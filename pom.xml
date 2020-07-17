@@ -61,6 +61,12 @@
             <artifactId>glass-x</artifactId>
             <version>1.0.6</version>
         </dependency>
+        <dependency>
+            <groupId>net.bootsfaces</groupId>
+            <artifactId>bootsfaces</artifactId>
+            <version>1.4.2</version>
+            <scope>compile</scope>
+        </dependency>
         
     </dependencies>
     <build>
