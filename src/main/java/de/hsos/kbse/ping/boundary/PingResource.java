@@ -7,6 +7,8 @@ import javax.ws.rs.Path;
  *
  * @author airhacks.com
  */
+// Funny Funny Funny
+
 @Path("ping")
 public class PingResource {
 
