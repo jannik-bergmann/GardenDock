@@ -23,9 +23,11 @@ import lombok.Data;
 @Entity
 @Access(AccessType.FIELD)
 public class SensorData implements Serializable{
+    
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    long id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private long id;
+    
     int waterlevel;
     int airhumidity;
     int soilhumidity;

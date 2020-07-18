@@ -11,7 +11,10 @@ import javax.enterprise.inject.Vetoed;
 import javax.inject.Inject;
 import javax.persistence.Access;
 import javax.persistence.AccessType;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
@@ -25,10 +28,13 @@ import lombok.Data;
 @Access(AccessType.FIELD)
 @Data
 public class Arduino implements Serializable {
+
     @Id
-    long id;
-    @OneToOne
-    @Inject
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private long id;
+    
+    @OneToOne(cascade = CascadeType.PERSIST)
     SensorData sensorData;
-    InetAddress ipAddress;
+    
+    String ipAddress;
 }
