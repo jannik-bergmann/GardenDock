@@ -32,10 +32,10 @@
                     <b:column col-sm="3" col-md="2" styleClass="sidebar">
                         <b:listLinks>
                             <b:navLink header="Dasboard Links" />
-                            <b:navCommandLink value="HeftigerButton" action="#{arduino.onClickDebug()}"></b:navCommandLink>
-                            <b:navLink href="#" value="AndererDebug" active="true"/>
-                            <b:navLink href="#" value="Reports" />
-                            <b:navLink href="#" value="Analytics" />
+                            <b:navCommandLink value="NeuerArduino" action="#{arduino.onClickDebug()}"></b:navCommandLink>
+                            <b:navCommandLink value="AktualisiereDaten" action="#{arduino.onClickDebug()}"></b:navCommandLink>
+                            <b:navCommandLink value="actionListener" actionListener="#{arduino.onClickDebug()}"
+                                              icon="tag" iconAlign="right" update="@form"/><b:navLink href="#" value="Analytics" />
                             <b:navLink href="#" value="Export" />
                         </b:listLinks>
                         <b:listLinks>
@@ -63,7 +63,7 @@
                                         <b:iconAwesome value="thermometer-three-quarters" solid="true" size="2x"/>
                                         <!--Temperatur-->
                                     </h4><br/>
-                                    <strong>24 &#186;C</strong><br/>
+                                    <strong>#{arduino.currentSensorData.temperature} &#186;C</strong><br/>
                                     <span class="text-muted">Temperatur</span>
                                 </b:jumbotron>
                             </b:column>
@@ -73,7 +73,7 @@
                                         <b:iconAwesome value="seedling" solid="true" size="2x"/>
                                         <!--Bodenfeuchtigkeit-->
                                     </h4><br/>
-                                    <strong>18%</strong><br/>
+                                    <strong>#{arduino.currentSensorData.soilhumidity}%</strong><br/>
                                     <span class="text-muted">Bodenfeuchtigkeit</span>
                                 </b:jumbotron>
                             </b:column>
@@ -83,8 +83,8 @@
                                         <b:iconAwesome value="tint" solid="true" size="2x"/>
                                         <!--Wassermenge-->
                                     </h4><br/>
-                                    <strong>400 ml</strong><br/>
-                                    <span class="text-muted">Wassermenge</span>
+                                    <strong>#{arduino.currentSensorData.waterlevel}%</strong><br/>
+                                    <span class="text-muted">Wasserf&uuml;llstand</span>
                                 </b:jumbotron>
                             </b:column>
                             <b:column col-xs="6" col-sm="3" styleClass="placeholder">
@@ -93,7 +93,7 @@
                                         <b:iconAwesome value="sun" solid="true" size="2x"/>
                                         <!--Sonneneinstrahlung-->
                                     </h4><br/>
-                                    <strong>40 %</strong><br/>
+                                    <strong>#{arduino.currentSensorData.lightIntensityInPercent} %</strong><br/>
                                     <span class="text-muted" >Sonneneinstrahlung</span>
                                 </b:jumbotron>
                             </b:column>
@@ -154,7 +154,7 @@
                     z-index: 1000;
                 }
             }
-            
+
             .nav-list {
                 margin-bottom: 20px;
                 margin-left: -20px;
@@ -166,11 +166,11 @@
             }
             <!--
             .nav-list > .active > a, .nav-sidebar > .active > a:hover, .nav-sidebar > .active > a:focus {
-               background-color: #428bca;
+                background-color: #428bca;
                 color: #fff;
             }
             -->
-          
+
             .navbar-style{
                 color: blue;
                 background-color: #72d4d4;

@@ -35,6 +35,8 @@ public class ArduinoBoundary implements Serializable {
     @Inject
     ArduinoRepoImpl arduinoRepo;
 
+    private SensorData currentSensorData;
+    
     private PieChartModel waterlevel;
     private PieChartModel soilhumidity;
 
@@ -44,12 +46,17 @@ public class ArduinoBoundary implements Serializable {
     public void init() {
         //createWaterLevel();
         createBarModel();
+        this.currentSensorData = new SensorData(0,0,0,0,0);
     }
 
     private void createPieModels() {
         createWaterLevel();
     }
 
+    private void updateDisplayedData(SensorData sensorData){
+        
+    }
+    
     private void createBarModel() {
         barModel = initBarModel();
 
@@ -118,8 +125,12 @@ public class ArduinoBoundary implements Serializable {
         sensorData.setLightintensity(20);
         sensorData.setSoilhumidity(30);
         sensorData.setWaterlevel(40);
+        sensorData.setTemperature(23.5);
 
+        this.currentSensorData = sensorData;
+        
         arduino.setSensorData(sensorData);
+        
         arduino.setIpAddress("1111");
         System.out.println(arduino.toString());
         arduinoRepo.newArduino(arduino);

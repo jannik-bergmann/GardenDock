@@ -18,6 +18,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.persistence.SequenceGenerator;
 import lombok.Data;
 
 /**
@@ -30,7 +31,7 @@ import lombok.Data;
 public class Arduino implements Serializable {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY,generator = "id_gen")
     private long id;
     
     @OneToOne(cascade = CascadeType.PERSIST)

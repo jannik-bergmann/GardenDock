@@ -12,7 +12,9 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.SequenceGenerator;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  *
@@ -22,14 +24,46 @@ import lombok.Data;
 @Data
 @Entity
 @Access(AccessType.FIELD)
+@NoArgsConstructor
+@SequenceGenerator(name = "id_gen", sequenceName = "id_gen",  initialValue = 2)
+
 public class SensorData implements Serializable{
     
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO, generator = "id_gen")
     private long id;
     
     int waterlevel;
     int airhumidity;
     int soilhumidity;
     int lightintensity;
+    double temperature;
+    
+    public SensorData(int waterlevel, int airhumidity, int soilhumidity,int lightintensity, double temperature){
+        this.waterlevel = waterlevel;
+        this.airhumidity = airhumidity;
+        this.soilhumidity = soilhumidity;
+        this.lightintensity = lightintensity;
+        this.temperature = temperature;
+    }
+    
+    public int getWaterlevelInPercent(){
+        return waterlevel;
+    }
+    
+    public int getAirhumidityInPercent(){
+        return airhumidity;
+    }
+    
+    public int getSoilhumidityInPercent(){
+        return soilhumidity;
+    }
+    
+    public int getLightIntensityInPercent(){
+        return lightintensity;
+    }
+    
+    public double getTemperatureInDegreesCelsius(){
+        return temperature;
+    }
 }
