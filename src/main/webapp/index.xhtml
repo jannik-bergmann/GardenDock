@@ -15,13 +15,10 @@
     <h:body style="padding-top: 60px">
         <h:outputScript library="holder" name="holder.js" />
         <!--script src="https://cdnjs.cloudflare.com/ajax/libs/holder/2.5.2/holder.min.js"></script-->
-        <b:navBar brand="GardenDock" brandHref="#" inverse="true" fixed="top" fluid="true">
+        <b:navBar brand="GardenDock" styleClass="navbar-style" brandHref="#" inverse="false" fixed="top" fluid="true" >
 
             <b:navbarLinks pull="right">
-                <b:navLink value="Dashboard" href="#"></b:navLink>
-                <b:navLink value="Settings" href="#"></b:navLink>
-                <b:navLink value="Profile" href="#"></b:navLink>
-                <b:navLink value="Help" href="#"></b:navLink>
+                <b:navLink value="Wiki" href="#"></b:navLink>
             </b:navbarLinks>
             <h:form styleClass="navbar-form navbar-right">
                 <div class="form-group">
@@ -55,25 +52,50 @@
                         </b:listLinks>
                     </b:column>
                     <b:column col-sm="9" offset-sm="3" col-md="10" offset="2" styleClass="main">
-                        <h1>Dashboard</h1>
+                        <h1>GardenDock Dashboard</h1>
                         <hr/>
                         <b:row styleClass="placeholders">
-                           <!--
-                            <p:chart type="pie" model="#{chartView.pieModel1}" style="width:400px;height:300px" />
-                            --><b:column col-xs="6" col-sm="3" styleClass="placeholder">
-                                <img data-src="holder.js/200x200/vine" class="img-responsive" alt="Generic placeholder thumbnail"/>
-                                <h4>Label</h4>
-                                <span class="text-muted">Something else</span>
+
+                            <p:chart type="bar" model="#{arduino.barModel}" style="height:300px"/>
+                            <b:column col-xs="6" col-sm="3" styleClass="placeholder">
+                                <b:jumbotron>
+                                    <h4>
+                                        <b:iconAwesome value="thermometer-three-quarters" solid="true" size="2x"/>
+                                        <!--Temperatur-->
+                                    </h4><br/>
+                                    <strong>24 &#186;C</strong><br/>
+                                    <span class="text-muted">Temperatur</span>
+                                </b:jumbotron>
                             </b:column>
                             <b:column col-xs="6" col-sm="3" styleClass="placeholder">
-                                <img data-src="holder.js/200x200/sky" class="img-responsive" alt="Generic placeholder thumbnail"/>
-                                <h4>Label</h4>
-                                <span class="text-muted">Something else</span>
+                                <b:jumbotron>
+                                    <h4>
+                                        <b:iconAwesome value="seedling" solid="true" size="2x"/>
+                                        <!--Bodenfeuchtigkeit-->
+                                    </h4><br/>
+                                    <strong>18%</strong><br/>
+                                    <span class="text-muted">Bodenfeuchtigkeit</span>
+                                </b:jumbotron>
                             </b:column>
                             <b:column col-xs="6" col-sm="3" styleClass="placeholder">
-                                <img data-src="holder.js/200x200/vine" class="img-responsive" alt="Generic placeholder thumbnail"/>
-                                <h4>Label</h4>
-                                <span class="text-muted">Something else</span>
+                                <b:jumbotron>
+                                    <h4>
+                                        <b:iconAwesome value="tint" solid="true" size="2x"/>
+                                        <!--Wassermenge-->
+                                    </h4><br/>
+                                    <strong>400 ml</strong><br/>
+                                    <span class="text-muted">Wassermenge</span>
+                                </b:jumbotron>
+                            </b:column>
+                            <b:column col-xs="6" col-sm="3" styleClass="placeholder">
+                                <b:jumbotron>
+                                    <h4>
+                                        <b:iconAwesome value="sun" solid="true" size="2x"/>
+                                        <!--Sonneneinstrahlung-->
+                                    </h4><br/>
+                                    <strong>40 %</strong><br/>
+                                    <span class="text-muted" >Sonneneinstrahlung</span>
+                                </b:jumbotron>
                             </b:column>
                         </b:row>
                         <h1>Section title</h1>
@@ -132,6 +154,7 @@
                     z-index: 1000;
                 }
             }
+            
             .nav-list {
                 margin-bottom: 20px;
                 margin-left: -20px;
@@ -141,9 +164,16 @@
                 padding-left: 20px;
                 padding-right: 20px;
             }
+            <!--
             .nav-list > .active > a, .nav-sidebar > .active > a:hover, .nav-sidebar > .active > a:focus {
-                background-color: #428bca;
+               background-color: #428bca;
                 color: #fff;
+            }
+            -->
+          
+            .navbar-style{
+                color: blue;
+                background-color: #72d4d4;
             }
             .main {
                 padding: 20px;
