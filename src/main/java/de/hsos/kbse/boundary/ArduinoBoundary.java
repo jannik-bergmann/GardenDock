@@ -7,7 +7,9 @@ package de.hsos.kbse.boundary;
 
 import static de.hsos.kbse.boundary.IoTDeviceGatewayMock.getRandomIntegerBetweenRange;
 import de.hsos.kbse.controller.ArduinoRepoImpl;
+import de.hsos.kbse.controller.ArduinoUserRepoImpl;
 import de.hsos.kbse.entities.Arduino;
+import de.hsos.kbse.entities.ArduinoUser;
 import de.hsos.kbse.entities.SensorData;
 import de.hsos.kbse.entities.interfaces.SensorDataRepo;
 
@@ -39,6 +41,9 @@ public class ArduinoBoundary implements Serializable {
 
     @Inject
     SensorDataRepo sensorDataRepo;
+    
+    @Inject 
+    ArduinoUserRepoImpl arduinoUserRepo;
 
     private SensorData currentSensorData;
 
@@ -125,6 +130,16 @@ public class ArduinoBoundary implements Serializable {
         System.out.println("Ich bin eine DebugNachricht (:");
     }
 
+    public void createUser(){
+        System.out.println("Erschaffe neuen User :D");
+        ArduinoUser arduinoUser = new ArduinoUser();
+        arduinoUser.setFirstname("Jannik");
+        arduinoUser.setLastname("Bergmann");
+        arduinoUser.setUsername("admin");
+        arduinoUser.setPassword("admin");
+        
+        arduinoUserRepo.newArduinoUser(arduinoUser);
+    }
     public void createRandomData() {
 
         SensorData sensorData = new SensorData(
@@ -138,5 +153,9 @@ public class ArduinoBoundary implements Serializable {
         currentSensorData = sensorData;
         System.out.println("Neue SensorData: " + sensorData);
 
+    }
+    
+    public String goToIndex(){
+        return "index";
     }
 }

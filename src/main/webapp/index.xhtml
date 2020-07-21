@@ -15,17 +15,24 @@
     <h:body style="padding-top: 60px">
         <h:outputScript library="holder" name="holder.js" />
         <!--script src="https://cdnjs.cloudflare.com/ajax/libs/holder/2.5.2/holder.min.js"></script-->
-        <b:navBar brand="GardenDock" styleClass="navbar-style" brandHref="#" inverse="false" fixed="top" fluid="true" >
 
-            <b:navbarLinks pull="right">
-                <b:navLink value="Wiki" icon-awesome="book" href="#"></b:navLink>
-            </b:navbarLinks>
+        <b:navBar brand="GardenDock" styleClass="navbar-style" brandHref="#" inverse="false" fixed="top" fluid="true" >
+            <h:form>
+                <b:navbarLinks pull="right">
+                    <b:navLink value="Wiki" icon-awesome="book" href="#"></b:navLink>
+
+                    <b:navCommandLink value="Logout" action="#{login.logout()}" href="#"></b:navCommandLink>
+
+
+                </b:navbarLinks>
+            </h:form>
             <h:form styleClass="navbar-form navbar-right">
                 <div class="form-group">
                     <b:inputText placeholder="Search..." fieldSize="sm"/>
                 </div>
             </h:form>
         </b:navBar>
+
         <b:container fluid="true">
             <b:row>
                 <h:form>
@@ -33,12 +40,12 @@
                         <b:listLinks>
                             <b:navLink header="Dasboard Links" />
                             <b:navCommandLink value="NeuerArduino" action="#{arduino.onClickDebug()}"></b:navCommandLink>
-                            <b:navCommandLink value="AktualisiereDaten" action="#{arduino.onClickDebug()}"></b:navCommandLink>
+                            <b:navCommandLink value="ErschaffeNutzer" action="#{arduino.createUser()}"></b:navCommandLink>
                             <b:navCommandLink value="actionListener" actionListener="#{arduino.onClickDebug()}"
                                               icon="tag" iconAlign="right" update="@form"/><b:navLink href="#" value="Analytics" />
                             <b:navCommandLink value="createSensorData" actionListener="#{arduino.createRandomData()}"
                                               icon="tag" iconAlign="right" update="@form"/><b:navLink href="#" value="Analytics" />
-                            
+
                         </b:listLinks>
                         <b:listLinks>
                             <b:navLink value="Nav item" />
@@ -54,7 +61,7 @@
                         </b:listLinks>
                     </b:column>
                     <b:column col-sm="9" offset-sm="3" col-md="10" offset="2" styleClass="main">
-                        <h1>GardenDock Dashboard</h1>
+                        <h1>Willkommen #{session.getAttribute("username").toString()}</h1>
                         <hr/>
                         <b:row styleClass="placeholders">
 

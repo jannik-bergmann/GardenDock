@@ -28,7 +28,8 @@ public class ArduinoUser implements Serializable{
     private long id;
     
     String username;
-    String pwd_hash;
+    //String pwd_hash;
+    String password;
     String firstname;
     String lastname;
     

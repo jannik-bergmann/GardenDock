@@ -39,7 +39,7 @@ public class SensorData implements Serializable{
     int soilhumidity;
     int lightintensity;
     double temperature;
-    LocalDateTime time;
+    LocalDateTime timeOfCapture;
     
     public SensorData(int waterlevel, int airhumidity, int soilhumidity,int lightintensity, double temperature){
         this.waterlevel = waterlevel;
@@ -47,7 +47,7 @@ public class SensorData implements Serializable{
         this.soilhumidity = soilhumidity;
         this.lightintensity = lightintensity;
         this.temperature = temperature;
-        this.time = java.time.LocalDateTime.now();
+        this.timeOfCapture = java.time.LocalDateTime.now();
     }
     
     public SensorData(){
@@ -56,7 +56,7 @@ public class SensorData implements Serializable{
         this.soilhumidity = 0;
         this.lightintensity = 0;
         this.temperature = 0;
-        this.time = java.time.LocalDateTime.now();
+        this.timeOfCapture = java.time.LocalDateTime.now();
     }
     
     public int getWaterlevelInPercent(){
