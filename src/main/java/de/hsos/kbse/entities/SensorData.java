@@ -6,6 +6,8 @@
 package de.hsos.kbse.entities;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
+import java.util.Date;
 import javax.persistence.Access;
 import javax.persistence.AccessType;
 import javax.persistence.Entity;
@@ -24,7 +26,6 @@ import lombok.NoArgsConstructor;
 @Data
 @Entity
 @Access(AccessType.FIELD)
-@NoArgsConstructor
 @SequenceGenerator(name = "id_gen", sequenceName = "id_gen",  initialValue = 2)
 
 public class SensorData implements Serializable{
@@ -38,6 +39,7 @@ public class SensorData implements Serializable{
     int soilhumidity;
     int lightintensity;
     double temperature;
+    LocalDateTime time;
     
     public SensorData(int waterlevel, int airhumidity, int soilhumidity,int lightintensity, double temperature){
         this.waterlevel = waterlevel;
@@ -45,6 +47,16 @@ public class SensorData implements Serializable{
         this.soilhumidity = soilhumidity;
         this.lightintensity = lightintensity;
         this.temperature = temperature;
+        this.time = java.time.LocalDateTime.now();
+    }
+    
+    public SensorData(){
+        this.waterlevel = 0;
+        this.airhumidity = 0;
+        this.soilhumidity = 0;
+        this.lightintensity = 0;
+        this.temperature = 0;
+        this.time = java.time.LocalDateTime.now();
     }
     
     public int getWaterlevelInPercent(){

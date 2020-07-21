@@ -6,7 +6,7 @@
 package de.hsos.kbse.controller;
 
 import de.hsos.kbse.entities.SensorData;
-import de.hsos.kbse.entities.SensorDataRepo;
+import de.hsos.kbse.entities.interfaces.SensorDataRepo;
 import javax.enterprise.context.RequestScoped;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;

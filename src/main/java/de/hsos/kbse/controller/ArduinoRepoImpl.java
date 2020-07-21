@@ -6,7 +6,7 @@
 package de.hsos.kbse.controller;
 
 import de.hsos.kbse.entities.Arduino;
-import de.hsos.kbse.entities.ArduinoRepo;
+import de.hsos.kbse.entities.interfaces.ArduinoRepo;
 import javax.enterprise.context.RequestScoped;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;

@@ -5,13 +5,15 @@
  */
 package de.hsos.kbse.boundary;
 
+import static de.hsos.kbse.boundary.IoTDeviceGatewayMock.getRandomIntegerBetweenRange;
 import de.hsos.kbse.controller.ArduinoRepoImpl;
 import de.hsos.kbse.entities.Arduino;
 import de.hsos.kbse.entities.SensorData;
+import de.hsos.kbse.entities.interfaces.SensorDataRepo;
+
 import java.io.Serializable;
-import javafx.scene.chart.PieChart;
 import javax.annotation.PostConstruct;
-import javax.enterprise.context.ConversationScoped;
+import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 import lombok.Getter;
@@ -26,7 +28,7 @@ import org.primefaces.model.chart.PieChartModel;
  *
  * @author Jannik Bergmann <jannik.bergmann@hs-osnabrueck.de>
  */
-@ConversationScoped
+@ApplicationScoped
 @Named(value = "arduino")
 @Getter
 @Setter
@@ -35,8 +37,11 @@ public class ArduinoBoundary implements Serializable {
     @Inject
     ArduinoRepoImpl arduinoRepo;
 
+    @Inject
+    SensorDataRepo sensorDataRepo;
+
     private SensorData currentSensorData;
-    
+
     private PieChartModel waterlevel;
     private PieChartModel soilhumidity;
 
@@ -44,19 +49,15 @@ public class ArduinoBoundary implements Serializable {
 
     @PostConstruct
     public void init() {
-        //createWaterLevel();
         createBarModel();
-        this.currentSensorData = new SensorData(0,0,0,0,0);
+        this.currentSensorData = new SensorData(0, 0, 0, 0, 0);
+
     }
 
-    private void createPieModels() {
-        createWaterLevel();
+    private void updateDisplayedData(SensorData sensorData) {
+
     }
 
-    private void updateDisplayedData(SensorData sensorData){
-        
-    }
-    
     private void createBarModel() {
         barModel = initBarModel();
 
@@ -78,16 +79,15 @@ public class ArduinoBoundary implements Serializable {
         ChartSeries waterlevel = new ChartSeries();
         waterlevel.setLabel("Wasserfüllstand");
         waterlevel.set("", 30);
-        
 
         ChartSeries soilhumidity = new ChartSeries();
         soilhumidity.setLabel("Bodenfeuchtigkeit");
         soilhumidity.set("", 52);
-        
+
         ChartSeries airhumidity = new ChartSeries();
         airhumidity.setLabel("Bodenfeuchtigkeit");
         airhumidity.set("", 72);
-        
+
         ChartSeries lightintensity = new ChartSeries();
         lightintensity.setLabel("Bodenfeuchtigkeit");
         lightintensity.set("", 92);
@@ -96,7 +96,6 @@ public class ArduinoBoundary implements Serializable {
         model.addSeries(soilhumidity);
         model.addSeries(airhumidity);
         model.addSeries(lightintensity);
-        
 
         return model;
     }
@@ -104,18 +103,6 @@ public class ArduinoBoundary implements Serializable {
     private void createSoilHumidity() {
         soilhumidity = new PieChartModel();
 
-    }
-
-    private void createWaterLevel() {
-        waterlevel = new PieChartModel();
-
-        waterlevel.set("Tanke gefüllt", 50);
-        waterlevel.set("Tank leer", 10);
-
-        waterlevel.setTitle("Wasserfüllstand");
-        waterlevel.setShowDataLabels(false);
-        //pieModel1.setLegendPosition("w");
-        waterlevel.setShadow(false);
     }
 
     public void onClickDebug() {
@@ -128,13 +115,28 @@ public class ArduinoBoundary implements Serializable {
         sensorData.setTemperature(23.5);
 
         this.currentSensorData = sensorData;
-        
+
         arduino.setSensorData(sensorData);
-        
+
         arduino.setIpAddress("1111");
         System.out.println(arduino.toString());
         arduinoRepo.newArduino(arduino);
 
         System.out.println("Ich bin eine DebugNachricht (:");
+    }
+
+    public void createRandomData() {
+
+        SensorData sensorData = new SensorData(
+                getRandomIntegerBetweenRange(0, 100),
+                getRandomIntegerBetweenRange(0, 100),
+                getRandomIntegerBetweenRange(0, 100),
+                getRandomIntegerBetweenRange(0, 100),
+                getRandomIntegerBetweenRange(0, 100)
+        );
+        sensorDataRepo.newSensorData(sensorData);
+        currentSensorData = sensorData;
+        System.out.println("Neue SensorData: " + sensorData);
+
     }
 }

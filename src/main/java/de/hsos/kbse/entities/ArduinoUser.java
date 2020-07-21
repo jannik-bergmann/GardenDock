@@ -6,19 +6,12 @@
 package de.hsos.kbse.entities;
 
 import java.io.Serializable;
-import java.net.InetAddress;
-import javax.enterprise.inject.Vetoed;
-import javax.inject.Inject;
 import javax.persistence.Access;
 import javax.persistence.AccessType;
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.SequenceGenerator;
 import lombok.Data;
 
 /**
@@ -28,14 +21,15 @@ import lombok.Data;
 @Entity
 @Access(AccessType.FIELD)
 @Data
-public class Arduino implements Serializable {
-
+public class ArduinoUser implements Serializable{
+    
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
     
-    @OneToOne(cascade = CascadeType.PERSIST)
-    SensorData sensorData;
+    String username;
+    String pwd_hash;
+    String firstname;
+    String lastname;
     
-    String ipAddress;
 }
