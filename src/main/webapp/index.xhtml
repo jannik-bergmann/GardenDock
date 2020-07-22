@@ -42,17 +42,24 @@
                             <b:navCommandLink value="NeuerArduino" action="#{arduino.onClickDebug()}"></b:navCommandLink>
                             <b:navCommandLink value="ErschaffeNutzer" action="#{arduino.createUser()}"></b:navCommandLink>
                             <b:navCommandLink value="actionListener" actionListener="#{arduino.onClickDebug()}"
-                                              icon="tag" iconAlign="right" update="@form"/><b:navLink href="#" value="Analytics" />
+                                              icon="tag" iconAlign="right" update="@form"/>
                             <b:navCommandLink value="createSensorData" actionListener="#{arduino.createRandomData()}"
-                                              icon="tag" iconAlign="right" update="@form"/><b:navLink href="#" value="Analytics" />
+                                              icon="tag" iconAlign="right" update="@form"/>
 
                         </b:listLinks>
                         <b:listLinks>
-                            <b:navLink value="Nav item" />
-                            <b:navLink value="Nav item again" />
-                            <b:navLink value="One more nav" />
-                            <b:navLink value="Another nav item" />
-                            <b:navLink value="More navigation" />
+                            <b:navCommandLink value="Wasserstand Detailansicht" actionListener="#{arduino.createRandomData()}"
+                                              icon="search" iconAlign="left" update="@form"/>
+
+                            <b:navCommandLink value="Bodenfeuchtigkeit Detailansicht" actionListener="#{arduino.createRandomData()}"
+                                              iconAwesome="search-plus" iconAlign="left" update="@form"/>
+                            <b:navCommandLink value="Luftfeuchtigkeit Detailansicht" actionListener="#{arduino.createRandomData()}"
+                                              icon="tag" iconAlign="right" update="@form"/>
+                            <b:navCommandLink value="Sonneneinstrahlung Detailansicht" actionListener="#{arduino.createRandomData()}"
+                                              icon="tag" iconAlign="right" update="@form"/>
+                            <b:navCommandLink value="Temperatur Detailansicht" actionListener="#{arduino.createRandomData()}"
+                                              icon="tag" iconAlign="right" update="@form"/>
+                            
                         </b:listLinks>
                         <b:listLinks>
                             <b:navLink value="Nav item again" />
