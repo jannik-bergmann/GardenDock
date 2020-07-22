@@ -46,7 +46,7 @@ public class Login implements Serializable {
         if (loginValid) {
             HttpSession session = SessionUtils.getSession();
             session.setAttribute("username", user.getUsername());
-            return "index?faces-redirect=true";
+            return "dashboard?faces-redirect=true";
         } else {
             FacesContext.getCurrentInstance().addMessage(
                     null,
