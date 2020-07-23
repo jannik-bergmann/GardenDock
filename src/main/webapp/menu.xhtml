@@ -13,13 +13,24 @@
 
     </h:head>
     <h:body style="padding-top: 60px">
-        <h:outputScript library="holder" name="holder.js" />
-        <!--script src="https://cdnjs.cloudflare.com/ajax/libs/holder/2.5.2/holder.min.js"></script-->
+        <!--<h:outputScript library="holder" name="holder.js" />-->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/holder/2.5.2/holder.min.js"></script>
+
+        <h:form>
+            <p:growl id="messages" showDetail="true" sticky="true" />
+
+            <p:idleMonitor timeout="5000">
+                <p:ajax event="idle" listener="#{login.timeout()}" update="messages" />
+            </p:idleMonitor>
+
+        </h:form>
 
         <b:navBar brand="GardenDock" styleClass="navbar-style" brandHref="#" inverse="false" fixed="top" fluid="true" >
             <h:form>
                 <b:navbarLinks pull="right">
-                    <b:navLink value="Wiki" icon-awesome="book" href="#"></b:navLink>
+
+                    <b:navLink value="Wiki" icon-awesome="book" iconAlign="left" update="@form @(.contentform)"
+                               onclick="ajax:arduino.showPageWiki()" />
 
                     <b:navCommandLink value="Logout" icon-awesome="power-off" action="#{login.logout()}" href="#"></b:navCommandLink>
 
@@ -35,11 +46,12 @@
 
         <b:container fluid="true">
             <b:row>
-                <h:form>
+                <h:form class="contentform">
                     <b:column col-sm="3" col-md="2" styleClass="sidebar">
                         <b:listLinks>
                             <b:navLink header="Dasboard Links" />
-                            <b:navCommandLink value="NeuerArduino" action="#{arduino.onClickDebug()}"></b:navCommandLink>
+                            <b:navCommandLink value="Landing Page" actionListener="#{arduino.setPage('landing')}"
+                                              icon="search" icon-align="left" update="@form"></b:navCommandLink>
                             <b:navCommandLink value="ErschaffeNutzer" action="#{arduino.createUser()}"></b:navCommandLink>
                             <b:navCommandLink value="actionListener" actionListener="#{arduino.onClickDebug()}"
                                               icon="tag" iconAlign="right" update="@form"/>
@@ -48,22 +60,23 @@
 
                         </b:listLinks>
                         <b:listLinks>
-                            <b:navCommandLink value="Wasserstand Detailansicht" actionListener="#{arduino.setPage('waterlevel')}"
+                            <b:navCommandLink value="Wasserstand" actionListener="#{arduino.showPageWaterlevel()}"
                                               icon="search" iconAlign="left" update="@form" />
-
-                            <b:navCommandLink value="Bodenfeuchtigkeit Detailansicht" actionListener="#{arduino.createRandomData()}"
-                                              iconAwesome="search-plus" iconAlign="left" update="@form"/>
-
-                            <b:navCommandLink value="Luftfeuchtigkeit Detailansicht" actionListener="#{arduino.createRandomData()}"
-                                              icon="tag" iconAlign="right" update="@form"/>
-                            <b:navCommandLink value="Sonneneinstrahlung Detailansicht" actionListener="#{arduino.createRandomData()}"
-                                              icon="tag" iconAlign="right" update="@form"/>
-                            <b:navCommandLink value="Temperatur Detailansicht" actionListener="#{arduino.createRandomData()}"
-                                              icon="tag" iconAlign="right" update="@form"/>
+                            <b:navCommandLink value="Bodenfeuchtigkeit" actionListener="#{arduino.setPage('soilmoisture')}"
+                                              icon="search" iconAlign="left" update="@form" />
+                            <b:navCommandLink value="Luftfeuchtigkeit" actionListener="#{arduino.setPage('airhumidity')}"
+                                              icon="search" iconAlign="left" update="@form" />
+                            <b:navCommandLink value="Sonneneinstrahlung" actionListener="#{arduino.setPage('lightintensity')}"
+                                              icon="search" iconAlign="left" update="@form"/>
+                            <b:navCommandLink value="Temperatur" actionListener="#{arduino.setPage('temperature')}"
+                                              icon="search" iconAlign="left" update="@form"/>
+                            <b:navCommandLink value="Wiki" actionListener="#{arduino.showPageWiki()}"
+                                              icon="search" iconAlign="left" update="@form"/>
 
                         </b:listLinks>
                         <b:listLinks>
-                            <b:navLink value="Nav item again" />
+                            <b:navCommandLink value="RedrawWaterLevelChart" actionListener="#{arduino.drawWaterlevelChart()}"
+                                              icon="pizza" iconAlign="left" update="@form"/>
                             <b:navLink value="One more nav" />
                             <b:navLink value="Another nav item" />
                         </b:listLinks>
@@ -71,9 +84,9 @@
 
                     <div id="page">
 
-                        <div id="content">
+                        <div class="pagecontent">
                             <ui:insert name="content" >
-                                <ui:include src="../#{arduino.page}.xhtml" />
+                                <ui:include src="#{arduino.page}.xhtml" />
                             </ui:insert>
                         </div>
 

@@ -10,6 +10,7 @@ import de.hsos.kbse.entities.authorization.Credentials;
 import de.hsos.kbse.entities.ArduinoUser;
 import de.hsos.kbse.entities.interfaces.ArduinoUserRepo;
 import de.hsos.kbse.util.SessionUtils;
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.List;
 import javax.enterprise.context.SessionScoped;
@@ -45,6 +46,7 @@ public class Login implements Serializable {
         boolean loginValid = validateUser(credentials);
         if (loginValid) {
             HttpSession session = SessionUtils.getSession();
+            //session.setMaxInactiveInterval(10);
             session.setAttribute("username", user.getUsername());
             return "dashboard?faces-redirect=true";
         } else {
@@ -67,6 +69,13 @@ public class Login implements Serializable {
         } else {
             return false;
         }
+    }
+
+    public void timeout() throws IOException {
+
+        logout();
+        FacesContext.getCurrentInstance().getExternalContext().redirect("/GardenDock/login.xhtml");
+
     }
 
     public String logout() {

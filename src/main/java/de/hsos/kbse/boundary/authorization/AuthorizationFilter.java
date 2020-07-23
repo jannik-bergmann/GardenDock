@@ -43,7 +43,7 @@ public class AuthorizationFilter implements Filter {
             HttpSession ses = reqt.getSession(false);
 
             String reqURI = reqt.getRequestURI();
-            if (reqURI.indexOf("/login.xhtml") >= 0
+            if (reqURI.contains("/login.xhtml")
                     || (ses != null && ses.getAttribute("username") != null)
                     || reqURI.contains("/public/")
                     || reqURI.contains("javax.faces.resource")) {

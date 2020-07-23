@@ -1,0 +1,69 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:b="http://bootsfaces.net/ui"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+    <h:head>
+        <title>GardenDock</title>
+    </h:head>
+    <h:body style="padding-top: 60px">
+        <ui:composition>
+
+
+            <b:column col-sm="9" offset-sm="3" col-md="10" offset="2" styleClass="main">
+                <h1>Bodenfeuchtigkeit</h1>
+                <hr/>
+                <b:row styleClass="placeholders">
+
+                    <p:chart type="bar" model="#{arduino.barModel}" style="height:300px"/>
+                    <b:column col-xs="6" col-sm="3" styleClass="placeholder">
+                        <b:jumbotron>
+                            <h4>
+                                <b:iconAwesome value="thermometer-three-quarters" solid="true" size="2x"/>
+                                <!--Temperatur-->
+                            </h4><br/>
+                            <strong>#{arduino.currentSensorData.temperature} &#186;C</strong><br/>
+                            <span class="text-muted">Temperatur</span>
+                        </b:jumbotron>
+                    </b:column>
+                    <b:column col-xs="6" col-sm="3" styleClass="placeholder">
+                        <b:jumbotron>
+                            <h4>
+                                <b:iconAwesome value="seedling" solid="true" size="2x"/>
+                                <!--Bodenfeuchtigkeit-->
+                            </h4><br/>
+                            <strong>#{arduino.currentSensorData.soilhumidity}%</strong><br/>
+                            <span class="text-muted">Bodenfeuchtigkeit</span>
+                        </b:jumbotron>
+                    </b:column>
+                    <b:column col-xs="6" col-sm="3" styleClass="placeholder">
+                        <b:jumbotron>
+                            <h4>
+                                <b:iconAwesome value="tint" solid="true" size="2x"/>
+                                <!--Wassermenge-->
+                            </h4><br/>
+                            <strong>#{arduino.currentSensorData.waterlevel}%</strong><br/>
+                            <span class="text-muted">Wasserf&uuml;llstand</span>
+                        </b:jumbotron>
+                    </b:column>
+                    <b:column col-xs="6" col-sm="3" styleClass="placeholder">
+                        <b:jumbotron>
+                            <h4>
+                                <b:iconAwesome value="sun" solid="true" size="2x"/>
+                                <!--Sonneneinstrahlung-->
+                            </h4><br/>
+                            <strong>#{arduino.currentSensorData.lightIntensityInPercent} %</strong><br/>
+                            <span class="text-muted" >Sonneneinstrahlung</span>
+                        </b:jumbotron>
+                    </b:column>
+                </b:row>
+            </b:column>
+
+
+        </ui:composition>
+    </h:body>
+</html>
