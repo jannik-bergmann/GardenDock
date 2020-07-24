@@ -143,5 +143,30 @@ public class ChartUtil {
 
         return lineModel;
     }
+    
+    public static LineChartModel drawFertilizerlevelChart(List<SensorData> sensorDataCollection) {
+
+        LineChartModel lineModel = new LineChartModel();
+
+        ChartSeries waterlevelSeries = new ChartSeries();
+        waterlevelSeries.setLabel("Duenger");
+        sensorDataCollection.forEach((sensorData) -> {
+            waterlevelSeries.set(sensorData.getTimeOfCapture().getMinute() + ":" + sensorData.getTimeOfCapture().getSecond(),
+                    sensorData.getFertilizerlevel());
+        });
+
+        lineModel.addSeries(waterlevelSeries);
+
+        lineModel.setTitle("Verlauf Duenger");
+        lineModel.setLegendPosition("e");
+        lineModel.setShowPointLabels(true);
+        lineModel.getAxes().put(AxisType.X, new CategoryAxis("Zeit"));
+        Axis yAxis = lineModel.getAxis(AxisType.Y);
+        yAxis.setLabel("Grad");
+        yAxis.setMin(0);
+        yAxis.setMax(100);
+
+        return lineModel;
+    }
 
 }

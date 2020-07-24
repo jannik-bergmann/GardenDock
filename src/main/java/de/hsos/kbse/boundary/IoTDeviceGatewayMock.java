@@ -49,6 +49,7 @@ public class IoTDeviceGatewayMock {
                         getRandomIntegerBetweenRange(0, 100),
                         getRandomIntegerBetweenRange(0, 100),
                         getRandomIntegerBetweenRange(0, 100),
+                        getRandomIntegerBetweenRange(0, 100),
                         getRandomIntegerBetweenRange(0, 100)
                 );
                 sensorDataRepo.newSensorData(sensorData);

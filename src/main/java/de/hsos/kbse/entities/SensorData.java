@@ -36,17 +36,19 @@ public class SensorData implements Serializable{
     
     int waterlevel;
     int airhumidity;
+    int fertilizerlevel;
     int soilhumidity;
     int lightintensity;
     double temperature;
     LocalDateTime timeOfCapture;
     
-    public SensorData(int waterlevel, int airhumidity, int soilhumidity,int lightintensity, double temperature){
+    public SensorData(int waterlevel, int airhumidity, int soilhumidity,int lightintensity,int fertilizerlevel, double temperature){
         this.waterlevel = waterlevel;
         this.airhumidity = airhumidity;
         this.soilhumidity = soilhumidity;
         this.lightintensity = lightintensity;
         this.temperature = temperature;
+        this.fertilizerlevel = fertilizerlevel;
         this.timeOfCapture = java.time.LocalDateTime.now();
     }
     

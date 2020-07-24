@@ -15,11 +15,12 @@
 
 
             <b:column col-sm="9" offset-sm="3" col-md="10" offset="2" styleClass="main">
-                <h1>Willkommen #{session.getAttribute("username").toString()}</h1>
+                <h1>Wasserstand</h1>
                 <hr/>
                 <b:row styleClass="placeholders">
 
-                    <p:chart type="bar" model="#{arduino.barModel}" style="height:300px"/>
+                    <p:chart type="line" model="#{arduino.waterlevelLineModel}" style="height:300px;"/>
+                    
                     <b:column col-xs="6" col-sm="3" styleClass="placeholder">
                         <b:jumbotron>
                             <h4>
@@ -58,28 +59,6 @@
                             </h4><br/>
                             <strong>#{arduino.currentSensorData.lightIntensityInPercent} %</strong><br/>
                             <span class="text-muted" >Sonneneinstrahlung</span>
-                        </b:jumbotron>
-                    </b:column>
-                </b:row>
-                <b:row styleClass="placeholders">
-                    <b:column col-xs="6" col-sm="3" styleClass="placeholder">
-                        <b:jumbotron>
-                            <h4>
-                                <b:iconAwesome value="burn" solid="true" size="2x"/>
-                                <!--Sonneneinstrahlung-->
-                            </h4><br/>
-                            <strong>#{arduino.currentSensorData.fertilizerlevel} %</strong><br/>
-                            <span class="text-muted" >D&uuml;ngerf&uuml;llstand</span>
-                        </b:jumbotron>
-                    </b:column>
-                    <b:column col-xs="6" col-sm="3" styleClass="placeholder">
-                        <b:jumbotron>
-                            <h4>
-                                <b:iconAwesome value="cloud" solid="true" size="2x"/>
-                                <!--Sonneneinstrahlung-->
-                            </h4><br/>
-                            <strong>#{arduino.currentSensorData.airhumidity} %</strong><br/>
-                            <span class="text-muted" >Luftfeuchtigkeit</span>
                         </b:jumbotron>
                     </b:column>
                 </b:row>

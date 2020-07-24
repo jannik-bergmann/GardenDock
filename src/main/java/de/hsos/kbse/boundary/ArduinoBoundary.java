@@ -17,10 +17,7 @@ import de.hsos.kbse.util.ChartUtil;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 import javax.annotation.PostConstruct;
-import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.context.SessionScoped;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -65,6 +62,7 @@ public class ArduinoBoundary implements Serializable {
     private LineChartModel airhumidityLineModel;
     private LineChartModel lightintensityLineModel;
     private LineChartModel temperatureLineModel;
+    private LineChartModel fertilizerlevelLineModel;
 
     private BarChartModel barModel;
 
@@ -74,7 +72,7 @@ public class ArduinoBoundary implements Serializable {
     public void init() {
         page = "landing";
         createBarModel();
-        this.currentSensorData = new SensorData(0, 0, 0, 0, 0);
+        this.currentSensorData = new SensorData(0, 0, 0, 0, 0, 0);
         sensorDataCollection = new ArrayList();
         initLineModels();
     }
@@ -85,7 +83,7 @@ public class ArduinoBoundary implements Serializable {
         airhumidityLineModel = ChartUtil.drawAirhumidityChart(sensorDataCollection);
         lightintensityLineModel = ChartUtil.drawLightintensityChart(sensorDataCollection);
         temperatureLineModel = ChartUtil.drawTemperatureChart(sensorDataCollection);
-
+        fertilizerlevelLineModel = ChartUtil.drawFertilizerlevelChart(sensorDataCollection);
     }
 
     private void updateDisplayedData(SensorData sensorData) {
@@ -204,6 +202,7 @@ public class ArduinoBoundary implements Serializable {
                 getRandomIntegerBetweenRange(0, 100),
                 getRandomIntegerBetweenRange(0, 100),
                 getRandomIntegerBetweenRange(0, 100),
+                getRandomIntegerBetweenRange(0, 100),
                 getRandomIntegerBetweenRange(0, 100)
         );
         sensorDataRepo.newSensorData(sensorData);
@@ -213,6 +212,9 @@ public class ArduinoBoundary implements Serializable {
         this.waterlevelLineModel = ChartUtil.drawWaterlevelChart(sensorDataCollection);
         this.soilmoistureLineModel = ChartUtil.drawSoilMoistureChart(sensorDataCollection);
         this.airhumidityLineModel = ChartUtil.drawAirhumidityChart(sensorDataCollection);
+        this.temperatureLineModel = ChartUtil.drawTemperatureChart(sensorDataCollection);
+        this.lightintensityLineModel = ChartUtil.drawLightintensityChart(sensorDataCollection);
+        this.fertilizerlevelLineModel = ChartUtil.drawFertilizerlevelChart(sensorDataCollection);
     }
 
     public String goToIndex() {
@@ -244,6 +246,11 @@ public class ArduinoBoundary implements Serializable {
         temperatureLineModel = ChartUtil.drawTemperatureChart(sensorDataCollection);
     }
 
+    public void showPageFertilizerlevel() {
+        this.page = "fertilizerlevel";
+        fertilizerlevelLineModel = ChartUtil.drawFertilizerlevelChart(sensorDataCollection);
+    }
+    
     public void showPageWiki() {
         this.page = "wiki";
         System.out.println("de.hsos.kbse.boundary.ArduinoBoundary.showPageWiki()");
