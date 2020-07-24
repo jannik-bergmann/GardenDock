@@ -19,7 +19,7 @@
         <h:form>
             <p:growl id="messages" showDetail="true" sticky="true" />
 
-            <p:idleMonitor timeout="5000">
+            <p:idleMonitor timeout="50000">
                 <p:ajax event="idle" listener="#{login.timeout()}" update="messages" />
             </p:idleMonitor>
 
@@ -49,36 +49,28 @@
                 <h:form class="contentform">
                     <b:column col-sm="3" col-md="2" styleClass="sidebar">
                         <b:listLinks>
-                            <b:navLink header="Dasboard Links" />
+                            <b:navLink header="Navigation" />
                             <b:navCommandLink value="Landing Page" actionListener="#{arduino.setPage('landing')}"
-                                              icon="search" icon-align="left" update="@form"></b:navCommandLink>
-                            <b:navCommandLink value="ErschaffeNutzer" action="#{arduino.createUser()}"></b:navCommandLink>
-                            <b:navCommandLink value="actionListener" actionListener="#{arduino.onClickDebug()}"
-                                              icon="tag" iconAlign="right" update="@form"/>
-                            <b:navCommandLink value="createSensorData" actionListener="#{arduino.createRandomData()}"
-                                              icon="tag" iconAlign="right" update="@form"/>
-
-                        </b:listLinks>
-                        <b:listLinks>
+                                              icon="search" icon-align="left" update="@form"/>
                             <b:navCommandLink value="Wasserstand" actionListener="#{arduino.showPageWaterlevel()}"
                                               icon="search" iconAlign="left" update="@form" />
-                            <b:navCommandLink value="Bodenfeuchtigkeit" actionListener="#{arduino.setPage('soilmoisture')}"
+                            <b:navCommandLink value="Bodenfeuchtigkeit" actionListener="#{arduino.showPageSoilmoisture()}"
                                               icon="search" iconAlign="left" update="@form" />
-                            <b:navCommandLink value="Luftfeuchtigkeit" actionListener="#{arduino.setPage('airhumidity')}"
+                            <b:navCommandLink value="Luftfeuchtigkeit" actionListener="#{arduino.showPageAirhumidity()}"
                                               icon="search" iconAlign="left" update="@form" />
-                            <b:navCommandLink value="Sonneneinstrahlung" actionListener="#{arduino.setPage('lightintensity')}"
+                            <b:navCommandLink value="Sonneneinstrahlung" actionListener="#{arduino.showPageLightintensity()}"
                                               icon="search" iconAlign="left" update="@form"/>
-                            <b:navCommandLink value="Temperatur" actionListener="#{arduino.setPage('temperature')}"
+                            <b:navCommandLink value="Temperatur" actionListener="#{arduino.showPageTemperature()}"
                                               icon="search" iconAlign="left" update="@form"/>
                             <b:navCommandLink value="Wiki" actionListener="#{arduino.showPageWiki()}"
                                               icon="search" iconAlign="left" update="@form"/>
-
                         </b:listLinks>
                         <b:listLinks>
+                            <b:navLink header="Debug" />
+                            <b:navCommandLink value="createSensorData" actionListener="#{arduino.createRandomData()}"
+                                              icon="tag" iconAlign="left" update="@form"/>
                             <b:navCommandLink value="RedrawWaterLevelChart" actionListener="#{arduino.drawWaterlevelChart()}"
                                               icon="pizza" iconAlign="left" update="@form"/>
-                            <b:navLink value="One more nav" />
-                            <b:navLink value="Another nav item" />
                         </b:listLinks>
                     </b:column>
 

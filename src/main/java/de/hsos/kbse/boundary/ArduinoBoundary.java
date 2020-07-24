@@ -12,8 +12,11 @@ import de.hsos.kbse.entities.Arduino;
 import de.hsos.kbse.entities.ArduinoUser;
 import de.hsos.kbse.entities.SensorData;
 import de.hsos.kbse.entities.interfaces.SensorDataRepo;
+import de.hsos.kbse.util.ChartUtil;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Vector;
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
@@ -46,63 +49,76 @@ public class ArduinoBoundary implements Serializable {
 
     @Inject
     SensorDataRepo sensorDataRepo;
-    
-    @Inject 
+
+    @Inject
     ArduinoUserRepoImpl arduinoUserRepo;
-    
+
     private String page;
 
     private SensorData currentSensorData;
 
     private PieChartModel waterlevel;
     private PieChartModel soilhumidity;
-    private LineChartModel lineModel;
+
+    private LineChartModel waterlevelLineModel;
+    private LineChartModel soilmoistureLineModel;
+    private LineChartModel airhumidityLineModel;
+    private LineChartModel lightintensityLineModel;
+    private LineChartModel temperatureLineModel;
 
     private BarChartModel barModel;
 
-    Vector<SensorData> sensorDataCollection;
-    
+    List<SensorData> sensorDataCollection;
+
     @PostConstruct
     public void init() {
         page = "landing";
         createBarModel();
         this.currentSensorData = new SensorData(0, 0, 0, 0, 0);
-        sensorDataCollection = new Vector();
-        drawWaterlevelChart();
+        sensorDataCollection = new ArrayList();
+        initLineModels();
+    }
+
+    private void initLineModels() {
+        waterlevelLineModel = ChartUtil.drawWaterlevelChart(sensorDataCollection);
+        soilmoistureLineModel = ChartUtil.drawSoilMoistureChart(sensorDataCollection);
+        airhumidityLineModel = ChartUtil.drawAirhumidityChart(sensorDataCollection);
+        lightintensityLineModel = ChartUtil.drawLightintensityChart(sensorDataCollection);
+        temperatureLineModel = ChartUtil.drawTemperatureChart(sensorDataCollection);
+
     }
 
     private void updateDisplayedData(SensorData sensorData) {
 
     }
-    
+
     private LineChartModel initLineChartWaterlevel() {
         LineChartModel model = new LineChartModel();
- 
+
         ChartSeries waterlevelSeries = new ChartSeries();
         waterlevelSeries.setLabel("waterlevel");
         sensorDataCollection.forEach((sensorData) -> {
-            waterlevelSeries.set(sensorData.getTimeOfCapture().getMinute() +":"+sensorData.getTimeOfCapture().getSecond(),
+            waterlevelSeries.set(sensorData.getTimeOfCapture().getMinute() + ":" + sensorData.getTimeOfCapture().getSecond(),
                     sensorData.getWaterlevel());
         });
-        
- 
+
         model.addSeries(waterlevelSeries);
-        
+
         return model;
     }
 
-    public void drawWaterlevelChart(){
-        lineModel = initLineChartWaterlevel();
-        lineModel.setTitle("Category Chart");
-        lineModel.setLegendPosition("e");
-        lineModel.setShowPointLabels(true);
-        lineModel.getAxes().put(AxisType.X, new CategoryAxis("Zeit"));
-        Axis yAxis = lineModel.getAxis(AxisType.Y);
+    public void drawWaterlevelChart() {
+        waterlevelLineModel = initLineChartWaterlevel();
+        waterlevelLineModel.setTitle("Verlauf Wasserstand");
+        waterlevelLineModel.setLegendPosition("e");
+        waterlevelLineModel.setShowPointLabels(true);
+        waterlevelLineModel.getAxes().put(AxisType.X, new CategoryAxis("Zeit"));
+        Axis yAxis = waterlevelLineModel.getAxis(AxisType.Y);
         yAxis.setLabel("Prozent");
         yAxis.setMin(0);
         yAxis.setMax(100);
     }
-    
+
     private void createBarModel() {
         barModel = initBarModel();
 
@@ -170,16 +186,17 @@ public class ArduinoBoundary implements Serializable {
         System.out.println("Ich bin eine DebugNachricht (:");
     }
 
-    public void createUser(){
+    public void createUser() {
         System.out.println("Erschaffe neuen User :D");
         ArduinoUser arduinoUser = new ArduinoUser();
         arduinoUser.setFirstname("Jannik");
         arduinoUser.setLastname("Bergmann");
         arduinoUser.setUsername("admin");
         arduinoUser.setPassword("admin");
-        
+
         arduinoUserRepo.newArduinoUser(arduinoUser);
     }
+
     public void createRandomData() {
 
         SensorData sensorData = new SensorData(
@@ -193,35 +210,41 @@ public class ArduinoBoundary implements Serializable {
         currentSensorData = sensorData;
         sensorDataCollection.add(sensorData);
         System.out.println("Neue SensorData: " + sensorData);
-        drawWaterlevelChart();
+        this.waterlevelLineModel = ChartUtil.drawWaterlevelChart(sensorDataCollection);
+        this.soilmoistureLineModel = ChartUtil.drawSoilMoistureChart(sensorDataCollection);
+        this.airhumidityLineModel = ChartUtil.drawAirhumidityChart(sensorDataCollection);
     }
-    
-    public String goToIndex(){
+
+    public String goToIndex() {
         return "index";
     }
-    
-    public void showPageWaterlevel(){
+
+    public void showPageWaterlevel() {
         this.page = "waterlevel";
-        this.drawWaterlevelChart();
+        this.waterlevelLineModel = ChartUtil.drawWaterlevelChart(sensorDataCollection);
     }
-    public void showPageAirhumidity(){
+
+    public void showPageAirhumidity() {
         this.page = "airhumidity";
-        this.drawWaterlevelChart();
+        this.airhumidityLineModel = ChartUtil.drawAirhumidityChart(sensorDataCollection);
     }
-    public void showPageLightintensity(){
+
+    public void showPageLightintensity() {
         this.page = "lightintensity";
-        this.drawWaterlevelChart();
+        lightintensityLineModel = ChartUtil.drawLightintensityChart(sensorDataCollection);
     }
-    public void showPageSoilmoisture(){
+
+    public void showPageSoilmoisture() {
         this.page = "soilmoisture";
-        this.drawWaterlevelChart();
+        this.soilmoistureLineModel = ChartUtil.drawSoilMoistureChart(sensorDataCollection);
     }
-    public void showPageTemperature(){
+
+    public void showPageTemperature() {
         this.page = "temperature";
-        this.drawWaterlevelChart();
+        temperatureLineModel = ChartUtil.drawTemperatureChart(sensorDataCollection);
     }
-    
-    public void showPageWiki(){
+
+    public void showPageWiki() {
         this.page = "wiki";
         System.out.println("de.hsos.kbse.boundary.ArduinoBoundary.showPageWiki()");
     }
