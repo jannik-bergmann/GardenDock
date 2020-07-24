@@ -36,12 +36,19 @@ public class UserRepository implements Serializable {
         try {
             emf = Persistence.createEntityManagerFactory("ogm-mongodb");
             tm = (TransactionManager) com.arjuna.ats.jta.TransactionManager.transactionManager();
-            tm.begin();
             em = emf.createEntityManager();
         } catch (PersistenceException ex) {
             System.err.println("********************************" + ex.toString());
-        } catch (NotSupportedException | SystemException ex) {
-            Logger.getLogger(UserRepository.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    public void init(TransactionManager tm) {
+        this.tm = tm; 
+        try {
+            emf = Persistence.createEntityManagerFactory("ogm-mongodb");
+            em = emf.createEntityManager();
+        } catch (PersistenceException ex) {
+            System.err.println("********************************" + ex.toString());
         }
     }
     

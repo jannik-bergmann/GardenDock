@@ -16,6 +16,9 @@ import javax.persistence.OneToMany;
 import java.util.Date;
 import javax.persistence.ManyToOne;
 import javax.persistence.Temporal;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 import lombok.Data;
 import org.hibernate.annotations.GenericGenerator;
 
@@ -31,18 +34,26 @@ public class Sensordata implements Serializable{
     @GenericGenerator(name = "uuid", strategy = "uuid2")
     private String sensorId;
     
+    @NotNull
     @ManyToOne
     private Arduino arduino;
     
     // Sensor datas
+    @Min(value = 0) @Max(value = 100)
     int waterMeter;
+    @Min(value = 0) @Max(value = 100)
     int dungMeter;
+    @Min(value = 0) @Max(value = 100)
     int sunLevel;
+    @Min(value = 0) @Max(value = 100)
     int airHumidity;
+    @Min(value = 0) @Max(value = 100)
     int soilHumidity;
+    @Min(value = -20) @Max(value = 40)
     int temperature;
     
     // Timestamp
+    @NotNull
     @Temporal(javax.persistence.TemporalType.DATE) // wird das gebraucht?
     Date timestamp;
 

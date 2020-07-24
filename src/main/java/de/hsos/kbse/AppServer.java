@@ -68,8 +68,6 @@ public class AppServer implements Serializable {
     @Inject
     private UserRepository usrRepo;
     
-    private EntityManager em;
-    
     public AppServer() {
         try {
             // Setup jms connection as receiver
@@ -88,9 +86,16 @@ public class AppServer implements Serializable {
     }
 
     void init(@Observes @Initialized(ApplicationScoped.class) Object init) {  
-        User usr = new User();
-        usrRepo.addUser(usr);
         iotgateway.routine();
+       
+        
+        Arduino ard = new Arduino();
+        User temp = new User();
+        usrRepo.addUser(temp);
+        ard.setUser(temp);
+        ard.setComPort("asfas");
+        ard.setName("asggsd");
+        ardRepo.addArduino(ard);
     }
      
     @PreDestroy

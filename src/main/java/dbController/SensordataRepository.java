@@ -43,6 +43,17 @@ public class SensordataRepository implements Serializable {
             System.err.println("********************************" + ex.toString());
         }
     }
+    
+    public void init(TransactionManager tm) {
+        this.tm = tm; 
+        try {
+            emf = Persistence.createEntityManagerFactory("ogm-mongodb");
+            tm = (TransactionManager) com.arjuna.ats.jta.TransactionManager.transactionManager();
+            em = emf.createEntityManager();
+        } catch (PersistenceException ex) {
+            System.err.println("********************************" + ex.toString());
+        }
+    }
 
     
     @PreDestroy

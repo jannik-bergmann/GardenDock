@@ -10,7 +10,10 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
+import javax.ejb.TransactionManagement;
+import javax.ejb.TransactionManagementType;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
@@ -29,16 +32,26 @@ import javax.transaction.TransactionManager;
 
 //@Transactional
 //@RequestScoped
+@TransactionManagement(TransactionManagementType.BEAN)
 public class ArduinoRepository implements Serializable {
     private EntityManagerFactory emf;
     private TransactionManager tm;
     private EntityManager em;
     
     public ArduinoRepository() {
-        
         try {
             emf = Persistence.createEntityManagerFactory("ogm-mongodb");
             tm = (TransactionManager) com.arjuna.ats.jta.TransactionManager.transactionManager();
+            em = emf.createEntityManager();
+        } catch (PersistenceException ex) {
+            System.err.println("********************************" + ex.toString());
+        }
+    }
+    
+    public void init(TransactionManager tm) {
+        this.tm = tm; 
+        try {
+            emf = Persistence.createEntityManagerFactory("ogm-mongodb");
             em = emf.createEntityManager();
         } catch (PersistenceException ex) {
             System.err.println("********************************" + ex.toString());
@@ -70,6 +83,7 @@ public class ArduinoRepository implements Serializable {
     
     // Arduino CRUD
     public Arduino addArduino(Arduino ard) {
+        System.out.println("add Arduino" + ard.getArduinoId());
         if(ard == null) return null;
         tmBegin();
         em.persist(ard);

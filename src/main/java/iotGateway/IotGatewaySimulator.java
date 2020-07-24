@@ -100,11 +100,11 @@ public class IotGatewaySimulator implements IotGatewayInterface{
         TextMessage message;
         try {
             String sim_value = simulator.generateSensordata(lastValues);         
-            
+            sim_value += ",18cbde73-db3e-4f6b-bbc4-be8769d574f7";
             // TODO: data validation // where to validate? App Server or Gateway
             
             message = session.createTextMessage();
-            message.setText("Simulated Data: " + sim_value);
+            message.setText(sim_value);
             producer.send(message);
         } catch (JMSException ex) {
             Logger.getLogger(IotGatewaySimulator.class.getName()).log(Level.SEVERE, null, ex);
