@@ -22,6 +22,10 @@
                 Herzlich Willkommen zu GardenDock! :)
             </h2>
         </p:outputPanel>
+        
+        <h:form>
+            <p:commandButton value="Debug" id="DebugButton"  action="#{appServer.doDebug()}" style="margin-right:20px;" styleClass="ui-priority-primary" />
+        </h:form>
 
     </h:body>
 </html>

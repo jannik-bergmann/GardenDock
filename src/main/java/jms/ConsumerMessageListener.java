@@ -4,38 +4,59 @@ package jms;
  *
  * @author bastianluhrspullmann
  */
-
 import dbController.ArduinoRepository;
 import dbController.SensordataRepository;
 import dbController.UserRepository;
 import entities.Arduino;
 import entities.Sensordata;
+import entities.User;
+import java.io.Serializable;
 import java.util.Date;
-import javax.inject.Inject;
 import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.MessageListener;
 import javax.jms.TextMessage;
-import javax.validation.constraints.Max;
 
-public class ConsumerMessageListener implements MessageListener {
-    //@Inject
-    //private SensordataRepository sensorRepo;
-    //@Inject
-    //private ArduinoRepository ardRepo;
+public class ConsumerMessageListener implements MessageListener, Serializable {
+    private SensordataRepository sensorRepo;
+    private ArduinoRepository ardRepo;
+    private UserRepository userRepo;
 
-    private final String consumerName;
-    
+    private String consumerName;
+
     public ConsumerMessageListener(String consumerName) {
+        this.sensorRepo = new SensordataRepository();
+        this.ardRepo = new ArduinoRepository();
+        this.userRepo = new UserRepository();
         this.consumerName = consumerName;
     }
     
-    private void persistSensorData(String data) {
-        String[] data_splitted = data.split(",");
-        Sensordata sd = new Sensordata();
-        if(data_splitted.length != 7) return;
-        // Validate watermeter
+    public ConsumerMessageListener() {
+        this.sensorRepo = new SensordataRepository();
+        this.ardRepo = new ArduinoRepository();
+        this.userRepo = new UserRepository();
+    }
+     
+    public void persistSensorData(String data) {
         System.out.println("********************** persist: " + data);
+        String[] data_splitted = data.split(",");
+        Arduino arduino = new Arduino();
+        arduino.setName("asdjkas");
+        arduino.setComPort("asga");
+        User userTest = new User();
+        userTest.setUsername("asf");
+        userTest.setPwdhash("hash");
+
+        userRepo.addUser(userTest);
+        arduino.setUser(userTest);
+        ardRepo.addArduino(arduino);
+
+        Sensordata sd = new Sensordata();
+        if (data_splitted.length != 7) {
+            return;
+        }
+        // Validate watermeter
+
         //Arduino ardToInsert = ardRepo.getArduino("18cbde73-db3e-4f6b-bbc4-be8769d574f7");
         //System.out.println(ardToInsert.getArduinoId());
         //if(ardToInsert == null) { System.out.println("ard was null"); return; }
@@ -46,20 +67,20 @@ public class ConsumerMessageListener implements MessageListener {
         sd.setSoilHumidity(Integer.parseInt(data_splitted[4]));
         sd.setTemperature(Integer.parseInt(data_splitted[5]));
         sd.setTimestamp(new Date());
-        //sd.setArduino(ardToInsert);
-        
-        //sensorRepo.addSensordata(sd);
+        sd.setArduino(arduino);
+
+        sensorRepo.addSensordata(sd);
     }
-    
+
     @Override
     public void onMessage(Message msg) {
         TextMessage textMessage = (TextMessage) msg;
         try {
             System.out.println(consumerName + " received " + textMessage.getText());
             persistSensorData(textMessage.getText());
-        } catch (JMSException e) {  
-            System.err.println("Error while getting JMS Textmessage");
-            e.toString();
+        } catch (JMSException e) {
+            System.err.println("Error while getting JMS Textmessage" + e.toString());
+
         }
     }
 

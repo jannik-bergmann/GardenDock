@@ -5,20 +5,16 @@
  */
 package de.hsos.kbse;
 
-import dbController.ArduinoRepository;
-import dbController.SensordataRepository;
-import dbController.UserRepository;
-import entities.Arduino;
-import entities.Sensordata;
-import entities.User;
 import jms.ConsumerMessageListener;
 import iotGateway.GatewayModeSimulator;
 import iotGateway.IotGatewayInterface;
 import java.io.Serializable;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.annotation.Resource;
+import javax.ejb.LocalBean;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.context.Initialized;
 import javax.enterprise.event.Observes;
@@ -33,16 +29,6 @@ import javax.jms.TopicConnectionFactory;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
-import javax.persistence.PersistenceContext;
-import javax.transaction.HeuristicMixedException;
-import javax.transaction.HeuristicRollbackException;
-import javax.transaction.NotSupportedException;
-import javax.transaction.RollbackException;
-import javax.transaction.SystemException;
-import javax.transaction.TransactionManager;
 
 /**
  *
@@ -50,6 +36,7 @@ import javax.transaction.TransactionManager;
  */
 
 @ApplicationScoped
+@Named
 public class AppServer implements Serializable {
     // IotGateway
     @Inject
@@ -61,14 +48,28 @@ public class AppServer implements Serializable {
     private TopicConnectionFactory topicFactory;
     
     // Repos
+    /*
     @Inject
     private ArduinoRepository ardRepo;
     @Inject
     private SensordataRepository sensorRepo;
     @Inject
     private UserRepository usrRepo;
+    */
+    
+    // 
+   
+    
+    
+    @Inject
+    private ConsumerMessageListener cml;
     
     public AppServer() {
+
+    }
+    
+    public void doDebug(){
+        System.out.println("de.hsos.kbse.AppServer.doDebug()");
         try {
             // Setup jms connection as receiver
             Context context = new InitialContext();
@@ -76,19 +77,25 @@ public class AppServer implements Serializable {
             Connection connection = topicFactory.createConnection();
             Session session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
             Topic topic = (Topic) context.lookup("jms.Topic");
-            
             MessageConsumer consumer = session.createConsumer(topic);
-            consumer.setMessageListener(new ConsumerMessageListener("consumer 1"));
+            consumer.setMessageListener(cml);
             connection.start();          
         } catch (NamingException | JMSException | SecurityException | IllegalStateException ex) {
             Logger.getLogger(AppServer.class.getName()).log(Level.SEVERE, null, ex);
         }
+        iotgateway.routine();
+        //cml.persistSensorData("Hallo :)");
+        
     }
-
+    
+    /*
     void init(@Observes @Initialized(ApplicationScoped.class) Object init) {  
+        
+        
+        
         iotgateway.routine();
        
-        
+        /*
         Arduino ard = new Arduino();
         User temp = new User();
         usrRepo.addUser(temp);
@@ -96,8 +103,10 @@ public class AppServer implements Serializable {
         ard.setComPort("asfas");
         ard.setName("asggsd");
         ardRepo.addArduino(ard);
+        
     }
-     
+     */
+        
     @PreDestroy
     void cleanup() {
        iotgateway.cleanup();

@@ -11,6 +11,9 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.PreDestroy;
+import javax.ejb.TransactionManagement;
+import javax.ejb.TransactionManagementType;
+import javax.enterprise.context.RequestScoped;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
@@ -27,25 +30,18 @@ import javax.transaction.TransactionManager;
  * @author Basti's
  */
 
+@RequestScoped
+@TransactionManagement(TransactionManagementType.BEAN)
 public class UserRepository implements Serializable {
     private EntityManagerFactory emf;
     private TransactionManager tm;
     private EntityManager em;
     
     public UserRepository() {
+        System.out.println("*************************************************Userrepo created");
         try {
             emf = Persistence.createEntityManagerFactory("ogm-mongodb");
             tm = (TransactionManager) com.arjuna.ats.jta.TransactionManager.transactionManager();
-            em = emf.createEntityManager();
-        } catch (PersistenceException ex) {
-            System.err.println("********************************" + ex.toString());
-        }
-    }
-    
-    public void init(TransactionManager tm) {
-        this.tm = tm; 
-        try {
-            emf = Persistence.createEntityManagerFactory("ogm-mongodb");
             em = emf.createEntityManager();
         } catch (PersistenceException ex) {
             System.err.println("********************************" + ex.toString());
