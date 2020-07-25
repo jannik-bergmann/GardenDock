@@ -28,7 +28,10 @@ import javax.jms.JMSException;
 import javax.jms.MessageConsumer;
 import javax.jms.Session;
 import javax.jms.Topic;
+import javax.jms.TopicConnection;
 import javax.jms.TopicConnectionFactory;
+import javax.jms.TopicSession;
+import javax.jms.TopicSubscriber;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
@@ -40,7 +43,6 @@ import lombok.NoArgsConstructor;
  */
 
 @ApplicationScoped
-@Named
 @NoArgsConstructor
 public class AppServer implements Serializable {
     // IotGateway
@@ -62,20 +64,17 @@ public class AppServer implements Serializable {
     @Inject
     private UserRepository usrRepo;
     
-    //@Inject
-    //private ConsumerMessageListener cml;
-    
+    //@PostConstruct
     void init(@Observes @Initialized(ApplicationScoped.class) Object init) {  
       try {
             // Setup jms connection as receiver
-            Context context = new InitialContext();
-            //topicFactory = (TopicConnectionFactory) context.lookup("jms/TopicFactory");
-            Connection connection = topicFactory.createConnection();
-            Session session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
-            MessageConsumer consumer = session.createConsumer(topic);
-            ConsumerMessageListener cml = new ConsumerMessageListener();
-            consumer.setMessageListener(cml);
-            connection.start();          
+            InitialContext ctx = new InitialContext();
+            TopicConnection con = topicFactory.createTopicConnection();
+            con.start();
+            TopicSession ses = con.createTopicSession(false, Session.AUTO_ACKNOWLEDGE);
+            TopicSubscriber receiver = ses.createSubscriber(topic);
+            receiver.setMessageListener(new ConsumerMessageListener("App Server"));
+            iotgateway.startUp();
         } catch (NamingException | JMSException | SecurityException | IllegalStateException ex) {
             Logger.getLogger(AppServer.class.getName()).log(Level.SEVERE, null, ex);
         }

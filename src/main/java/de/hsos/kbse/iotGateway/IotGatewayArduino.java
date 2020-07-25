@@ -198,4 +198,9 @@ public class IotGatewayArduino implements IotGatewayInterface {
         }  
     }
 
+    @Override
+    public void startUp() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
 }
