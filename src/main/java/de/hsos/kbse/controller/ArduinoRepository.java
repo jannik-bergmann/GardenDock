@@ -107,7 +107,6 @@ public class ArduinoRepository implements Serializable {
     }
     
     public Arduino getArduino(String id) {
-        System.out.println("123124");
         tmBegin();
         Arduino ard = null;
         ard = em.find(Arduino.class, id);

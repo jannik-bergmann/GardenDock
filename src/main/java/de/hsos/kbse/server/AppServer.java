@@ -5,6 +5,9 @@
  */
 package de.hsos.kbse.server;
 
+import de.hsos.kbse.controller.ArduinoRepository;
+import de.hsos.kbse.controller.SensordataRepository;
+import de.hsos.kbse.controller.UserRepository;
 import de.hsos.kbse.jms.ConsumerMessageListener;
 import de.hsos.kbse.iotGateway.GatewayModeSimulator;
 import de.hsos.kbse.iotGateway.IotGatewayInterface;
@@ -29,6 +32,7 @@ import javax.jms.TopicConnectionFactory;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
+import lombok.NoArgsConstructor;
 
 /**
  *
@@ -37,6 +41,7 @@ import javax.naming.NamingException;
 
 @ApplicationScoped
 @Named
+@NoArgsConstructor
 public class AppServer implements Serializable {
     // IotGateway
     @Inject
@@ -46,66 +51,37 @@ public class AppServer implements Serializable {
     // JMS
     @Resource(mappedName = "jms/TopicFactory")
     private TopicConnectionFactory topicFactory;
+    @Resource(lookup = "jms.Topic")
+    private Topic topic;
     
     // Repos
-    /*
     @Inject
     private ArduinoRepository ardRepo;
     @Inject
     private SensordataRepository sensorRepo;
     @Inject
     private UserRepository usrRepo;
-    */
     
-    // 
-   
+    //@Inject
+    //private ConsumerMessageListener cml;
     
-    
-    @Inject
-    private ConsumerMessageListener cml;
-    
-    public AppServer() {
-
-    }
-    
-    public void doDebug(){
-        System.out.println("de.hsos.kbse.AppServer.doDebug()");
-        try {
+    void init(@Observes @Initialized(ApplicationScoped.class) Object init) {  
+      try {
             // Setup jms connection as receiver
             Context context = new InitialContext();
-            topicFactory = (TopicConnectionFactory) context.lookup("jms/TopicFactory");
+            //topicFactory = (TopicConnectionFactory) context.lookup("jms/TopicFactory");
             Connection connection = topicFactory.createConnection();
             Session session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
-            Topic topic = (Topic) context.lookup("jms.Topic");
             MessageConsumer consumer = session.createConsumer(topic);
+            ConsumerMessageListener cml = new ConsumerMessageListener();
             consumer.setMessageListener(cml);
             connection.start();          
         } catch (NamingException | JMSException | SecurityException | IllegalStateException ex) {
             Logger.getLogger(AppServer.class.getName()).log(Level.SEVERE, null, ex);
         }
         iotgateway.routine();
-        //cml.persistSensorData("Hallo :)");
-        
     }
-    
-    /*
-    void init(@Observes @Initialized(ApplicationScoped.class) Object init) {  
-        
-        
-        
-        iotgateway.routine();
-       
-        /*
-        Arduino ard = new Arduino();
-        User temp = new User();
-        usrRepo.addUser(temp);
-        ard.setUser(temp);
-        ard.setComPort("asfas");
-        ard.setName("asggsd");
-        ardRepo.addArduino(ard);
-        
-    }
-     */
+     
         
     @PreDestroy
     void cleanup() {

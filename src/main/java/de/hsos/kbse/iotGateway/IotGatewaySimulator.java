@@ -19,6 +19,7 @@ import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 import javax.jms.Connection;
 import javax.jms.JMSException;
+import javax.jms.MapMessage;
 import javax.jms.MessageConsumer;
 import javax.jms.MessageProducer;
 import javax.jms.Session;
@@ -34,13 +35,16 @@ public class IotGatewaySimulator implements IotGatewayInterface{
     // Jms
     private InputStream input;
     private OutputStream output;
+    @Inject
+    MessageProducer producer;
+    @Inject
+    Session session;
+    
     // Simulator
     @Inject
     private IotSimulator simulator;
-    private Connection connection;
-    private Session session;
-    private MessageProducer producer;
     private int[] lastValues;
+    
     // Scheduler
     private ScheduledExecutorService scheduler;
     private boolean closed;
@@ -55,25 +59,10 @@ public class IotGatewaySimulator implements IotGatewayInterface{
     @PostConstruct
     @Override
     public void init() {
-        // Setup jms connection as sender
-        try {
-            // Build up connection
-            InitialContext context = new InitialContext();
-            TopicConnectionFactory topicFactory = (TopicConnectionFactory) context.lookup("jms/TopicFactory");
-            connection = topicFactory.createConnection();
-            session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE); // false -> not transacted, AUTO_ACKNOWLEDGE -> automatisch Nachrichten entgegennehmen
-            Topic topic = (Topic) context.lookup("jms.Topic");
-            connection.start();
-            producer = session.createProducer(topic);
-            
-            // Init 'lastValues' for Simulation
-            lastValues = new int[6];
-            for(int val : lastValues) {
-                val = 0;
-            }
-            
-        } catch (NamingException | JMSException  ex) {
-            System.err.println(ex.toString());
+        // Init 'lastValues' for Simulation
+        lastValues = new int[6];
+        for(int val : lastValues) {
+            val = 0;
         }
     }
     
@@ -83,32 +72,35 @@ public class IotGatewaySimulator implements IotGatewayInterface{
         this.closed = true;
         
         // Close jms connection
+        this.scheduler.shutdownNow();
+        this.scheduler.shutdown();
+    }
+    
+    private void sendMessage(String[] values_split) {
         try {
-            this.scheduler.shutdownNow();
-            this.scheduler.shutdown();
-            this.connection.close();
-            this.producer.close();
-            this.session.close();
+            MapMessage msg = session.createMapMessage();
+            msg.setInt("waterMeter", Integer.parseInt(values_split[0]));
+            msg.setInt("dungMeter", Integer.parseInt(values_split[1]));
+            msg.setInt("sunLevel", Integer.parseInt(values_split[2]));
+            msg.setInt("airHumidity", Integer.parseInt(values_split[3]));
+            msg.setInt("soilHumidity", Integer.parseInt(values_split[4]));
+            msg.setDouble("temperature", Double.parseDouble(values_split[5]));
+            msg.setString("arduinoId", values_split[6]);
+            producer.send(msg);
+            System.out.println("aaaaaaaaaaaaaaaaaaaaaaaaaaa");
         } catch (JMSException ex) {
             Logger.getLogger(IotGatewaySimulator.class.getName()).log(Level.SEVERE, null, ex);
-            System.err.println(ex.toString());
         }
     }
     
     public void simulateData() {
         if(closed) { return; }
         TextMessage message;
-        try {
-            String sim_value = simulator.generateSensordata(lastValues);         
-            sim_value += ",18cbde73-db3e-4f6b-bbc4-be8769d574f7";
-            // TODO: data validation // where to validate? App Server or Gateway
-            
-            message = session.createTextMessage();
-            message.setText(sim_value);
-            producer.send(message);
-        } catch (JMSException ex) {
-            Logger.getLogger(IotGatewaySimulator.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        String sim_value = simulator.generateSensordata(lastValues);
+        sim_value += ",176ba88b-3b64-4e65-9705-6111b7b9da08";
+        
+        String[] values_split = sim_value.split(",");
+        sendMessage(values_split);
     }
     
     @Override
