@@ -243,7 +243,7 @@ public class ArduinoBoundary implements Serializable {
     }
     
     
-    public int getRandomIntegerBetweenRange(double min, double max) {
+    public static int getRandomIntegerBetweenRange(double min, double max) {
         int x = (int) ((int) (Math.random() * ((max - min) + 1)) + min);
         return x;
     }

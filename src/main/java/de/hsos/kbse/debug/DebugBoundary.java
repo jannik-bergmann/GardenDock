@@ -5,6 +5,7 @@
  */
 package de.hsos.kbse.debug;
 
+import de.hsos.kbse.boundary.ArduinoBoundary;
 import de.hsos.kbse.controller.ArduinoRepository;
 import de.hsos.kbse.controller.SensordataRepository;
 import de.hsos.kbse.controller.UserRepository;
@@ -26,7 +27,7 @@ import lombok.Setter;
 @Named
 @ApplicationScoped
 public class DebugBoundary {
-    
+
     @Inject
     ArduinoRepository arduinoRepo;
     @Inject
@@ -34,19 +35,36 @@ public class DebugBoundary {
     @Inject
     SensordataRepository sensordataRepo;
     
-    public void persistSensorData(){
-        Sensordata sensordata = new Sensordata(0,10,20,30,40,50);
-        sensordataRepo.addSensordata(sensordata);
+    Arduino arduino;
+    User user;
+
+    public void persistSensorData() {
+       
         
+            Sensordata sensordata = new Sensordata(
+                    ArduinoBoundary.getRandomIntegerBetweenRange(0, 100),
+                    ArduinoBoundary.getRandomIntegerBetweenRange(0, 100),
+                    ArduinoBoundary.getRandomIntegerBetweenRange(0, 100),
+                    ArduinoBoundary.getRandomIntegerBetweenRange(0, 100),
+                    ArduinoBoundary.getRandomIntegerBetweenRange(0, 100),
+                    ArduinoBoundary.getRandomIntegerBetweenRange(0, 39)
+            );
+            sensordata.setArduino(arduino);
+            
+            sensordataRepo.addSensordata(sensordata);
+        
+
     }
-    
-    public void persistArduino(){
-        Arduino ard = new Arduino();
-        User temp = new User();
-        userRepo.addUser(temp);
-        ard.setUser(temp);
-        ard.setComPort("ComPortBeispiel");
-        ard.setName("ArduinoEins");
-        arduinoRepo.addArduino(ard);
+
+    public void persistArduino() {
+        arduino = new Arduino();
+        user = new User();
+        user.setUsername("admin");
+        user.setPwdhash("admin");
+        userRepo.addUser(user);
+        arduino.setUser(user);
+        arduino.setComPort("ComPortBeispiel");
+        arduino.setName("ArduinoEins");
+        arduinoRepo.addArduino(arduino);
     }
 }

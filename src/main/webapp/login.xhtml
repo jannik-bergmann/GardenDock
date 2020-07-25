@@ -55,7 +55,17 @@
                     </b:column>
                     
                     <b:column span="2" offset="2">
-                        <b:commandButton update="@form" value="Debug" action="#{debugBoundary.persistArduino()}" look="primary" style="width:100%" />
+                        <b:commandButton update="@form" value="AddData2User" action="#{debugBoundary.persistSensorData()}" look="primary" style="width:100%" />
+                    
+                    </b:column>
+                    
+                </b:row>
+                <b:row>
+                    
+                    
+                    <b:column span="2" offset="2">
+                        <b:commandButton update="@form" value="ErstelleUser" action="#{debugBoundary.persistArduino()}" look="primary" style="width:100%" />
+                    
                     </b:column>
                     
                 </b:row>
