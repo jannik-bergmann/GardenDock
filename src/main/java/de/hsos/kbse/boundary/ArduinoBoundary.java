@@ -5,10 +5,14 @@
  */
 package de.hsos.kbse.boundary;
 
+import de.hsos.kbse.controller.ArduinoRepository;
 import de.hsos.kbse.controller.SensordataRepository;
+import de.hsos.kbse.controller.UserRepository;
+import de.hsos.kbse.entities.Arduino;
 import de.hsos.kbse.entities.Sensordata;
 import de.hsos.kbse.util.ChartUtil;
 import de.hsos.kbse.entities.User;
+import de.hsos.kbse.util.SessionUtils;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -37,12 +41,17 @@ import org.primefaces.model.chart.PieChartModel;
 @Setter
 public class ArduinoBoundary implements Serializable {
 
-   
     @Inject
     SensordataRepository sensorDataRepo;
 
     @Inject
-    User arduinoUserRepo;
+    ArduinoRepository arduinoRepo;
+
+    @Inject
+    UserRepository arduinoUserRepo;
+
+    private List<Arduino> arduinos;
+    User currentUser;
 
     private String page;
 
@@ -68,6 +77,14 @@ public class ArduinoBoundary implements Serializable {
         createBarModel();
         this.currentSensorData = new Sensordata(0, 0, 0, 0, 0, 0);
         sensorDataCollection = new ArrayList();
+
+        
+
+        currentUser = arduinoUserRepo.getUser(SessionUtils.getUserId());
+        arduinos = arduinoRepo.getAllArduinosByUser(currentUser);
+        //GEtting first Arduino  TODO: Enable user to choose.
+        sensorDataCollection = sensorDataRepo.getLast100EntriesByArduino(arduinos.get(0));
+
         initLineModels();
     }
 
@@ -178,8 +195,7 @@ public class ArduinoBoundary implements Serializable {
 
         System.out.println("Ich bin eine DebugNachricht (:");
     }
-*/
-
+     */
     public void createRandomData() {
 
         Sensordata sensorData = new Sensordata(
@@ -236,13 +252,12 @@ public class ArduinoBoundary implements Serializable {
         this.page = "fertilizerlevel";
         fertilizerlevelLineModel = ChartUtil.drawFertilizerlevelChart(sensorDataCollection);
     }
-    
+
     public void showPageWiki() {
         this.page = "wiki";
         System.out.println("de.hsos.kbse.boundary.ArduinoBoundary.showPageWiki()");
     }
-    
-    
+
     public static int getRandomIntegerBetweenRange(double min, double max) {
         int x = (int) ((int) (Math.random() * ((max - min) + 1)) + min);
         return x;

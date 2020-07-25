@@ -18,28 +18,41 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.validation.constraints.NotNull;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 import org.hibernate.annotations.GenericGenerator;
 
 /**
  *
  * @author bastianluhrspullmann
  */
-
 @Entity
-@Data
+@Getter
+@Setter
+@NoArgsConstructor
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@ToString(onlyExplicitlyIncluded = true)
 public class Arduino implements Serializable {
+
     @Id
     @GeneratedValue(generator = "uuid")
     @GenericGenerator(name = "uuid", strategy = "uuid2")
+    @EqualsAndHashCode.Include
+    @ToString.Include
     private String arduinoId;
-    
+
     @NotNull
+    @ToString.Include
     private String comPort;
+    @ToString.Include
     private String name;
-    
+
     @OneToMany(mappedBy = "arduino", cascade = CascadeType.REMOVE)
     private Set<Sensordata> sensorDatas = new HashSet<>();
-    
+
     @NotNull
     @ManyToOne
     private User user;

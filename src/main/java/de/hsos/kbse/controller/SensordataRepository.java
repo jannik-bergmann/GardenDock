@@ -5,6 +5,7 @@
  */
 package de.hsos.kbse.controller;
 
+import de.hsos.kbse.entities.Arduino;
 import de.hsos.kbse.entities.Sensordata;
 import java.io.Serializable;
 import java.util.List;
@@ -18,6 +19,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 import javax.persistence.PersistenceException;
+import javax.persistence.Query;
 import javax.transaction.HeuristicMixedException;
 import javax.transaction.HeuristicRollbackException;
 import javax.transaction.NotSupportedException;
@@ -29,15 +31,14 @@ import javax.transaction.TransactionManager;
  *
  * @author Basti's
  */
-
 @RequestScoped
 @TransactionManagement(TransactionManagementType.BEAN)
 public class SensordataRepository implements Serializable {
-    
+
     private EntityManagerFactory emf;
     private TransactionManager tm;
     private EntityManager em;
-    
+
     public SensordataRepository() {
         System.out.println("*************************************************Sensorrepo created");
         try {
@@ -54,7 +55,7 @@ public class SensordataRepository implements Serializable {
         emf.close();
         em.close();
     }
-    
+
     // Helper functions for handling Transactions
     private void tmBegin() {
         try {
@@ -63,7 +64,7 @@ public class SensordataRepository implements Serializable {
             Logger.getLogger(SensordataRepository.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
+
     private void tmCommit() {
         try {
             tm.commit();
@@ -71,54 +72,99 @@ public class SensordataRepository implements Serializable {
             Logger.getLogger(SensordataRepository.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
+
     // Sensordata CRUD
     public Sensordata addSensordata(Sensordata sd) {
         tmBegin();
-        if(sd == null) return null;
+        if (sd == null) {
+            return null;
+        }
         em.persist(sd);
         Sensordata temp = em.find(Sensordata.class, sd.getSensorId());
         tmCommit();
         return temp;
     }
-    
+
     public int deleteSensordata(Sensordata sd) {
-        if(sd == null) return 0; 
+        if (sd == null) {
+            return 0;
+        }
         tmBegin();
         em.remove(sd);
-        if(em.find(Sensordata.class, sd.getSensorId()) != null) {
+        if (em.find(Sensordata.class, sd.getSensorId()) != null) {
             tmCommit();
             return 0;
         }
         tmCommit();
         return 1;
     }
-    
+
     public Sensordata updateSensordata(Sensordata sd) {
-        if(sd == null) return null; 
+        if (sd == null) {
+            return null;
+        }
         tmBegin();
         em.persist(sd);
         Sensordata temp = em.find(Sensordata.class, sd.getSensorId());
         tmCommit();
-        if(temp == null) return null;
+        if (temp == null) {
+            return null;
+        }
         return temp;
     }
-    
+
     public Sensordata getSensordata(String id) {
         Sensordata sd = null;
         tmBegin();
         sd = em.find(Sensordata.class, id);
         tmCommit();
-        if(sd == null) { return null; }
+        if (sd == null) {
+            return null;
+        }
         return sd;
     }
-    
+
     public List<Sensordata> getAllSensordata() {
         tmBegin();
-        List<Sensordata> data = em.createQuery("SELECT h FROM Sensordata h" , Sensordata.class).getResultList();
+        List<Sensordata> data = em.createQuery("SELECT h FROM Sensordata h", Sensordata.class).getResultList();
         tmCommit();
-        if(data.isEmpty()) return null;
+        if (data.isEmpty()) {
+            return null;
+        }
         return data;
     }
-    
+
+    public List<Sensordata> getLast100Entries() {
+        tmBegin();
+
+        List<Sensordata> data = em.createQuery("select t from Sensordata t order by t.timeOfCapture desc", Sensordata.class)
+                .setMaxResults(100)
+                .getResultList();
+
+        //query.setParameter("username",);s
+        tmCommit();
+
+        //List<Sensordata> data = query.getResultList();
+        if (data.isEmpty()) {
+            return null;
+        }
+        return data;
+    }
+
+    public List<Sensordata> getLast100EntriesByArduino(Arduino arduino) {
+        tmBegin();
+
+        List<Sensordata> data = em.createQuery("select t from Sensordata t where t.arduino=:arduino order by t.timeOfCapture desc", Sensordata.class)
+                .setParameter("arduino", arduino)
+                .setMaxResults(100)
+                .getResultList();
+
+        tmCommit();
+
+        if (data.isEmpty()) {
+            return null;
+        }
+        return data;
+    }
+
 }

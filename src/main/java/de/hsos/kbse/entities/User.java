@@ -14,24 +14,35 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 import org.hibernate.annotations.GenericGenerator;
 
 /**
  *
  * @author Basti's
  */
-
 @Entity
-@Data
+@Getter
+@Setter
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@ToString(onlyExplicitlyIncluded = true)
 public class User implements Serializable {
+
     @Id
     @GeneratedValue(generator = "uuid")
     @GenericGenerator(name = "uuid", strategy = "uuid2")
+    @EqualsAndHashCode.Include
+    @ToString.Include
     private String userId;
-    
+
+    @ToString.Include
     private String username;
+    @ToString.Include
     private String pwdhash;
-    
+
     @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
     private Set<Arduino> arduinos = new HashSet<>();
 }
