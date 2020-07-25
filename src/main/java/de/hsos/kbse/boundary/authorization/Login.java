@@ -5,13 +5,14 @@
  */
 package de.hsos.kbse.boundary.authorization;
 
-import de.hsos.kbse.controller.ArduinoUserRepoImpl;
+//import de.hsos.kbse.controller.ArduinoUserRepoImpl;
 import de.hsos.kbse.entities.authorization.Credentials;
-import de.hsos.kbse.entities.ArduinoUser;
-import de.hsos.kbse.entities.interfaces.ArduinoUserRepo;
+//import de.hsos.kbse.entities.interfaces.ArduinoUserRepo;
 import de.hsos.kbse.util.SessionUtils;
+import de.hsos.kbse.entities.User;
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import javax.enterprise.context.SessionScoped;
 import javax.faces.application.FacesMessage;
@@ -36,10 +37,12 @@ public class Login implements Serializable {
     @Inject
     Credentials credentials;
 
+    /*
     @Inject
     ArduinoUserRepoImpl arduinoUserRepo;
+    */
 
-    private ArduinoUser user;
+    private User user;
 
     public String login() {
 
@@ -61,7 +64,11 @@ public class Login implements Serializable {
     }
 
     private boolean validateUser(Credentials credentials) {
-        List<ArduinoUser> results = arduinoUserRepo.getArduinoUserByCredentials(credentials);
+        //TODO: Hole User aus DB
+        //List<ArduinoUser> results = arduinoUserRepo.getArduinoUserByCredentials(credentials);
+        List<User> results = new ArrayList();
+        results.add(createUser());
+        
         if (!results.isEmpty()) {
 
             user = results.get(0);
@@ -93,21 +100,21 @@ public class Login implements Serializable {
 
     //@Produces
     //@LoggedIn
-    ArduinoUser getCurrentUser() {
+    User getCurrentUser() {
 
         return user;
 
     }
 
-    public void createUser() {
+    public User createUser() {
         System.out.println("Erschaffe neuen User :D");
-        ArduinoUser arduinoUser = new ArduinoUser();
-        arduinoUser.setFirstname("Jannik");
-        arduinoUser.setLastname("Bergmann");
+        User arduinoUser = new User();
         arduinoUser.setUsername("admin");
-        arduinoUser.setPassword("admin");
+        arduinoUser.setPwdhash("admin");
+        
 
-        arduinoUserRepo.newArduinoUser(arduinoUser);
+        //arduinoUserRepo.newArduinoUser(arduinoUser);
+        return arduinoUser;
     }
 
 }

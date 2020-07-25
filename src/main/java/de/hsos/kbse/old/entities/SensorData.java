@@ -3,7 +3,8 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package de.hsos.kbse.entities;
+/*
+package de.hsos.kbse.old.entities;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -17,17 +18,16 @@ import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
+*/
 /**
  *
  * @author Jannik Bergmann <jannik.bergmann@hs-osnabrueck.de>
  */
-
+/*
 @Data
 @Entity
 @Access(AccessType.FIELD)
 @SequenceGenerator(name = "id_gen", sequenceName = "id_gen",  initialValue = 2)
-
 public class SensorData implements Serializable{
     
     @Id
@@ -81,3 +81,4 @@ public class SensorData implements Serializable{
         return temperature;
     }
 }
+*/

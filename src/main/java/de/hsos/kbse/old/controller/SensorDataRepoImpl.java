@@ -3,19 +3,22 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package de.hsos.kbse.controller;
+/*
+package de.hsos.kbse.old.controller;
 
-import de.hsos.kbse.entities.SensorData;
+import de.hsos.kbse.old.entities.SensorData;
 import de.hsos.kbse.entities.interfaces.SensorDataRepo;
 import javax.enterprise.context.RequestScoped;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
-
+*/
 /**
  *
  * @author Jannik Bergmann <jannik.bergmann@hs-osnabrueck.de>
  */
+
+/*
 @RequestScoped
 @Transactional
 public class SensorDataRepoImpl implements SensorDataRepo {
@@ -45,3 +48,4 @@ public class SensorDataRepoImpl implements SensorDataRepo {
     }
 
 }
+*/

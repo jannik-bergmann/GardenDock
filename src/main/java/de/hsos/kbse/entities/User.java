@@ -5,7 +5,6 @@
  */
 package de.hsos.kbse.entities;
 
-import de.hsos.kbse.entities.User;
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
@@ -13,34 +12,26 @@ import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.validation.constraints.NotNull;
 import lombok.Data;
 import org.hibernate.annotations.GenericGenerator;
 
 /**
  *
- * @author bastianluhrspullmann
+ * @author Basti's
  */
 
 @Entity
 @Data
-public class Arduino implements Serializable {
+public class User implements Serializable {
     @Id
     @GeneratedValue(generator = "uuid")
     @GenericGenerator(name = "uuid", strategy = "uuid2")
-    private String arduinoId;
+    private String userId;
     
-    @NotNull
-    private String comPort;
-    private String name;
+    private String username;
+    private String pwdhash;
     
-    @OneToMany(mappedBy = "arduino", cascade = CascadeType.REMOVE)
-    private Set<Sensordata> sensorDatas = new HashSet<>();
-    
-    @NotNull
-    @ManyToOne
-    private User user;
+    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
+    private Set<Arduino> arduinos = new HashSet<>();
 }

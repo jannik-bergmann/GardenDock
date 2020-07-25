@@ -3,6 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
+/*
 package de.hsos.kbse.boundary;
 
 import de.hsos.kbse.controller.SensorDataRepoImpl;
@@ -19,11 +20,12 @@ import javax.enterprise.context.SessionScoped;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import lombok.NoArgsConstructor;
-
+*/
 /**
  *
  * @author Jannik Bergmann <jannik.bergmann@hs-osnabrueck.de>
  */
+/*
 @ApplicationScoped
 public class IoTDeviceGatewayMock {
 
@@ -69,3 +71,4 @@ public class IoTDeviceGatewayMock {
     }
 
 }
+*/

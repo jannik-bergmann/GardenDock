@@ -5,7 +5,7 @@
  */
 package de.hsos.kbse.util;
 
-import de.hsos.kbse.entities.SensorData;
+import de.hsos.kbse.entities.Sensordata;
 import java.util.List;
 import org.primefaces.model.chart.Axis;
 import org.primefaces.model.chart.AxisType;
@@ -19,14 +19,14 @@ import org.primefaces.model.chart.LineChartModel;
  */
 public class ChartUtil {
 
-    public static LineChartModel drawWaterlevelChart(List<SensorData> sensorDataCollection) {
+    public static LineChartModel drawWaterlevelChart(List<Sensordata> sensorDataCollection) {
 
         LineChartModel lineModel = new LineChartModel();
 
         ChartSeries waterlevelSeries = new ChartSeries();
         waterlevelSeries.setLabel("waterlevel");
         sensorDataCollection.forEach((sensorData) -> {
-            waterlevelSeries.set(sensorData.getTimeOfCapture().getMinute() + ":" + sensorData.getTimeOfCapture().getSecond(),
+            waterlevelSeries.set(sensorData.getTimeOfCapture().getMinutes() + ":" + sensorData.getTimeOfCapture().getSeconds(),
                     sensorData.getWaterlevel());
         });
 
@@ -44,14 +44,14 @@ public class ChartUtil {
         return lineModel;
     }
 
-    public static LineChartModel drawSoilMoistureChart(List<SensorData> sensorDataCollection) {
+    public static LineChartModel drawSoilMoistureChart(List<Sensordata> sensorDataCollection) {
 
         LineChartModel lineModel = new LineChartModel();
 
         ChartSeries waterlevelSeries = new ChartSeries();
         waterlevelSeries.setLabel("Bodenfeuchtigkeit");
         sensorDataCollection.forEach((sensorData) -> {
-            waterlevelSeries.set(sensorData.getTimeOfCapture().getMinute() + ":" + sensorData.getTimeOfCapture().getSecond(),
+            waterlevelSeries.set(sensorData.getTimeOfCapture().getMinutes() + ":" + sensorData.getTimeOfCapture().getSeconds(),
                     sensorData.getSoilhumidity());
         });
 
@@ -69,14 +69,14 @@ public class ChartUtil {
         return lineModel;
     }
 
-    public static LineChartModel drawAirhumidityChart(List<SensorData> sensorDataCollection) {
+    public static LineChartModel drawAirhumidityChart(List<Sensordata> sensorDataCollection) {
 
         LineChartModel lineModel = new LineChartModel();
 
         ChartSeries waterlevelSeries = new ChartSeries();
         waterlevelSeries.setLabel("Luftfeuchtigkeit");
         sensorDataCollection.forEach((sensorData) -> {
-            waterlevelSeries.set(sensorData.getTimeOfCapture().getMinute() + ":" + sensorData.getTimeOfCapture().getSecond(),
+            waterlevelSeries.set(sensorData.getTimeOfCapture().getMinutes() + ":" + sensorData.getTimeOfCapture().getSeconds(),
                     sensorData.getAirhumidity());
         });
 
@@ -94,14 +94,14 @@ public class ChartUtil {
         return lineModel;
     }
 
-    public static LineChartModel drawLightintensityChart(List<SensorData> sensorDataCollection) {
+    public static LineChartModel drawLightintensityChart(List<Sensordata> sensorDataCollection) {
 
         LineChartModel lineModel = new LineChartModel();
 
         ChartSeries waterlevelSeries = new ChartSeries();
         waterlevelSeries.setLabel("Lichtintensitaet");
         sensorDataCollection.forEach((sensorData) -> {
-            waterlevelSeries.set(sensorData.getTimeOfCapture().getMinute() + ":" + sensorData.getTimeOfCapture().getSecond(),
+            waterlevelSeries.set(sensorData.getTimeOfCapture().getMinutes() + ":" + sensorData.getTimeOfCapture().getSeconds(),
                     sensorData.getLightintensity());
         });
 
@@ -119,14 +119,14 @@ public class ChartUtil {
         return lineModel;
     }
 
-    public static LineChartModel drawTemperatureChart(List<SensorData> sensorDataCollection) {
+    public static LineChartModel drawTemperatureChart(List<Sensordata> sensorDataCollection) {
 
         LineChartModel lineModel = new LineChartModel();
 
         ChartSeries waterlevelSeries = new ChartSeries();
         waterlevelSeries.setLabel("Temperatur");
         sensorDataCollection.forEach((sensorData) -> {
-            waterlevelSeries.set(sensorData.getTimeOfCapture().getMinute() + ":" + sensorData.getTimeOfCapture().getSecond(),
+            waterlevelSeries.set(sensorData.getTimeOfCapture().getMinutes() + ":" + sensorData.getTimeOfCapture().getSeconds(),
                     sensorData.getTemperature());
         });
 
@@ -144,14 +144,14 @@ public class ChartUtil {
         return lineModel;
     }
     
-    public static LineChartModel drawFertilizerlevelChart(List<SensorData> sensorDataCollection) {
+    public static LineChartModel drawFertilizerlevelChart(List<Sensordata> sensorDataCollection) {
 
         LineChartModel lineModel = new LineChartModel();
 
         ChartSeries waterlevelSeries = new ChartSeries();
         waterlevelSeries.setLabel("Duenger");
         sensorDataCollection.forEach((sensorData) -> {
-            waterlevelSeries.set(sensorData.getTimeOfCapture().getMinute() + ":" + sensorData.getTimeOfCapture().getSecond(),
+            waterlevelSeries.set(sensorData.getTimeOfCapture().getMinutes() + ":" + sensorData.getTimeOfCapture().getSeconds(),
                     sensorData.getFertilizerlevel());
         });
 

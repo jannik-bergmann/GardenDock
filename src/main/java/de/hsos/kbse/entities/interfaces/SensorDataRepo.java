@@ -3,14 +3,16 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
+/*
 package de.hsos.kbse.entities.interfaces;
 
-import de.hsos.kbse.entities.SensorData;
-
+import de.hsos.kbse.old.entities.SensorData;
+*/
 /**
  *
  * @author Jannik Bergmann <jannik.bergmann@hs-osnabrueck.de>
  */
+/*
 public interface SensorDataRepo {
 
     public void newSensorData(SensorData sensorData);
@@ -21,3 +23,4 @@ public interface SensorDataRepo {
 
     public void deleteSensorData(SensorData sensorData);
 }
+*/

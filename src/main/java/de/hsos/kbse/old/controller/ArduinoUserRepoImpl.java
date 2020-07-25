@@ -3,9 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package de.hsos.kbse.controller;
+/*
+package de.hsos.kbse.old.controller;
 
-import de.hsos.kbse.entities.ArduinoUser;
+import de.hsos.kbse.old.entites.ArduinoUser;
 import de.hsos.kbse.entities.authorization.Credentials;
 import de.hsos.kbse.entities.interfaces.ArduinoUserRepo;
 import java.util.List;
@@ -15,11 +16,13 @@ import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.transaction.Transactional;
-
+*/
 /**
  *
  * @author Jannik Bergmann <jannik.bergmann@hs-osnabrueck.de>
  */
+
+/*
 @RequestScoped
 @Transactional
 public class ArduinoUserRepoImpl implements ArduinoUserRepo {
@@ -67,3 +70,4 @@ public class ArduinoUserRepoImpl implements ArduinoUserRepo {
     }
 
 }
+*/
