@@ -68,6 +68,11 @@ public class ConsumerMessageListener implements MessageListener, Serializable {
 
     @Override
     public void onMessage(Message msg) {
+        try {
+            msg.acknowledge();
+        } catch (JMSException ex) {
+            Logger.getLogger(ConsumerMessageListener.class.getName()).log(Level.SEVERE, null, ex);
+        }
         System.out.println(consumerName + " received " + msg.toString());
         MapMessage message = (MapMessage) msg;
         persistSensorData(message);

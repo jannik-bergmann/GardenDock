@@ -16,6 +16,7 @@ import java.util.logging.Logger;
 import javax.annotation.ManagedBean;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
+import javax.annotation.Resource;
 import javax.inject.Inject;
 import javax.jms.Connection;
 import javax.jms.JMSException;
@@ -25,20 +26,27 @@ import javax.jms.MessageProducer;
 import javax.jms.Session;
 import javax.jms.TextMessage;
 import javax.jms.Topic;
+import javax.jms.TopicConnection;
 import javax.jms.TopicConnectionFactory;
+import javax.jms.TopicPublisher;
+import javax.jms.TopicSession;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
+import lombok.NoArgsConstructor;
 
 @ManagedBean
 @GatewayModeSimulator
+@NoArgsConstructor
 public class IotGatewaySimulator implements IotGatewayInterface{
     // Jms
     private InputStream input;
     private OutputStream output;
-    @Inject
-    MessageProducer producer;
-    @Inject
-    Session session;
+    @Resource(lookup = "jms/TopicFactory")
+    private TopicConnectionFactory topicFactory;
+    @Resource(lookup = "jms.Topic")
+    private Topic topic;
+    private TopicSession session;
+    private TopicPublisher producer;
     
     // Simulator
     @Inject
@@ -50,11 +58,6 @@ public class IotGatewaySimulator implements IotGatewayInterface{
     private boolean closed;
     
     // Constructor
-    public IotGatewaySimulator () {
-        scheduler = Executors.newScheduledThreadPool( 1 );
-        System.out.println("IotGateway erstellt");
-        closed = false;
-    }
     
     @PostConstruct
     @Override
@@ -101,6 +104,25 @@ public class IotGatewaySimulator implements IotGatewayInterface{
         
         String[] values_split = sim_value.split(",");
         sendMessage(values_split);
+    }
+    
+    public void startUp() {
+        try {
+            scheduler = Executors.newScheduledThreadPool( 1 );
+            InitialContext ctx=new InitialContext();
+            TopicConnection con = topicFactory.createTopicConnection();
+            con.start();
+            //2) create queue session
+            session = con.createTopicSession(false, Session.AUTO_ACKNOWLEDGE);
+            //3)create TopicPublisher object
+            producer = session.createPublisher(topic);
+            System.out.println("IotGateway erstellt");
+            closed = false;
+        } catch (NamingException ex) {
+            Logger.getLogger(IotGatewaySimulator.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (JMSException ex) {
+            Logger.getLogger(IotGatewaySimulator.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
     
     @Override
