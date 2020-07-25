@@ -6,6 +6,7 @@
 package de.hsos.kbse.controller;
 
 import de.hsos.kbse.entities.User;
+import de.hsos.kbse.entities.authorization.Credentials;
 import java.io.Serializable;
 import java.util.List;
 import java.util.logging.Level;
@@ -16,8 +17,10 @@ import javax.ejb.TransactionManagementType;
 import javax.enterprise.context.RequestScoped;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import javax.persistence.NoResultException;
 import javax.persistence.Persistence;
 import javax.persistence.PersistenceException;
+import javax.persistence.Query;
 import javax.transaction.HeuristicMixedException;
 import javax.transaction.HeuristicRollbackException;
 import javax.transaction.NotSupportedException;
@@ -118,6 +121,31 @@ public class UserRepository implements Serializable {
         tmCommit();
         if(data.isEmpty()) return null;
         return data;
+    }
+    
+    public List<User> getArduinoUserByCredentials(Credentials credentials) {
+
+        tmBegin();
+        
+        Query query = em.createQuery("select u from User u where u.username=:username and u.pwdhash=:passwordhash" ,User.class);
+        query.setParameter("username", credentials.getUsername());
+        query.setParameter("passwordhash", credentials.getPassword());
+        
+        tmCommit();
+        
+        
+        List<User> ArduinoUsers;
+        try
+        {
+             ArduinoUsers = query.getResultList();
+        }
+        catch(NoResultException e){
+            return null;
+        }
+        
+        
+        return ArduinoUsers;
+
     }
     
 }

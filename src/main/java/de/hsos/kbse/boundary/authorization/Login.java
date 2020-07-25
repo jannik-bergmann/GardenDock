@@ -6,6 +6,7 @@
 package de.hsos.kbse.boundary.authorization;
 
 //import de.hsos.kbse.controller.ArduinoUserRepoImpl;
+import de.hsos.kbse.controller.UserRepository;
 import de.hsos.kbse.entities.authorization.Credentials;
 //import de.hsos.kbse.entities.interfaces.ArduinoUserRepo;
 import de.hsos.kbse.util.SessionUtils;
@@ -37,10 +38,10 @@ public class Login implements Serializable {
     @Inject
     Credentials credentials;
 
-    /*
+    
     @Inject
-    ArduinoUserRepoImpl arduinoUserRepo;
-    */
+    UserRepository arduinoUserRepo;
+    
 
     private User user;
 
@@ -66,8 +67,11 @@ public class Login implements Serializable {
     private boolean validateUser(Credentials credentials) {
         //TODO: Hole User aus DB
         //List<ArduinoUser> results = arduinoUserRepo.getArduinoUserByCredentials(credentials);
-        List<User> results = new ArrayList();
-        results.add(createUser());
+        
+        List<User> results=  arduinoUserRepo.getArduinoUserByCredentials(credentials);
+        
+        //List<User> results = new ArrayList();
+        //results.add(createUser());
         
         if (!results.isEmpty()) {
 
