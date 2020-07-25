@@ -54,6 +54,10 @@
                         <b:commandButton update="@form" value="login" action="#{login.login()}" look="primary" style="width:100%" />
                     </b:column>
                     
+                    <b:column span="2" offset="2">
+                        <b:commandButton update="@form" value="Debug" action="#{debugBoundary.persistArduino()}" look="primary" style="width:100%" />
+                    </b:column>
+                    
                 </b:row>
             </b:form>
         </b:container> 
