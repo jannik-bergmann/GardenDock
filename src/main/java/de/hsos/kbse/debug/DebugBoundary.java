@@ -61,12 +61,12 @@ public class DebugBoundary {
         user.setUsername("admin");
         user.setPwdhash("admin");
         userRepo.addUser(user);
-        /*
+        
         arduino.setUser(user);
         arduino.setComPort("ComPortBeispiel");
         arduino.setName("ArduinoEins");
         arduinoRepo.addArduino(arduino);
-        */
+        
     }
 
     public void printSensorData100() {
