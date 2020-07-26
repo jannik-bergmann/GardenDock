@@ -159,7 +159,7 @@ public class IotGatewayArduino implements IotGatewayInterface {
     
     /*** Arduino Functions ***/
     @Override
-    public void waterPumoOn() {
+    public void waterPumpOn() {
         try {         
             output.write(Byte.parseByte("water, on"));
             output.flush();
@@ -179,7 +179,7 @@ public class IotGatewayArduino implements IotGatewayInterface {
     }
 
     @Override
-    public void waterPumoOff() {
+    public void waterPumpOff() {
         try {         
             output.write(Byte.parseByte("water, off"));
             output.flush();
