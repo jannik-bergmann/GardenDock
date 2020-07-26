@@ -5,11 +5,11 @@ package de.hsos.kbse.iotGateway;
  * @author bastianluhrspullmann
  */
 
+import com.fazecast.jSerialComm.SerialPort;
 import de.hsos.kbse.entities.Arduino;
 import de.hsos.kbse.repos.interfaces.ArduinoRepoInterface;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ScheduledExecutorService;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.inject.Inject;
@@ -24,55 +24,86 @@ public class IotGatewaySimulator implements IotGatewayInterface{
     ArduinoRepoInterface arduinoRepo;
     
     // Simulator
-    private List<SimulatorDataListener> simulatorDatalisteners;
+    private List<SimulatedIotConnection> openSimulatedConnections;
     
-    // Scheduler
+    // Other
     private boolean closed;
     
     @PostConstruct
     public void init() {
         // Get all Arduinos from DB and create IotSimulater
-        System.out.println("Gateway init");
-        this.simulatorDatalisteners = new ArrayList<>();
+        this.openSimulatedConnections = new ArrayList<>();
         List<Arduino> arduinos = arduinoRepo.getAllArduino();
         for(Arduino ard : arduinos) {
-            SimulatorDataListener sdl = new SimulatorDataListener(ard);
+            SimulatedIotConnection sdl = new SimulatedIotConnection(ard);
             if(sdl == null) continue;
             //sdl.routine();
-            this.simulatorDatalisteners.add(sdl);
+            this.openSimulatedConnections.add(sdl);
         }
     }
     
     @PreDestroy
     @Override
     public void cleanup() {
+        for(SimulatedIotConnection con : openSimulatedConnections) {
+            con.close();
+        }
         this.closed = true;
     }
-     
-    @Override
-    public void startUp() {
-        System.out.println("IotGateway erstellt");
-        closed = false;
+    
+    private SimulatedIotConnection findConnection(String arduinoID) {
+        // Get Arduino
+        Arduino ard = arduinoRepo.getArduino(arduinoID);
+        if(ard == null) return null;
+        
+        // Check if right IotConnection and return if correct
+        for(SimulatedIotConnection con : this.openSimulatedConnections) {
+            if(con.getArdId().equals(arduinoID)) {
+                return con;
+            }
+        }
+        
+        return null;
     }
     
     @Override
-    public void waterPumpOn() {
-        System.out.println("Waterpump on");
+    public void waterPumpOn(String arduinoID) {
+        SimulatedIotConnection sic = findConnection(arduinoID);
+        if(sic == null) {
+            System.err.println("Error while turning waterpump on: getting IotConnection of Arduino" + arduinoID);
+            return;
+        } 
+        sic.waterOn();
     }
 
     @Override
-    public void dungPumpOn() {
-        System.out.println("Fertelizerpump on");
+    public void dungPumpOn(String arduinoID) {
+        SimulatedIotConnection sic = findConnection(arduinoID);
+        if(sic == null) {
+            System.err.println("Error while turning waterpump on: getting IotConnection of Arduino" + arduinoID);
+            return;
+        } 
+        sic.fertilizerOn();
     }
 
     @Override
-    public void waterPumpOff() {
-        System.out.println("Waterpump off");
+    public void waterPumpOff(String arduinoID) {
+        SimulatedIotConnection sic = findConnection(arduinoID);
+        if(sic == null) {
+            System.err.println("Error while turning waterpump on: getting IotConnection of Arduino" + arduinoID);
+            return;
+        } 
+        sic.waterOff();
     }
 
     @Override
-    public void dungPumpOff() {
-        System.out.println("Fertelizerpump off");
+    public void dungPumpOff(String arduinoID) {
+        SimulatedIotConnection sic = findConnection(arduinoID);
+        if(sic == null) {
+            System.err.println("Error while turning waterpump on: getting IotConnection of Arduino" + arduinoID);
+            return;
+        } 
+        sic.fertilizerOff();
     }
    
 }

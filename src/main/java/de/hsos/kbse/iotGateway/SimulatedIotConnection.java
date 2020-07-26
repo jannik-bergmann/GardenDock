@@ -14,9 +14,6 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.annotation.ManagedBean;
-import javax.annotation.Resource;
-import javax.inject.Named;
 import javax.jms.JMSException;
 import javax.jms.MapMessage;
 import javax.jms.Session;
@@ -28,12 +25,9 @@ import javax.jms.TopicSession;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
-import javax.persistence.Persistence;
 
-public class SimulatorDataListener {
+public class SimulatedIotConnection {
     // Jms
-    private InputStream input;
-    private OutputStream output;
     private TopicSession session;
     private TopicPublisher producer;
     
@@ -41,11 +35,11 @@ public class SimulatorDataListener {
     private ScheduledExecutorService scheduler;
     private int[] lastValues;
     
-    // ?
+    // Others
     private Random rand;
     private Arduino arduino;
 
-    public SimulatorDataListener(Arduino ard) {
+    public SimulatedIotConnection(Arduino ard) {
         this.arduino = ard;
         rand = new Random();
         
@@ -55,10 +49,10 @@ public class SimulatorDataListener {
             val = 0;
         }
         
-        // init scheduler
+        // Init scheduler
         scheduler = Executors.newScheduledThreadPool( 1 );
         
-        // init JMS publisher        
+        // Init JMS publisher        
         try {
             Context context = new InitialContext();
             TopicConnectionFactory topicFactory = (TopicConnectionFactory) context.lookup("jms/TopicFactory");
@@ -67,13 +61,21 @@ public class SimulatorDataListener {
             session = con.createTopicSession(false, Session.AUTO_ACKNOWLEDGE);
             Topic topic = (Topic) context.lookup("jms.Topic");
             producer = session.createPublisher(topic);
-        } catch (JMSException ex) {
-            Logger.getLogger(SimulatorDataListener.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (NamingException ex) {
-            Logger.getLogger(SimulatorDataListener.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (JMSException | NamingException ex) {
+            Logger.getLogger(SimulatedIotConnection.class.getName()).log(Level.SEVERE, null, ex);
         }
         
         this.routine();
+    }
+    
+    public String getArdId() {
+        return this.arduino.getArduinoId();
+    }
+    
+    // Close all connections and stop scheduler
+    public void close() {
+        scheduler.shutdownNow();
+        System.out.println("Port " + arduino.getComPort() + "is closed :)");
     }
     
     private void sendMessage(String[] values_split) {
@@ -87,7 +89,6 @@ public class SimulatorDataListener {
             msg.setDouble("temperature", Double.parseDouble(values_split[5]));
             msg.setString("arduinoId", values_split[6]);
             producer.send(msg);
-            System.out.println("aaaaaaaaaaaaaaaaaaaaaaaaaaa");
         } catch (JMSException ex) {
             Logger.getLogger(IotGatewaySimulator.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -101,7 +102,7 @@ public class SimulatorDataListener {
         *int soilHumidity;
         *int temperature;
     */
-    public String generateSensordata(int[] lastValues) {
+    private String generateSensordata(int[] lastValues) {
         String csv = "";
         boolean initLastValues = true;
         for(int val : lastValues) {
@@ -156,7 +157,8 @@ public class SimulatorDataListener {
         return csv;
     }
     
-    public void routine() {
+    // Scheduler for generating sensordata und produce messages for topic
+    private void routine() {
         scheduler.scheduleAtFixedRate(() -> {
             // generate data
             String generated_val = generateSensordata(lastValues);
@@ -177,5 +179,19 @@ public class SimulatorDataListener {
         );
     }
     
+    public void waterOn() {
+        System.out.println("Arduino " + this.arduino.getArduinoId() + ": Waterpump on");
+    }
     
+    public void fertilizerOn() {
+        System.out.println("Arduino " + this.arduino.getArduinoId() + ": Fertilizerpump on");
+    }
+    
+    public void waterOff() {
+        System.out.println("Arduino " + this.arduino.getArduinoId() + ": Waterpump off");
+    }
+    
+    public void fertilizerOff() {
+        System.out.println("Arduino " + this.arduino.getArduinoId() + ": Fertilizerpump off");
+    }
 }
