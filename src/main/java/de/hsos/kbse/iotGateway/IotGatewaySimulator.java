@@ -50,9 +50,10 @@ public class IotGatewaySimulator implements IotGatewayInterface {
             return;
         }
         for(Arduino ard : arduinos) {
-            DataListenerSimulated sdl = new DataListenerSimulated(ard, arduinoRepo, sensorRepo);
+            DataListenerSimulated sdl = new DataListenerSimulated();
             if(sdl == null) continue;
-            //sdl.routine();
+            sdl.setArduino(ard);
+            sdl.init();
             this.openSimulatedConnections.add(sdl);
         }
     }

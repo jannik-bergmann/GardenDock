@@ -28,13 +28,12 @@ import lombok.NoArgsConstructor;
  * @author Basti's
  */
 
-@NoArgsConstructor
 public class SensordataRepository implements SensordataRepoInterface, Serializable {  
     EntityManagerFactory emf;
     private EntityManager em;
     
-    @PostConstruct
-    private void init() {
+    
+    public SensordataRepository() {
         try {
             emf = Persistence.createEntityManagerFactory("ogm-mongodb");
             em = emf.createEntityManager();

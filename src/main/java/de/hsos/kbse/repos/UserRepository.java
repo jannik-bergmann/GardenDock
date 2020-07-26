@@ -25,13 +25,11 @@ import lombok.NoArgsConstructor;
  * @author Basti's
  */
 
-@NoArgsConstructor
 public class UserRepository implements UserRepoInterface, Serializable {
     EntityManagerFactory emf;
     private EntityManager em;
     
-    @PostConstruct
-    private void init() {
+    public UserRepository() {
         try {
             emf = Persistence.createEntityManagerFactory("ogm-mongodb");
             em = emf.createEntityManager();

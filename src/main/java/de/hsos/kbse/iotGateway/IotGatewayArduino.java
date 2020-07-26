@@ -50,12 +50,14 @@ public class IotGatewayArduino implements IotGatewayInterface {
             sp.setComPortParameters(9600, 8, 1, 0);
             sp.setComPortTimeouts(SerialPort.TIMEOUT_WRITE_BLOCKING, 0, 0);
             
-            DataListenerArduino ardDataListener = new DataListenerArduino(sp, ard);
-       
+            DataListenerArduino ardDataListener = new DataListenerArduino();
             if(ardDataListener == null) {
                 System.err.println("Error while creating ArduinoDataListener for Arduino " + ard.getName());
                 continue;
             }
+            ardDataListener.setArduino(ard);
+            ardDataListener.setSerialPort(sp);
+            
             sp.addDataListener(ardDataListener);
 
             this.openConnections.add(ardDataListener);

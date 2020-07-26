@@ -21,6 +21,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.ManagedBean;
+import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.jms.JMSException;
@@ -41,6 +42,8 @@ import javax.naming.NamingException;
  * @author bastianluhrspullmann
  */
 
+@Named
+@RequestScoped
 public class DataListenerArduino implements SerialPortDataListener, DataListener {
     // Jms
     private TopicSession session;
@@ -61,12 +64,10 @@ public class DataListenerArduino implements SerialPortDataListener, DataListener
     private String newestDataAsString;
     
     // Repo
-    ArduinoRepoInterface arduinoRepo;
+    private ArduinoRepoInterface arduinoRepo;
     
     // Constructor
-    public DataListenerArduino(SerialPort sp, Arduino arduino) {
-        this.sp = sp;
-        this.arduino = arduino;
+    public DataListenerArduino() {
         newestDataAsString = "";
         
         // Repos
@@ -92,6 +93,14 @@ public class DataListenerArduino implements SerialPortDataListener, DataListener
         }
         
         this.routine();
+    }
+    
+    public void setArduino(Arduino ard) {
+        this.arduino = ard;
+    }
+    
+    public void setSerialPort(SerialPort sp) {
+        this.sp = sp;
     }
     
     public SerialPort getSerialPort() {

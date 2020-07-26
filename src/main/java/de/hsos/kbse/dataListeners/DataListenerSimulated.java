@@ -23,6 +23,7 @@ import java.util.logging.Logger;
 import javax.annotation.ManagedBean;
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.RequestScoped;
+import javax.faces.annotation.ManagedProperty;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.jms.JMSException;
@@ -37,6 +38,7 @@ import javax.jms.TopicSession;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
+import javax.persistence.Persistence;
 
 @Named
 @RequestScoped
@@ -55,15 +57,17 @@ public class DataListenerSimulated implements DataListener {
     private Arduino arduino;
     
     // Repos
+
     private SensordataRepoInterface sensordataRepo;
     private ArduinoRepoInterface arduinoRepo;
 
-    public DataListenerSimulated(Arduino ard, ArduinoRepoInterface ArduinoRepo, SensordataRepoInterface sensoRepo) {
-        this.arduino = ard;
-        this.arduinoRepo = arduinoRepo;
-        this.sensordataRepo = sensoRepo;
+    public DataListenerSimulated() {
         rand = new Random();
-             
+        
+        // Repos 
+        this.sensordataRepo = new SensordataRepository();
+        this.arduinoRepo = new ArduinoRepository();
+ 
         // Init scheduler
         scheduler = Executors.newScheduledThreadPool( 1 );
         
@@ -78,17 +82,14 @@ public class DataListenerSimulated implements DataListener {
             Topic topicProducer = (Topic) context.lookup("jms.Topic");
             producer = session.createPublisher(topicProducer);
             
-            Topic topicWarnings = (Topic) context.lookup("jms.Warning");
-            emptyWarner = session.createPublisher(topicWarnings);
+            //Topic topicWarnings = (Topic) context.lookup("jms.Warning");
+            //emptyWarner = session.createPublisher(topicWarnings);
         } catch (JMSException | NamingException ex) {
             Logger.getLogger(DataListenerSimulated.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        
-        init();
-        
+        }  
     }
     
-    private void init() {
+    public void init() {
         // Init 'lastValues' for Simulation
         System.out.println("listener init");
         Sensordata lastData = sensordataRepo.getLast(arduino);
@@ -107,6 +108,10 @@ public class DataListenerSimulated implements DataListener {
             }
         }
         this.routine();
+    }
+    
+    public void setArduino(Arduino ard) {
+        this.arduino = ard;
     }
     
     // Send jms message to topic emptyTankWarning

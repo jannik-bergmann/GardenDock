@@ -94,7 +94,6 @@ public class StreamAnalytics implements Serializable {
         ard.setFertilizerIntervallInDays(5);
         ardRepo.addArduino(ard);
         */
-
         iotgateway.startUp();
     }
         
