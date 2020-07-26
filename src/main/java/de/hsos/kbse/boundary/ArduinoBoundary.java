@@ -19,6 +19,8 @@ import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.ejb.Schedule;
 import javax.ejb.Schedules;
+import javax.faces.application.FacesMessage;
+import javax.faces.context.FacesContext;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -51,10 +53,10 @@ public class ArduinoBoundary implements Serializable {
 
     private List<Arduino> arduinos;
     User currentUser;
+    private Sensordata currentSensorData;
+    private Arduino currentArduino;
 
     private String page;
-
-    private Sensordata currentSensorData;
 
     private PieChartModel waterlevel;
     private PieChartModel soilhumidity;
@@ -76,14 +78,15 @@ public class ArduinoBoundary implements Serializable {
         page = "landing";
         createBarModel();
         sensorDataCollection = new ArrayList();
-        
+
         currentUser = arduinoUserRepo.getUser(SessionUtils.getUserId());
         arduinos = arduinoRepo.getAllArduinosByUser(currentUser);
-        //GEtting first Arduino  TODO: Enable user to choose.        
-        sensorDataCollection = sensorDataRepo.getLast100EntriesByArduino(arduinos.get(0));
-        
+        currentArduino = arduinos.get(0);
+        //Getting first Arduino  TODO: Enable user to choose.        
+        sensorDataCollection = sensorDataRepo.getLast100EntriesByArduino(currentArduino);
+
         this.currentSensorData = sensorDataCollection.get(0);
-        
+
         initLineModels();
     }
 
@@ -226,7 +229,7 @@ public class ArduinoBoundary implements Serializable {
         this.page = "wiki";
         System.out.println("de.hsos.kbse.boundary.ArduinoBoundary.showPageWiki()");
     }
-    
+
     public void showPageAccount() {
         this.page = "account";
     }
@@ -265,14 +268,23 @@ public class ArduinoBoundary implements Serializable {
         this.temperatureLineModel = ChartUtil.drawTemperatureChart(sensorDataCollection);
         this.lightintensityLineModel = ChartUtil.drawLightintensityChart(sensorDataCollection);
         this.fertilizerlevelLineModel = ChartUtil.drawFertilizerlevelChart(sensorDataCollection);
-        
+
         this.currentSensorData = sensorDataCollection.get(0);
     }
-    
-    public void accountLoeschen(){
+
+    public void accountLoeschen() {
         System.out.println("<------------->Account wurde geloescht! ");
         System.out.println("<------------->Account wurde geloescht! ");
         System.out.println("<------------->Account wurde geloescht! ");
+    }
+
+    public void showFacesMessage() {
+        accountLoeschen();
+        FacesContext.getCurrentInstance().addMessage(
+                null,
+                new FacesMessage(FacesMessage.SEVERITY_WARN,
+                        "Falscher Username oder Passwort",
+                        "Bitte geben Sie gültige Nutzerdaten ein"));
     }
 
 }

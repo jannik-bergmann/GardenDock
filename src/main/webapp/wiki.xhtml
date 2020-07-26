@@ -16,7 +16,13 @@
 
             <b:column col-sm="9" offset-sm="3" col-md="10" offset="2" styleClass="main">
                 <h1>Wiki</h1>
-                
+
+                <h:form>
+
+                    <b:commandButton ajax="true" update="@form"
+                                     actionListener="#{arduino.drawWaterlevelChart()}" value="toggle" />
+
+                </h:form>
             </b:column>
 
 

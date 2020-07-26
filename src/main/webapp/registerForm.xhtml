@@ -15,6 +15,11 @@
 
         <ui:composition>
             <b:container fluid="true">
+                <b:row>
+                    <b:column span="4" offset="2">
+                        <h2>Registrieren:</h2>
+                    </b:column>
+                </b:row>
                 <b:form>
                     <b:row>
                         <b:column medium-screen="2">
@@ -43,7 +48,7 @@
 
                             <b:commandButton update="@form" value="Registrieren" action="#{login.register()}" look="primary" style="width:100%" />
                         </b:column>
-                        
+
 
 
                     </b:row>
