@@ -136,7 +136,7 @@ public class IotGatewaySimulator implements IotGatewayInterface{
     }
 
     @Override
-    public void waterPumoOn() {
+    public void waterPumpOn() {
         System.out.println("Waterpump on");
     }
 
@@ -146,7 +146,7 @@ public class IotGatewaySimulator implements IotGatewayInterface{
     }
 
     @Override
-    public void waterPumoOff() {
+    public void waterPumpOff() {
         System.out.println("Waterpump off");
     }
 

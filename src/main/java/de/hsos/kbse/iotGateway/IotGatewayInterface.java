@@ -13,9 +13,9 @@ public interface IotGatewayInterface {
     void init();
     void cleanup();
     void routine();
-    void waterPumoOn();
+    void waterPumpOn();
     void dungPumpOn();
-    void waterPumoOff();
+    void waterPumpOff();
     void dungPumpOff();
     void startUp();
 }

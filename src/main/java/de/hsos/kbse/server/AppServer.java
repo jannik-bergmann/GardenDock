@@ -23,6 +23,7 @@ import javax.enterprise.context.Initialized;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.inject.Singleton;
 import javax.jms.JMSException;
 import javax.jms.Session;
 import javax.jms.Topic;
