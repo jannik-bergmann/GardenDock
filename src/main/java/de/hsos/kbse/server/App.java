@@ -22,24 +22,34 @@ public class App {
     @Inject
     StreamAnalytics server;
     
-    private void init(@Observes @Initialized(ApplicationScoped.class) Object init) {
+    private void init(@Observes @Initialized(ApplicationScoped.class) Object init) throws InterruptedException {
         System.out.println("test");
+        
+        /* Test PumpON / PumpOff 
+        String arduinoID = "2f778d37-5e9a-4564-a0ff-5a088f99b558";
+        this.waterPumpOn(arduinoID);
+        Thread.sleep(1000);
+        this.waterPumpOff(arduinoID);
+        this.fertilizerPumpOn(arduinoID);
+        Thread.sleep(1000);
+        this.fertilizerPumpOff(arduinoID);
+        */
     }
     
-    public void waterPumpOn() {
-        server.waterPumpOn();
+    public void waterPumpOn(String arduinoID) {
+        server.waterPumpOn(arduinoID);
     }
     
-    public void fertilizerPumpOn() {
-        server.fertilizerPumpOn();
+    public void fertilizerPumpOn(String arduinoID) {
+        server.fertilizerPumpOn( arduinoID);
     }
     
-    public void waterPumpOff() {
-        server.waterPumpOff();
+    public void waterPumpOff(String arduinoID) {
+        server.waterPumpOff(arduinoID);
     }
     
-    public void fertilizerPumpOff() {
-        server.fertilizerPumpOff();
+    public void fertilizerPumpOff(String arduinoID) {
+        server.fertilizerPumpOff(arduinoID);
     }
     
 }

@@ -76,7 +76,6 @@ public class StreamAnalytics implements Serializable {
             TopicSession ses = con.createTopicSession(false, Session.AUTO_ACKNOWLEDGE);
             TopicSubscriber receiver = ses.createSubscriber(topic);
             receiver.setMessageListener(cml);
-            iotgateway.startUp();
         } catch ( JMSException | SecurityException | IllegalStateException ex) {
             Logger.getLogger(StreamAnalytics.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -87,19 +86,19 @@ public class StreamAnalytics implements Serializable {
        iotgateway.cleanup();
     }
     
-    public void waterPumpOn() {
-        iotgateway.waterPumpOn();
+    public void waterPumpOn(String arduinoID) {
+        iotgateway.waterPumpOn(arduinoID);
     }
     
-    public void fertilizerPumpOn() {
-        iotgateway.dungPumpOn();
+    public void fertilizerPumpOn(String arduinoID) {
+        iotgateway.dungPumpOn(arduinoID);
     }
     
-    public void waterPumpOff() {
-        iotgateway.waterPumpOff();
+    public void waterPumpOff(String arduinoID) {
+        iotgateway.waterPumpOff(arduinoID);
     }
     
-    public void fertilizerPumpOff() {
-        iotgateway.dungPumpOff();
+    public void fertilizerPumpOff(String arduinoID) {
+        iotgateway.dungPumpOff(arduinoID);
     }
 }

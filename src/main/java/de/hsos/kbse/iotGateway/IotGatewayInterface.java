@@ -11,9 +11,8 @@ package de.hsos.kbse.iotGateway;
  */
 public interface IotGatewayInterface {
     void cleanup();
-    void waterPumpOn();
-    void dungPumpOn();
-    void waterPumpOff();
-    void dungPumpOff();
-    void startUp();
+    void waterPumpOn(String arduinoID);
+    void dungPumpOn(String arduinoID);
+    void waterPumpOff(String arduinoID);
+    void dungPumpOff(String arduinoID);
 }

@@ -4,15 +4,13 @@ package de.hsos.kbse.jms;
  *
  * @author bastianluhrspullmann
  */
-import de.hsos.kbse.repos.ArduinoRepository;
-import de.hsos.kbse.repos.SensordataRepository;
-import de.hsos.kbse.repos.UserRepository;
 import de.hsos.kbse.entities.Arduino;
 import de.hsos.kbse.entities.Sensordata;
-import de.hsos.kbse.entities.User;
+import de.hsos.kbse.repos.interfaces.ArduinoRepoInterface;
+import de.hsos.kbse.repos.interfaces.SensordataRepoInterface;
+import de.hsos.kbse.repos.interfaces.UserRepoInterface;
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.inject.Inject;
@@ -20,15 +18,14 @@ import javax.jms.JMSException;
 import javax.jms.MapMessage;
 import javax.jms.Message;
 import javax.jms.MessageListener;
-import javax.jms.TextMessage;
 
 public class ConsumerMessageListener implements MessageListener, Serializable {
     @Inject
-    private SensordataRepository sensorRepo;
+    private SensordataRepoInterface sensorRepo;
     @Inject
-    private ArduinoRepository ardRepo;
+    private ArduinoRepoInterface ardRepo;
     @Inject
-    private UserRepository userRepo;
+    private UserRepoInterface userRepo;
 
     private String consumerName;
 
@@ -37,6 +34,7 @@ public class ConsumerMessageListener implements MessageListener, Serializable {
     }
     
     public ConsumerMessageListener() {
+        this.consumerName = "";
     }
      
     public void persistSensorData(MapMessage data) {

@@ -5,162 +5,95 @@ package de.hsos.kbse.iotGateway;
  * @author bastianluhrspullmann
  */
 
-import de.hsos.kbse.entities.Sensordata;
 import java.io.IOException;
 import com.fazecast.jSerialComm.SerialPort;
-import java.io.InputStream;
+import de.hsos.kbse.entities.Arduino;
+import de.hsos.kbse.repos.interfaces.ArduinoRepoInterface;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.annotation.ManagedBean;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
-import javax.jms.Connection;
-import javax.jms.JMSException;
-import javax.jms.MessageProducer;
-import javax.jms.Session;
-import javax.jms.TextMessage;
-import javax.jms.Topic;
-import javax.jms.TopicConnectionFactory;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
+import javax.inject.Inject;
+import lombok.NoArgsConstructor;
 
-@ManagedBean
 @GatewayModeArduino
+@NoArgsConstructor
 public class IotGatewayArduino implements IotGatewayInterface { 
-    // Arduino
-    private final SerialPort sp;
-    List<ArduinoDataListener> arduinoListener;
-    List<Sensordata> sensordata = new ArrayList<>();
     
-    // Jms
-    private InputStream input;
-    private OutputStream output;
-    private SimulatorDataListener simulator;
-    private Connection connection;
-    private Session session;
-    private MessageProducer producer;
+    // Repos
+    @Inject
+    ArduinoRepoInterface arduinoRepo;
     
-    // Scheduler 
-    ScheduledExecutorService scheduler;
-    
-    // Constructor
-    public IotGatewayArduino () {
-        // Scheduler 
-        scheduler = Executors.newScheduledThreadPool( 1 );
-        
-        // Arduino connection
-        this.sp = SerialPort.getCommPort("/dev/tty.usbmodem14301");
-        if(sp.openPort()) {
-            sp.setComPortParameters(9600, 8, 1, 0); // default connection settings for Arduino
-            sp.setComPortTimeouts(SerialPort.TIMEOUT_WRITE_BLOCKING, 0, 0); // block until bytes can be written
-            input = sp.getInputStream();
-            output = sp.getOutputStream();
-        }
-        this.arduinoListener.add(new ArduinoDataListener(sp));
-         
-        System.out.println("IotGateway erstellt");
-    }
+    // Arduinos
+    private List<SerialPort> openSerialPorts;
     
     @PostConstruct
     public void init() {
-        // Setup jms connection as sender
-        try {
-            // Build up connection
-            InitialContext context = new InitialContext();
-            TopicConnectionFactory topicFactory = (TopicConnectionFactory) context.lookup("jms/TopicFactory");
-            connection = topicFactory.createConnection();
-            session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE); // false -> not transacted, AUTO_ACKNOWLEDGE -> automatisch Nachrichten entgegennehmen
-            Topic topic = (Topic) context.lookup("jms.Topic");
-            connection.start();
-            producer = session.createProducer(topic);
+        this.openSerialPorts = new ArrayList<>();
+        List<Arduino> arduinos = arduinoRepo.getAllArduino();
+        for(Arduino ard : arduinos) {
+            SerialPort sp = null;
+            sp = SerialPort.getCommPort(ard.getComPort());
+            if(!sp.openPort()) {
+                System.err.println("Error while opening port for Arduino " + ard.getName());
+                continue;
+            }
+            sp.setComPortParameters(9600, 8, 1, 0);
+            sp.setComPortTimeouts(SerialPort.TIMEOUT_WRITE_BLOCKING, 0, 0);
             
-        } catch (NamingException | JMSException  ex) {
-            System.err.println(ex.toString());
+            ArduinoDataListener ardDataListener = new ArduinoDataListener(sp);
+            if(ardDataListener == null) {
+                System.err.println("Error while creating ArduinoDataListener for Arduino " + ard.getName());
+                continue;
+            }
+            sp.addDataListener(ardDataListener);
+            
+            this.openSerialPorts.add(sp);
         }
-   
-        // Setup serial arduino connection
-        if (sp.openPort()) {
-            System.out.println("Port is open :)");
-        } else {
-            System.out.println("Failed to open port :(");
-            return;
+
+    }
+    
+    private SerialPort findSerialport(String ardID) {
+        // Get Arduino
+        Arduino ard = arduinoRepo.getArduino(ardID);
+        if(ard == null) return null;
+        
+        // Check if right SerialPort and return if correct
+        for(SerialPort port : this.openSerialPorts) {
+            if(port.getDescriptivePortName().equals(ard.getComPort())) {
+                return port;
+            }
         }
         
-        //sp.addDataListener(arduinoListener);
+        return null;
     }
 
-    
     @PreDestroy
     @Override
     public void cleanup() {
-        // Close serial arduino connection
-        if (sp.closePort()) {
-            System.out.println("Port is closed :)");
-        } else {
-            System.out.println("Failed to close port :(");
-        }
-        
-        try {
-            // Close jms connection     
-            this.connection.close();
-            this.session.close();
-        } catch (JMSException ex) {
-            Logger.getLogger(IotGatewayArduino.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
-    }
-    
-    private void sendData() {
-        try {
-            // TODO: parse Sensordata to JMS Message
-            TextMessage message = session.createTextMessage();
-            message.setText("Wasserstand: 20%");     
-            producer.send(message);
-        } catch (JMSException ex) {
-            Logger.getLogger(IotGatewayArduino.class.getName()).log(Level.SEVERE, null, ex);
+        // Close serial arduino connections
+        for(SerialPort sp : openSerialPorts) {
+            if (sp.closePort()) {
+                System.out.println("Port " + sp.toString() + "is closed :)");
+            } else {
+                System.out.println("Failed to close port :(");
+            }
         }
     }
-    
-    private void getData() {
-        // Sensordata temp = arduinoListener.getSensordata();
-        // if(temp != null) this.sensordata.add(temp);
-    }
-    
-    public void routine() {
-        System.out.println("123");
-        // jms & arduino
-        /* 
-            - alle 5 Sekunden Daten auslesen vom arduino oder aus Simulatorklasse
-            - diese dann per jms an das topic "sensordata" schicken
-        
-            - auf Nachrichten vom topic "actuators" warten
-            - diese ggf. ausführen
-        */
-        
-        scheduler.scheduleAtFixedRate(
-            new Runnable() {
-                @Override
-                public void run() {
-                    // Gt last data from rduino
-                    getData();
-                    
-                    // Send data via jms
-                    sendData();
-                }    
-            }, 1, 2, TimeUnit.SECONDS   
-        );
-        
-    }
-    
-    /*** Arduino Functions ***/
+   
+    /*** Arduino Functions
+     * @param arduinoID ***/
     @Override
-    public void waterPumpOn() {
+    public void waterPumpOn(String arduinoID) {
+        OutputStream output = null;
+        SerialPort sp = findSerialport(arduinoID);
+        if(sp == null) {
+            System.err.println("Error while turning waterpump on: getting SerialPort of Arduino " + arduinoID);
+            return;
+        }
+        output = sp.getOutputStream();
+        
         try {         
             output.write(Byte.parseByte("water, on"));
             output.flush();
@@ -170,7 +103,15 @@ public class IotGatewayArduino implements IotGatewayInterface {
     }
 
     @Override
-    public void dungPumpOn() {
+    public void dungPumpOn(String arduinoID) {
+        OutputStream output = null;
+        SerialPort sp = findSerialport(arduinoID);
+        if(sp == null) {
+            System.err.println("Error while turning fertilizerpump on: getting SerialPort of Arduino " + arduinoID);
+            return;
+        }
+        output = sp.getOutputStream();
+        
         try {         
             output.write(Byte.parseByte("dung, on"));
             output.flush();
@@ -180,7 +121,15 @@ public class IotGatewayArduino implements IotGatewayInterface {
     }
 
     @Override
-    public void waterPumpOff() {
+    public void waterPumpOff(String arduinoID) {
+        OutputStream output = null;
+        SerialPort sp = findSerialport(arduinoID);
+        if(sp == null) {
+            System.err.println("Error while turning waterpump off: getting SerialPort of Arduino " + arduinoID);
+            return;
+        }
+        output = sp.getOutputStream();
+        
         try {         
             output.write(Byte.parseByte("water, off"));
             output.flush();
@@ -190,18 +139,21 @@ public class IotGatewayArduino implements IotGatewayInterface {
     }
 
     @Override
-    public void dungPumpOff() {
+    public void dungPumpOff(String arduinoID) {
+        OutputStream output = null;
+        SerialPort sp = findSerialport(arduinoID);
+        if(sp == null) {
+            System.err.println("Error while turning fertilizerpump off: getting SerialPort of Arduino " + arduinoID);
+            return;
+        }
+        output = sp.getOutputStream();
+        
         try {         
             output.write(Byte.parseByte("dung, off"));
             output.flush();
         } catch (IOException ex) {
             System.out.println(ex.toString());
         }  
-    }
-
-    @Override
-    public void startUp() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
 }
