@@ -16,10 +16,8 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.NoResultException;
 import javax.persistence.Persistence;
-import javax.persistence.PersistenceContext;
 import javax.persistence.PersistenceException;
 import javax.persistence.Query;
-import javax.transaction.TransactionManager;
 import lombok.NoArgsConstructor;
 
 /**
@@ -27,12 +25,9 @@ import lombok.NoArgsConstructor;
  * @author Basti's
  */
 
-//@TransactionManagement(TransactionManagementType.BEAN)
 @NoArgsConstructor
 public class UserRepository implements UserRepoInterface, Serializable {
-    //@PersistenceContext(unitName = "ogm-mongodb")
     EntityManagerFactory emf;
-    //private TransactionManager tm;
     private EntityManager em;
     
     @PostConstruct
@@ -40,7 +35,6 @@ public class UserRepository implements UserRepoInterface, Serializable {
         System.out.println("*************************************************Sensorrepo created");
         try {
             emf = Persistence.createEntityManagerFactory("ogm-mongodb");
-            //tm = (TransactionManager) com.arjuna.ats.jta.TransactionManager.transactionManager();
             em = emf.createEntityManager();
         } catch (PersistenceException ex) {
             System.err.println("********************************" + ex.toString());
@@ -49,35 +43,17 @@ public class UserRepository implements UserRepoInterface, Serializable {
     
     @PreDestroy
     private void cleanup() {
-        //emf.close();
-        //em.close();
+        emf.close();
+        em.close();
     }
-    
-    // Helper functions for handling Transactions
-    private void tmBegin() {
-        /*
-        try {
-            tm.begin();
-        } catch (NotSupportedException | SystemException ex) {
-            Logger.getLogger(SensordataRepository.class.getName()).log(Level.SEVERE, null, ex);
-        }
-*/
-    }
-    
-    private void tmCommit() {
-  /*      try {
-            tm.commit();
-        } catch (RollbackException | HeuristicMixedException | HeuristicRollbackException | SecurityException | IllegalStateException | SystemException ex) {
-            Logger.getLogger(SensordataRepository.class.getName()).log(Level.SEVERE, null, ex);
-        }
-*/
-    }
-   
+
     // User CRUD
     @Override
     public User addUser(User usr) {
         if(usr == null) return null;
+        em.getTransaction().begin();
         em.persist(usr);
+        em.getTransaction().commit();
         User temp = em.find(User.class, usr.getUserId());
         return temp;
     }
@@ -85,58 +61,51 @@ public class UserRepository implements UserRepoInterface, Serializable {
     @Override
     public int deleteUser(User usr) {
         if(usr == null) return 0; 
-        tmBegin();
+        em.getTransaction().begin();
         em.remove(usr);
+        em.getTransaction().commit();
         if(em.find(User.class, usr.getUserId()) != null) {
-            tmCommit();
             return 0;
         }
-        tmCommit();
         return 1;
     }
     
     @Override
     public User updateUser(User usr) {
         if(usr == null) return null; 
-        tmBegin();
+        em.getTransaction().begin();
         em.persist(usr);
+        em.getTransaction().commit();
         User temp = em.find(User.class, usr.getUserId());
-        tmCommit();
         if(temp == null) return null;
         return temp;
     }
     
     @Override
     public User getUser(String id) {
-        tmBegin();
         User usr = null;
         usr = em.find(User.class, id);
-        tmCommit();
         if(usr == null) { return null; }
         return usr;
     }
     
     @Override
     public List<User> getAllUser() {
-        tmBegin();
+        em.getTransaction().begin();
         List<User> data = em.createQuery("SELECT h FROM User h" , User.class).getResultList();
-        tmCommit();
+        em.getTransaction().commit();
         if(data.isEmpty()) return null;
         return data;
     }
     
     @Override
     public List<User> getArduinoUserByCredentials(Credentials credentials) {
-
-        tmBegin();
-        
+        em.getTransaction().begin();
         Query query = em.createQuery("select u from User u where u.username=:username and u.pwdhash=:passwordhash" ,User.class);
+        em.getTransaction().commit();
         query.setParameter("username", credentials.getUsername());
         query.setParameter("passwordhash", credentials.getPassword());
-        
-        tmCommit();
-        
-        
+
         List<User> ArduinoUsers;
         try
         {
@@ -146,9 +115,7 @@ public class UserRepository implements UserRepoInterface, Serializable {
             return null;
         }
         
-        
         return ArduinoUsers;
-
     }
     
 }

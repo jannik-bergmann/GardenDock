@@ -32,20 +32,10 @@ public class ConsumerMessageListener implements MessageListener, Serializable {
     private String consumerName;
 
     public ConsumerMessageListener(String consumerName) { 
-        /*
-        this.sensorRepo = new SensordataRepository();
-        this.ardRepo = new ArduinoRepository();
-        this.userRepo = new UserRepository();
-*/
         this.consumerName = consumerName;
     }
     
     public ConsumerMessageListener() {
-  /*      
-        this.sensorRepo = new SensordataRepository();
-        this.ardRepo = new ArduinoRepository();
-        this.userRepo = new UserRepository();
-*/
     }
      
     public void persistSensorData(MapMessage data) {

@@ -52,6 +52,7 @@ public class Login implements Serializable {
             HttpSession session = SessionUtils.getSession();
             //session.setMaxInactiveInterval(10);
             session.setAttribute("username", user.getUsername());
+            session.setAttribute("userId", user.getUserId());
             return "dashboard?faces-redirect=true";
         } else {
             FacesContext.getCurrentInstance().addMessage(
