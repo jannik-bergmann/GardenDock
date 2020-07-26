@@ -1,0 +1,57 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:b="http://bootsfaces.net/ui"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+    <h:head>
+        <title>GardenDock</title>
+    </h:head>
+    <h:body>
+
+
+        <ui:composition>
+            <b:container fluid="true">
+                <b:form>
+                    <b:row>
+                        <b:column medium-screen="2">
+                            <h:outputText value="Username:"/>
+                        </b:column>
+                        <b:column medium-screen="4">
+                            <b:inputText id="username" placeholder="Username" value="#{login.credentials.username}"/>
+                        </b:column>
+                        <b:column medium-screen="6">
+                            <b:message for="username" />
+                        </b:column>
+                    </b:row>
+                    <b:row>
+                        <b:column medium-screen="2">
+                            <h:outputText value="Password:" />
+                        </b:column>
+                        <b:column medium-screen="4">
+                            <b:inputSecret id="password" placeholder="Password" value="#{login.credentials.password}" />
+                        </b:column>
+                        <b:column medium-screen="6">
+                            <b:message for="password" />
+                        </b:column>
+                    </b:row>
+                    <b:row>
+                        <b:column span="4" offset="2">
+
+                            <b:commandButton update="@form" value="login" action="#{login.login()}" look="primary" style="width:100%" />
+                        </b:column>
+                        
+
+
+                    </b:row>
+
+                </b:form>
+            </b:container> 
+        </ui:composition>
+
+
+    </h:body>
+</html>

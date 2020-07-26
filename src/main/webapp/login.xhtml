@@ -13,73 +13,11 @@
     <h:body style="padding-top: 60px">
         <h:outputScript library="holder" name="holder.js" />
         <!--script src="https://cdnjs.cloudflare.com/ajax/libs/holder/2.5.2/holder.min.js"></script-->
-        <b:navBar brand="GardenDock" styleClass="navbar-style" brandHref="#" inverse="false" fixed="top" fluid="true" >
+       
+        
+        <ui:composition template="loginlayout.xhtml">
 
-            <b:navbarLinks pull="right">
-                <b:navLink value="Wiki" icon-awesome="book" href="index.html" ></b:navLink>
-            </b:navbarLinks>
-            <h:form styleClass="navbar-form navbar-right">
-                <div class="form-group">
-                    <b:inputText placeholder="Search..." fieldSize="sm"/>
-                </div>
-            </h:form>
-        </b:navBar>
-        <b:container fluid="true">
-            <b:form>
-                <b:row>
-                    <b:column medium-screen="2">
-                        <h:outputText value="Username:"/>
-                    </b:column>
-                    <b:column medium-screen="4">
-                        <b:inputText id="username" placeholder="Username" value="#{login.credentials.username}"/>
-                    </b:column>
-                    <b:column medium-screen="6">
-                        <b:message for="username" />
-                    </b:column>
-                </b:row>
-                <b:row>
-                    <b:column medium-screen="2">
-                        <h:outputText value="Password:" />
-                    </b:column>
-                    <b:column medium-screen="4">
-                        <b:inputSecret id="password" placeholder="Password" value="#{login.credentials.password}" />
-                    </b:column>
-                    <b:column medium-screen="6">
-                        <b:message for="password" />
-                    </b:column>
-                </b:row>
-                <b:row>
-                    <b:column span="2" offset="2">
-
-                        <b:commandButton update="@form" value="login" action="#{login.login()}" look="primary" style="width:100%" />
-                    </b:column>
-                    
-                    <b:column span="2" offset="2">
-                        <b:commandButton update="@form" value="AddData2User" action="#{debugBoundary.persistSensorData()}" look="primary" style="width:100%" />
-                    
-                    </b:column>
-                    
-                </b:row>
-                <b:row>
-                    
-                    
-                    <b:column span="2" offset="2">
-                        <b:commandButton update="@form" value="ErstelleUser" action="#{debugBoundary.persistArduino()}" look="primary" style="width:100%" />
-                    
-                    </b:column>
-                    
-                </b:row>
-                <b:row>
-                    
-                    
-                    <b:column span="2" offset="2">
-                        <b:commandButton update="@form" value="PrintArduinosFromUser" action="#{debugBoundary.printSensorData100ByArduino()}" look="primary" style="width:100%" />
-                    
-                    </b:column>
-                    
-                </b:row>
-            </b:form>
-        </b:container> 
-
+        </ui:composition>
+        
     </h:body>
 </html>

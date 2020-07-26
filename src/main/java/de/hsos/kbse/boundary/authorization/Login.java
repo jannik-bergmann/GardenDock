@@ -11,10 +11,12 @@ import de.hsos.kbse.entities.authorization.Credentials;
 //import de.hsos.kbse.entities.interfaces.ArduinoUserRepo;
 import de.hsos.kbse.util.SessionUtils;
 import de.hsos.kbse.entities.User;
+import de.hsos.kbse.repos.ArduinoRepository;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import javax.annotation.PostConstruct;
 import javax.enterprise.context.SessionScoped;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
@@ -22,6 +24,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.servlet.http.HttpSession;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 /**
@@ -33,17 +36,31 @@ import lombok.Setter;
 @Named
 @Getter
 @Setter
+@NoArgsConstructor
 public class Login implements Serializable {
 
     @Inject
     Credentials credentials;
 
+    @Inject
+    Credentials registerCredentials;
     
     @Inject
     UserRepository arduinoUserRepo;
     
+    @Inject
+    ArduinoRepository arduinoRepo;
+    
+    private boolean showRegisterIcon;
 
     private User user;
+    private String page;
+    
+    @PostConstruct
+    private void init(){
+        page = "loginForm";
+        showRegisterIcon = true;
+    }
 
     public String login() {
 
@@ -81,6 +98,11 @@ public class Login implements Serializable {
         } else {
             return false;
         }
+    }
+    
+    public String register(){
+        System.out.println("<----->Register");
+        return "";
     }
 
     public void timeout() throws IOException {
@@ -120,6 +142,16 @@ public class Login implements Serializable {
 
         //arduinoUserRepo.newArduinoUser(arduinoUser);
         return arduinoUser;
+    }
+    
+    public void showLogin(){
+        this.showRegisterIcon = true;
+        this.page = "loginForm";
+    }
+    
+    public void showRegister(){
+        this.showRegisterIcon = false;
+        this.page = "registerForm";
     }
 
 }

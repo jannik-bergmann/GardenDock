@@ -1,0 +1,42 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:b="http://bootsfaces.net/ui"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+    <h:head>
+        <title>GardenDock</title>
+    </h:head>
+    <h:body style="padding-top: 60px">
+        <h:outputScript library="holder" name="holder.js" />
+        <!--script src="https://cdnjs.cloudflare.com/ajax/libs/holder/2.5.2/holder.min.js"></script-->
+        <b:navBar brand="GardenDock" styleClass="navbar-style" brandHref="#" inverse="false" fixed="top" fluid="true" >
+            <h:form>
+                <b:navbarLinks pull="right">
+
+                    <b:navLink value="Register" icon-awesome="key" iconAlign="left" update="@form @(.contentform)"
+                               onclick="ajax:login.showRegister()" rendered="#{login.showRegisterIcon}"/>
+                    
+                    <b:navLink value="Login" icon-awesome="key" iconAlign="left" update="@form @(.contentform)"
+                               onclick="ajax:login.showLogin()" rendered="#{!login.showRegisterIcon}"/>
+                    
+                </b:navbarLinks>
+            </h:form>
+            <h:form styleClass="navbar-form navbar-right">
+                <div class="form-group">
+                    <b:inputText placeholder="Search..." fieldSize="sm"/>
+                </div>
+            </h:form>
+        </b:navBar>
+
+        <h:form class="contentform">
+            <ui:insert name="content" >
+                <ui:include src="#{login.page}.xhtml" />
+            </ui:insert>
+        </h:form>
+
+    </h:body>
+</html>
