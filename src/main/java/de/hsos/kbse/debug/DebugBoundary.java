@@ -50,7 +50,7 @@ public class DebugBoundary {
                 ArduinoBoundary.getRandomIntegerBetweenRange(0, 39)
         );
         sensordata.setArduino(arduino);
-
+ 
         sensordataRepo.addSensordata(sensordata);
 
     }
@@ -61,12 +61,12 @@ public class DebugBoundary {
         user.setUsername("admin");
         user.setPwdhash("admin");
         userRepo.addUser(user);
-        /*
+        
         arduino.setUser(user);
         arduino.setComPort("ComPortBeispiel");
         arduino.setName("ArduinoEins");
         arduinoRepo.addArduino(arduino);
-        */
+        
     }
 
     public void printSensorData100() {

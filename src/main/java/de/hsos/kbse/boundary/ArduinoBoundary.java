@@ -17,6 +17,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.PostConstruct;
+import javax.ejb.Schedule;
+import javax.ejb.Schedules;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -39,7 +41,7 @@ import org.primefaces.model.chart.PieChartModel;
 @Getter
 @Setter
 public class ArduinoBoundary implements Serializable {
-    
+
     @Inject
     SensordataRepository sensorDataRepo;
     @Inject
@@ -70,15 +72,16 @@ public class ArduinoBoundary implements Serializable {
 
     @PostConstruct
     public void init() {
+
         page = "landing";
         createBarModel();
         this.currentSensorData = new Sensordata(0, 0, 0, 0, 0, 0);
         sensorDataCollection = new ArrayList();
         currentUser = arduinoUserRepo.getUser(SessionUtils.getUserId());
         arduinos = arduinoRepo.getAllArduinosByUser(currentUser);
-        //GEtting first Arduino  TODO: Enable user to choose.
+        //GEtting first Arduino  TODO: Enable user to choose.        
         sensorDataCollection = sensorDataRepo.getLast100EntriesByArduino(arduinos.get(0));
-
+        
         initLineModels();
     }
 
@@ -90,7 +93,6 @@ public class ArduinoBoundary implements Serializable {
         temperatureLineModel = ChartUtil.drawTemperatureChart(sensorDataCollection);
         fertilizerlevelLineModel = ChartUtil.drawFertilizerlevelChart(sensorDataCollection);
     }
-
 
     private LineChartModel initLineChartWaterlevel() {
         LineChartModel model = new LineChartModel();
@@ -227,9 +229,37 @@ public class ArduinoBoundary implements Serializable {
         int x = (int) ((int) (Math.random() * ((max - min) + 1)) + min);
         return x;
     }
-    
-    public void createNewSensorData(){
-        
+
+    public void persistNewSensorData() {
+
+        Sensordata sensordata = new Sensordata(
+                ArduinoBoundary.getRandomIntegerBetweenRange(0, 100),
+                ArduinoBoundary.getRandomIntegerBetweenRange(0, 100),
+                ArduinoBoundary.getRandomIntegerBetweenRange(0, 100),
+                ArduinoBoundary.getRandomIntegerBetweenRange(0, 100),
+                ArduinoBoundary.getRandomIntegerBetweenRange(0, 100),
+                ArduinoBoundary.getRandomIntegerBetweenRange(0, 39)
+        );
+        sensordata.setArduino(arduinos.get(0));
+
+        sensorDataRepo.addSensordata(sensordata);
+
+    }
+
+    public void pollSensorData() {
+        sensorDataCollection = sensorDataRepo.getLast100EntriesByArduino(arduinos.get(0));
+    }
+
+    public void pollData() {
+        System.out.println("<----->Scheduled Function");
+        sensorDataCollection = sensorDataRepo.getLast100EntriesByArduino(arduinos.get(0));
+        this.waterlevelLineModel = ChartUtil.drawWaterlevelChart(sensorDataCollection);
+        this.soilmoistureLineModel = ChartUtil.drawSoilMoistureChart(sensorDataCollection);
+        this.airhumidityLineModel = ChartUtil.drawAirhumidityChart(sensorDataCollection);
+        this.temperatureLineModel = ChartUtil.drawTemperatureChart(sensorDataCollection);
+        this.lightintensityLineModel = ChartUtil.drawLightintensityChart(sensorDataCollection);
+        this.fertilizerlevelLineModel = ChartUtil.drawFertilizerlevelChart(sensorDataCollection);
+
     }
 
 }

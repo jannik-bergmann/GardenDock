@@ -11,6 +11,7 @@ import de.hsos.kbse.repos.interfaces.SensordataRepoInterface;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -133,6 +134,7 @@ public class SensordataRepository implements SensordataRepoInterface, Serializab
         if (data.isEmpty()) {
             return null;
         }
+        Collections.reverse(data);
         return data;
     }
     

@@ -15,7 +15,11 @@
 
 
             <b:column col-sm="9" offset-sm="3" col-md="10" offset="2" styleClass="main">
-                <h1>Wasserstand</h1>
+                <h1 onclick="#{arduino.pollSensorData()}">Wasserstand
+                <b:iconAwesome value="redo" solid="true" size="xs "/>
+                
+                </h1>
+                                
                 <hr/>
                 <b:row styleClass="placeholders">
 

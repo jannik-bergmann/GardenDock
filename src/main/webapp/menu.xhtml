@@ -87,6 +87,10 @@
                                               icon="tag" iconAlign="left" update="@form"/>
                             <b:navCommandLink value="RedrawWaterLevelChart" actionListener="#{arduino.drawWaterlevelChart()}"
                                               icon="pizza" iconAlign="left" update="@form"/>
+                            <b:navCommandLink value="Persist New SensorData" actionListener="#{arduino.persistNewSensorData()}"
+                                              icon="pizza" iconAlign="left" update="@form"/>
+
+
                         </b:listLinks>
                     </b:column>
 
@@ -99,6 +103,7 @@
                         </div>
 
                     </div>
+                    <p:poll interval="10" listener="#{arduino.pollData()}" update="@(.contentform)"  />
                 </h:form>
             </b:row>
         </b:container> 
