@@ -25,7 +25,7 @@ public class App {
     private void init(@Observes @Initialized(ApplicationScoped.class) Object init) throws InterruptedException {
         System.out.println("test");
         
-        /* Test PumpON / PumpOff 
+        /* // Test PumpON / PumpOff 
         String arduinoID = "2f778d37-5e9a-4564-a0ff-5a088f99b558";
         this.waterPumpOn(arduinoID);
         Thread.sleep(1000);
@@ -51,5 +51,7 @@ public class App {
     public void fertilizerPumpOff(String arduinoID) {
         server.fertilizerPumpOff(arduinoID);
     }
+    
+    
     
 }

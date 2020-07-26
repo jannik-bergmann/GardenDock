@@ -23,11 +23,20 @@ import de.hsos.kbse.entities.User;
  * @author Basti's
  */
 
-@NoArgsConstructor
 public class ArduinoRepository implements ArduinoRepoInterface, Serializable {
     private EntityManagerFactory emf;
     private EntityManager em;
     
+    public ArduinoRepository() {
+        try {
+            emf = Persistence.createEntityManagerFactory("ogm-mongodb");
+            em = emf.createEntityManager();
+        } catch (PersistenceException ex) {
+            System.err.println("********************************" + ex.toString());
+        }
+    }
+    
+    /*
     @PostConstruct
     private void init() {
         try {
@@ -37,6 +46,7 @@ public class ArduinoRepository implements ArduinoRepoInterface, Serializable {
             System.err.println("********************************" + ex.toString());
         }
     }
+*/
 
     @PreDestroy
     private void cleanup() {
@@ -102,7 +112,8 @@ public class ArduinoRepository implements ArduinoRepoInterface, Serializable {
         }
         return data;
     }
-
+    
+    @Override
     public List<Arduino> getAllArduinosByUser(User user) {
         em.getTransaction().begin();
         List<Arduino> data = em.createQuery("SELECT h FROM Arduino h where h.user=:user", Arduino.class)

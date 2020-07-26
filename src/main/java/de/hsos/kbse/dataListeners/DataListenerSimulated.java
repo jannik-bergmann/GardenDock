@@ -1,4 +1,4 @@
-package de.hsos.kbse.iotGateway;
+package de.hsos.kbse.dataListeners;
 
 /**
  *
@@ -6,17 +6,30 @@ package de.hsos.kbse.iotGateway;
  */
 
 import de.hsos.kbse.entities.Arduino;
-import java.io.InputStream;
-import java.io.OutputStream;
+import de.hsos.kbse.entities.Sensordata;
+import de.hsos.kbse.iotGateway.IotGatewaySimulator;
+import de.hsos.kbse.repos.ArduinoRepository;
+import de.hsos.kbse.repos.SensordataRepository;
+import de.hsos.kbse.repos.interfaces.ArduinoRepoInterface;
+import de.hsos.kbse.repos.interfaces.SensordataRepoInterface;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.Random;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.annotation.ManagedBean;
+import javax.annotation.PostConstruct;
+import javax.enterprise.context.RequestScoped;
+import javax.faces.annotation.ManagedProperty;
+import javax.inject.Inject;
+import javax.inject.Named;
 import javax.jms.JMSException;
 import javax.jms.MapMessage;
 import javax.jms.Session;
+import javax.jms.TextMessage;
 import javax.jms.Topic;
 import javax.jms.TopicConnection;
 import javax.jms.TopicConnectionFactory;
@@ -25,11 +38,15 @@ import javax.jms.TopicSession;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
+import javax.persistence.Persistence;
 
-public class SimulatedIotConnection {
+@Named
+@RequestScoped
+public class DataListenerSimulated implements DataListener {
     // Jms
     private TopicSession session;
     private TopicPublisher producer;
+    private TopicPublisher emptyWarner;
     
     // Scheduler
     private ScheduledExecutorService scheduler;
@@ -38,47 +55,89 @@ public class SimulatedIotConnection {
     // Others
     private Random rand;
     private Arduino arduino;
+    
+    // Repos
 
-    public SimulatedIotConnection(Arduino ard) {
-        this.arduino = ard;
+    private SensordataRepoInterface sensordataRepo;
+    private ArduinoRepoInterface arduinoRepo;
+
+    public DataListenerSimulated() {
         rand = new Random();
         
-        // Init 'lastValues' for Simulation
-        lastValues = new int[6];
-        for(int val : lastValues) {
-            val = 0;
-        }
-        
+        // Repos 
+        this.sensordataRepo = new SensordataRepository();
+        this.arduinoRepo = new ArduinoRepository();
+ 
         // Init scheduler
         scheduler = Executors.newScheduledThreadPool( 1 );
         
         // Init JMS publisher        
+        System.out.println("cunstructor datalistener");
         try {
             Context context = new InitialContext();
             TopicConnectionFactory topicFactory = (TopicConnectionFactory) context.lookup("jms/TopicFactory");
             TopicConnection con = topicFactory.createTopicConnection();
             con.start();
             session = con.createTopicSession(false, Session.AUTO_ACKNOWLEDGE);
-            Topic topic = (Topic) context.lookup("jms.Topic");
-            producer = session.createPublisher(topic);
+            Topic topicProducer = (Topic) context.lookup("jms.Topic");
+            producer = session.createPublisher(topicProducer);
+            
+            //Topic topicWarnings = (Topic) context.lookup("jms.Warning");
+            //emptyWarner = session.createPublisher(topicWarnings);
         } catch (JMSException | NamingException ex) {
-            Logger.getLogger(SimulatedIotConnection.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(DataListenerSimulated.class.getName()).log(Level.SEVERE, null, ex);
+        }  
+    }
+    
+    public void init() {
+        // Init 'lastValues' for Simulation
+        System.out.println("listener init");
+        Sensordata lastData = sensordataRepo.getLast(arduino);
+        if(lastData != null) { 
+            lastValues = new int[6];
+            lastValues[0] = lastData.getWaterlevel();
+            lastValues[1] = lastData.getFertilizerlevel();
+            lastValues[2] = lastData.getLightintensity();
+            lastValues[3] = lastData.getAirhumidity();
+            lastValues[4] = lastData.getSoilhumidity();
+            lastValues[5] = (int)lastData.getTemperature();
+        } else {
+            lastValues = new int[6];
+            for(int val : lastValues) {
+                val = 0;
+            }
         }
-        
         this.routine();
     }
     
-    public String getArdId() {
-        return this.arduino.getArduinoId();
+    public void setArduino(Arduino ard) {
+        this.arduino = ard;
     }
     
-    // Close all connections and stop scheduler
-    public void close() {
-        scheduler.shutdownNow();
-        System.out.println("Port " + arduino.getComPort() + "is closed :)");
+    // Send jms message to topic emptyTankWarning
+    private void sendTankEmptyWarning(String tank) {
+        if(tank.equals("water")) {
+            try {
+                TextMessage msg = session.createTextMessage();
+                msg.setText("Watertank empty");
+                emptyWarner.publish(msg);
+            } catch (JMSException ex) {
+                Logger.getLogger(DataListenerArduino.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        if(tank.equals("fertilizer")) {
+            try {
+                TextMessage msg = session.createTextMessage();
+                msg.setText("Fertilizertank empty");
+                emptyWarner.publish(msg);
+            } catch (JMSException ex) {
+                Logger.getLogger(DataListenerArduino.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
     }
     
     private void sendMessage(String[] values_split) {
+        System.out.println("Send data" + values_split.toString());
         try {
             MapMessage msg = session.createMapMessage();
             msg.setInt("waterMeter", Integer.parseInt(values_split[0]));
@@ -111,17 +170,11 @@ public class SimulatedIotConnection {
         
         // WaterMeter
         int waterMeter = lastValues[0];
-        if(initLastValues) { waterMeter = rand.nextInt(101); }
-        waterMeter += rand.nextInt(10)-5;
-        if(waterMeter < 0) waterMeter = 0;
-        if(waterMeter > 100) waterMeter = 100;
+        if(initLastValues) { waterMeter = 50 + rand.nextInt(50); }
         
         // DungMeter
         int dungMeter = lastValues[1];
-        if(initLastValues) { dungMeter = rand.nextInt(101); }
-        dungMeter += rand.nextInt(10)-5;
-        if(dungMeter < 0) dungMeter = 0;
-        if(dungMeter > 100) dungMeter = 100;
+        if(initLastValues) { dungMeter = 50 + rand.nextInt(50); }
         
         // SunLevel
         int sunLevel = lastValues[2];
@@ -140,7 +193,7 @@ public class SimulatedIotConnection {
         // SoilHumidity
         int soilHum = lastValues[4];
         if(initLastValues) { soilHum = rand.nextInt(101); }
-        soilHum += rand.nextInt(2)-1;
+        soilHum -= rand.nextInt(2);
         if(soilHum < 0) soilHum = 0;
         if(soilHum > 100) soilHum = 100;
         
@@ -172,6 +225,9 @@ public class SimulatedIotConnection {
                 i++;
             }
             
+            
+            currentToSetValue();
+            
             // sende Message
             sendMessage(values_split);
             
@@ -179,18 +235,74 @@ public class SimulatedIotConnection {
         );
     }
     
+    // Routine for automatically water and fertilize the bed of the arduino
+    @Override
+    public void currentToSetValue() {
+        int currentSoilhumidity = lastValues[4];
+        // Check soilhumidity
+        if(arduino.getSetWaterLevel() > currentSoilhumidity) {
+            // Water
+            this.waterOn();
+            this.waterOff();
+        }
+        
+        // Check timer for fertilizing
+        LocalDateTime from = LocalDateTime.from(arduino.getLastFertilization());
+        long daysSinceLastFert = from.until(LocalDateTime.now(), ChronoUnit.DAYS);
+        if(daysSinceLastFert > Long.valueOf(arduino.getFertilizerIntervallInDays())) {
+            // Fertilizer
+            this.fertilizerOn();
+            this.fertilizerOff();
+        }
+        
+    }
+    
+    // Stop scheduler
+    @Override
+    public void close() {
+        scheduler.shutdownNow();
+        System.out.println("Port " + arduino.getComPort() + "is closed :)");
+    }
+    
+    @Override
+    public String getArdId() {
+        return this.arduino.getArduinoId();
+    }
+    
+    @Override
     public void waterOn() {
+        if(this.lastValues[0] == 0) {
+            this.lastValues[0] = 0;
+            sendTankEmptyWarning("water");
+        }
+        this.lastValues[0] -= 1;
+        
+        if(this.lastValues[4] > 95) this.lastValues[4] = 100;
+        this.lastValues[4] += 4;
+        
         System.out.println("Arduino " + this.arduino.getArduinoId() + ": Waterpump on");
     }
     
+    @Override
     public void fertilizerOn() {
+        if(this.lastValues[1] == 0) {
+            this.lastValues[1] = 0;
+            sendTankEmptyWarning("fertilizer");
+        }
+        this.lastValues[1] -= 2;
+        
+        // Update Ferilization date in DB
+        arduino.setLastFertilization(LocalDateTime.now());
+        arduinoRepo.updateArduino(arduino);
         System.out.println("Arduino " + this.arduino.getArduinoId() + ": Fertilizerpump on");
     }
     
+    @Override
     public void waterOff() {
         System.out.println("Arduino " + this.arduino.getArduinoId() + ": Waterpump off");
     }
     
+    @Override
     public void fertilizerOff() {
         System.out.println("Arduino " + this.arduino.getArduinoId() + ": Fertilizerpump off");
     }

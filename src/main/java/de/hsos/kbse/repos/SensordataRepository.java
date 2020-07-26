@@ -17,6 +17,7 @@ import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import javax.persistence.NoResultException;
 import javax.persistence.Persistence;
 import javax.persistence.PersistenceException;
 import javax.transaction.TransactionManager;
@@ -27,14 +28,12 @@ import lombok.NoArgsConstructor;
  * @author Basti's
  */
 
-@NoArgsConstructor
 public class SensordataRepository implements SensordataRepoInterface, Serializable {  
     EntityManagerFactory emf;
     private EntityManager em;
     
-    @PostConstruct
-    private void init() {
-        System.out.println("*************************************************Sensorrepo created");
+    
+    public SensordataRepository() {
         try {
             emf = Persistence.createEntityManagerFactory("ogm-mongodb");
             em = emf.createEntityManager();
@@ -112,6 +111,7 @@ public class SensordataRepository implements SensordataRepoInterface, Serializab
         return data;
     }
 
+    @Override
     public List<Sensordata> getLast100Entries() {
         em.getTransaction().begin();
         List<Sensordata> data = em.createQuery("select t from Sensordata t order by t.timeOfCapture desc", Sensordata.class)
@@ -123,7 +123,27 @@ public class SensordataRepository implements SensordataRepoInterface, Serializab
         }
         return data;
     }
-
+    
+    @Override
+    public Sensordata getLast(Arduino arduino) {
+        em.getTransaction().begin();
+        Sensordata sd = null;
+        try {
+            sd = em.createQuery("select t from Sensordata t where t.arduino=:arduino order by t.timeOfCapture desc", Sensordata.class)
+                .setParameter("arduino", arduino)
+                .setMaxResults(1)
+                .getSingleResult();
+        } catch (NoResultException ex) {
+            System.err.println(ex.toString());
+        }
+        
+        em.getTransaction().commit();
+        
+        if(sd == null) return null;
+        return sd;
+    }
+    
+    @Override
     public List<Sensordata> getLast100EntriesByArduino(Arduino arduino) {
         em.getTransaction().begin();
         List<Sensordata> data = em.createQuery("select t from Sensordata t where t.arduino=:arduino order by t.timeOfCapture desc", Sensordata.class)
@@ -136,11 +156,6 @@ public class SensordataRepository implements SensordataRepoInterface, Serializab
         }
         Collections.reverse(data);
         return data;
-    }
-    
-    public List<Sensordata> getNewEntries(Arduino arduino, LocalDateTime localTime){
-        
-        return new ArrayList();
     }
 
 }
