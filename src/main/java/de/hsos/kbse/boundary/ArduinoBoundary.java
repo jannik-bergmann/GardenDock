@@ -97,9 +97,6 @@ public class ArduinoBoundary implements Serializable {
         fertilizerlevelLineModel = ChartUtil.drawFertilizerlevelChart(sensorDataCollection);
     }
 
-    private void updateDisplayedData(Sensordata sensorData) {
-
-    }
 
     private LineChartModel initLineChartWaterlevel() {
         LineChartModel model = new LineChartModel();
@@ -107,7 +104,7 @@ public class ArduinoBoundary implements Serializable {
         ChartSeries waterlevelSeries = new ChartSeries();
         waterlevelSeries.setLabel("waterlevel");
         sensorDataCollection.forEach((sensorData) -> {
-            waterlevelSeries.set(sensorData.getTimeOfCapture().getMinutes() + ":" + sensorData.getTimeOfCapture().getSeconds(),
+            waterlevelSeries.set(sensorData.getTimeOfCapture().getMinute() + ":" + sensorData.getTimeOfCapture().getSecond(),
                     sensorData.getWaterlevel());
         });
 
@@ -170,32 +167,6 @@ public class ArduinoBoundary implements Serializable {
         return model;
     }
 
-    private void createSoilHumidity() {
-        soilhumidity = new PieChartModel();
-
-    }
-
-    /*
-    public void onClickDebug() {
-        Arduino arduino = new Arduino();
-        Sensordata sensorData = new SensorData();
-        sensorData.setAirhumidity(10);
-        sensorData.setLightintensity(20);
-        sensorData.setSoilhumidity(30);
-        sensorData.setWaterlevel(40);
-        sensorData.setTemperature(23.5);
-
-        this.currentSensorData = sensorData;
-
-        arduino.setSensorData(sensorData);
-
-        arduino.setIpAddress("1111");
-        System.out.println(arduino.toString());
-        arduinoRepo.newArduino(arduino);
-
-        System.out.println("Ich bin eine DebugNachricht (:");
-    }
-     */
     public void createRandomData() {
 
         Sensordata sensorData = new Sensordata(
@@ -261,6 +232,10 @@ public class ArduinoBoundary implements Serializable {
     public static int getRandomIntegerBetweenRange(double min, double max) {
         int x = (int) ((int) (Math.random() * ((max - min) + 1)) + min);
         return x;
+    }
+    
+    public void createNewSensorData(){
+        
     }
 
 }

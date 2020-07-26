@@ -8,6 +8,8 @@ package de.hsos.kbse.controller;
 import de.hsos.kbse.entities.Arduino;
 import de.hsos.kbse.entities.Sensordata;
 import java.io.Serializable;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -165,6 +167,11 @@ public class SensordataRepository implements Serializable {
             return null;
         }
         return data;
+    }
+    
+    public List<Sensordata> getNewEntries(Arduino arduino, LocalDateTime localTime){
+        
+        return new ArrayList();
     }
 
 }
