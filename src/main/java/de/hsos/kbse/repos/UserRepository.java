@@ -32,7 +32,6 @@ public class UserRepository implements UserRepoInterface, Serializable {
     
     @PostConstruct
     private void init() {
-        System.out.println("*************************************************Sensorrepo created");
         try {
             emf = Persistence.createEntityManagerFactory("ogm-mongodb");
             em = emf.createEntityManager();

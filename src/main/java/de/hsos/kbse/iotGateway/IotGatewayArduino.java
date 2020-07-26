@@ -5,6 +5,8 @@ package de.hsos.kbse.iotGateway;
  * @author bastianluhrspullmann
  */
 
+import de.hsos.kbse.dataListeners.DataListenerArduino;
+import de.hsos.kbse.dataListeners.DataListener;
 import java.io.IOException;
 import com.fazecast.jSerialComm.SerialPort;
 import de.hsos.kbse.entities.Arduino;
@@ -12,6 +14,7 @@ import de.hsos.kbse.repos.interfaces.ArduinoRepoInterface;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
+import javax.annotation.ManagedBean;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.inject.Inject;
@@ -19,6 +22,7 @@ import lombok.NoArgsConstructor;
 
 @GatewayModeArduino
 @NoArgsConstructor
+@ManagedBean
 public class IotGatewayArduino implements IotGatewayInterface { 
     
     // Repos
@@ -26,12 +30,16 @@ public class IotGatewayArduino implements IotGatewayInterface {
     ArduinoRepoInterface arduinoRepo;
     
     // Arduinos
-    private List<SerialPort> openSerialPorts;
+    private List<DataListener> openConnections;
     
     @PostConstruct
     public void init() {
-        this.openSerialPorts = new ArrayList<>();
-        List<Arduino> arduinos = arduinoRepo.getAllArduino();
+        this.openConnections = new ArrayList<>();
+    }
+    
+    @Override
+    public void startUp() {
+    List<Arduino> arduinos = arduinoRepo.getAllArduino();
         for(Arduino ard : arduinos) {
             SerialPort sp = null;
             sp = SerialPort.getCommPort(ard.getComPort());
@@ -42,27 +50,28 @@ public class IotGatewayArduino implements IotGatewayInterface {
             sp.setComPortParameters(9600, 8, 1, 0);
             sp.setComPortTimeouts(SerialPort.TIMEOUT_WRITE_BLOCKING, 0, 0);
             
-            ArduinoDataListener ardDataListener = new ArduinoDataListener(sp);
+            DataListenerArduino ardDataListener = new DataListenerArduino(sp, ard);
+       
             if(ardDataListener == null) {
                 System.err.println("Error while creating ArduinoDataListener for Arduino " + ard.getName());
                 continue;
             }
             sp.addDataListener(ardDataListener);
-            
-            this.openSerialPorts.add(sp);
-        }
 
+            this.openConnections.add(ardDataListener);
+        }
     }
     
-    private SerialPort findSerialport(String ardID) {
+    @Override
+    public DataListener findConnection(String arduinoID) {
         // Get Arduino
-        Arduino ard = arduinoRepo.getArduino(ardID);
+        Arduino ard = arduinoRepo.getArduino(arduinoID);
         if(ard == null) return null;
         
-        // Check if right SerialPort and return if correct
-        for(SerialPort port : this.openSerialPorts) {
-            if(port.getDescriptivePortName().equals(ard.getComPort())) {
-                return port;
+        // Check if right IotConnection and return if correct
+        for(DataListener con : this.openConnections) {
+            if(con.getArdId().equals(arduinoID)) {
+                return con;
             }
         }
         
@@ -72,88 +81,51 @@ public class IotGatewayArduino implements IotGatewayInterface {
     @PreDestroy
     @Override
     public void cleanup() {
-        // Close serial arduino connections
-        for(SerialPort sp : openSerialPorts) {
-            if (sp.closePort()) {
-                System.out.println("Port " + sp.toString() + "is closed :)");
-            } else {
-                System.out.println("Failed to close port :(");
-            }
-        }
+        this.openConnections.forEach((dl) -> {
+            dl.close();
+        });
     }
    
     /*** Arduino Functions
      * @param arduinoID ***/
     @Override
     public void waterPumpOn(String arduinoID) {
-        OutputStream output = null;
-        SerialPort sp = findSerialport(arduinoID);
-        if(sp == null) {
-            System.err.println("Error while turning waterpump on: getting SerialPort of Arduino " + arduinoID);
+        DataListener sic = findConnection(arduinoID);
+        if(sic == null) {
+            System.err.println("Error while turning waterpump on: getting IotConnection of Arduino" + arduinoID);
             return;
-        }
-        output = sp.getOutputStream();
-        
-        try {         
-            output.write(Byte.parseByte("water, on"));
-            output.flush();
-        } catch (IOException ex) {
-            System.out.println(ex.toString());
-        }  
+        } 
+        sic.waterOn();
     }
 
     @Override
     public void dungPumpOn(String arduinoID) {
-        OutputStream output = null;
-        SerialPort sp = findSerialport(arduinoID);
-        if(sp == null) {
-            System.err.println("Error while turning fertilizerpump on: getting SerialPort of Arduino " + arduinoID);
+        DataListener sic = findConnection(arduinoID);
+        if(sic == null) {
+            System.err.println("Error while turning waterpump on: getting IotConnection of Arduino" + arduinoID);
             return;
-        }
-        output = sp.getOutputStream();
-        
-        try {         
-            output.write(Byte.parseByte("dung, on"));
-            output.flush();
-        } catch (IOException ex) {
-            System.out.println(ex.toString());
-        }  
+        } 
+        sic.fertilizerOn();
     }
 
     @Override
     public void waterPumpOff(String arduinoID) {
-        OutputStream output = null;
-        SerialPort sp = findSerialport(arduinoID);
-        if(sp == null) {
-            System.err.println("Error while turning waterpump off: getting SerialPort of Arduino " + arduinoID);
+        DataListener sic = findConnection(arduinoID);
+        if(sic == null) {
+            System.err.println("Error while turning waterpump on: getting IotConnection of Arduino" + arduinoID);
             return;
-        }
-        output = sp.getOutputStream();
-        
-        try {         
-            output.write(Byte.parseByte("water, off"));
-            output.flush();
-        } catch (IOException ex) {
-            System.out.println(ex.toString());
-        }  
+        } 
+        sic.waterOff();
     }
 
     @Override
     public void dungPumpOff(String arduinoID) {
-        OutputStream output = null;
-        SerialPort sp = findSerialport(arduinoID);
-        if(sp == null) {
-            System.err.println("Error while turning fertilizerpump off: getting SerialPort of Arduino " + arduinoID);
+        DataListener sic = findConnection(arduinoID);
+        if(sic == null) {
+            System.err.println("Error while turning waterpump on: getting IotConnection of Arduino" + arduinoID);
             return;
-        }
-        output = sp.getOutputStream();
-        
-        try {         
-            output.write(Byte.parseByte("dung, off"));
-            output.flush();
-        } catch (IOException ex) {
-            System.out.println(ex.toString());
-        }  
+        } 
+        sic.fertilizerOff();
     }
 
 }

@@ -5,6 +5,7 @@
  */
 package de.hsos.kbse.server;
 
+import de.hsos.kbse.entities.Arduino;
 import de.hsos.kbse.entities.User;
 import de.hsos.kbse.jms.ConsumerMessageListener;
 import de.hsos.kbse.iotGateway.GatewayModeSimulator;
@@ -79,6 +80,22 @@ public class StreamAnalytics implements Serializable {
         } catch ( JMSException | SecurityException | IllegalStateException ex) {
             Logger.getLogger(StreamAnalytics.class.getName()).log(Level.SEVERE, null, ex);
         }
+        
+        // Initial data
+        /*
+        Arduino ard = new Arduino();
+        User user = new User();
+        user.setPwdhash("admin");
+        user.setUsername("admin");
+        usrRepo.addUser(user);
+        ard.setUser(user);
+        ard.setName("ard2");
+        ard.setComPort("dev/1");
+        ard.setFertilizerIntervallInDays(5);
+        ardRepo.addArduino(ard);
+        */
+
+        iotgateway.startUp();
     }
         
     @PreDestroy

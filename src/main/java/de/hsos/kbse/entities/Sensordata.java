@@ -5,7 +5,6 @@
  */
 package de.hsos.kbse.entities;
 
-import de.hsos.kbse.entities.Arduino;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import javax.persistence.Entity;
@@ -47,38 +46,39 @@ public class Sensordata implements Serializable {
     @Min(value = 0)
     @Max(value = 100)
     @ToString.Include
-    int waterlevel;
+    private int waterlevel;
 
     @Min(value = 0)
     @Max(value = 100)
     @ToString.Include
-    int fertilizerlevel;
+    private int fertilizerlevel;
 
     @Min(value = 0)
     @Max(value = 100)
     @ToString.Include
-    int lightintensity;
+    private int lightintensity;
 
     @Min(value = 0)
     @Max(value = 100)
     @ToString.Include
-    int airhumidity;
+    private int airhumidity;
 
     @Min(value = 0)
     @Max(value = 100)
     @ToString.Include
-    int soilhumidity;
+    private int soilhumidity;
 
     @Min(value = -20)
     @Max(value = 40)
     @ToString.Include
-    double temperature;
+    private double temperature;
 
     // Timestamp
     @NotNull
     @ToString.Include
-    LocalDateTime timeOfCapture;
+    private LocalDateTime timeOfCapture;
 
+    
     public Sensordata(int waterlevel, int airhumidity, int soilhumidity, int lightintensity, int fertilizerlevel, double temperature) {
         this.waterlevel = waterlevel;
         this.airhumidity = airhumidity;

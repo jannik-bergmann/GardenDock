@@ -5,21 +5,19 @@
  */
 package de.hsos.kbse.entities;
 
-import de.hsos.kbse.entities.User;
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
-import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -34,7 +32,6 @@ import org.hibernate.annotations.GenericGenerator;
 @Entity
 @Getter
 @Setter
-@NoArgsConstructor
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @ToString(onlyExplicitlyIncluded = true)
 public class Arduino implements Serializable {
@@ -61,10 +58,18 @@ public class Arduino implements Serializable {
     
     @Min(value = 0) @Max(value = 100)
     private int setWaterLevel;
-    @Min(value = 0) @Max(value = 100)
-    private int currentWaterLevel;
-    @Min(value = 0) @Max(value = 100)
-    private int setFertilizerLevel;
-    @Min(value = 0) @Max(value = 100)
-    private int currentFertilizerLevel;
+    @Min(value = 0) @Max(value = 60)
+    private int fertilizerIntervallInDays;
+    
+    // Timestamp
+    @NotNull
+    @ToString.Include
+    private LocalDateTime lastFertilization;
+    
+    public Arduino() {
+        this.comPort = "";
+        this.name = "";
+        this.fertilizerIntervallInDays = 0;
+        this.lastFertilization = LocalDateTime.now();
+    }
 }

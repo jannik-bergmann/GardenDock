@@ -1,6 +1,7 @@
 package de.hsos.kbse.repos.interfaces;
 
 import de.hsos.kbse.entities.Arduino;
+import de.hsos.kbse.entities.User;
 import java.util.List;
 
 /*
@@ -25,5 +26,6 @@ public interface ArduinoRepoInterface {
     public Arduino updateArduino(Arduino ard);
     public Arduino getArduino(String id);
     public List<Arduino> getAllArduino();
+    public List<Arduino> getAllArduinosByUser(User user);
 }
 

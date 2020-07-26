@@ -5,6 +5,8 @@
  */
 package de.hsos.kbse.iotGateway;
 
+import de.hsos.kbse.dataListeners.DataListener;
+
 /**
  *
  * @author bastianluhrspullmann
@@ -15,4 +17,6 @@ public interface IotGatewayInterface {
     void dungPumpOn(String arduinoID);
     void waterPumpOff(String arduinoID);
     void dungPumpOff(String arduinoID);
+    void startUp();
+    DataListener findConnection(String ardID);
 }

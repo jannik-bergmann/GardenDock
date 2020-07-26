@@ -102,7 +102,8 @@ public class ArduinoRepository implements ArduinoRepoInterface, Serializable {
         }
         return data;
     }
-
+    
+    @Override
     public List<Arduino> getAllArduinosByUser(User user) {
         em.getTransaction().begin();
         List<Arduino> data = em.createQuery("SELECT h FROM Arduino h where h.user=:user", Arduino.class)
