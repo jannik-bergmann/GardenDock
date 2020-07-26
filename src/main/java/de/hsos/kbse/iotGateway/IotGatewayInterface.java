@@ -10,9 +10,7 @@ package de.hsos.kbse.iotGateway;
  * @author bastianluhrspullmann
  */
 public interface IotGatewayInterface {
-    void init();
     void cleanup();
-    void routine();
     void waterPumpOn();
     void dungPumpOn();
     void waterPumpOff();
