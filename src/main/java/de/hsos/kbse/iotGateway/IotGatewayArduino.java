@@ -35,15 +35,17 @@ import javax.naming.NamingException;
 public class IotGatewayArduino implements IotGatewayInterface { 
     // Arduino
     private final SerialPort sp;
-    ArduinoDataListener arduinoListener;
+    List<ArduinoDataListener> arduinoListener;
     List<Sensordata> sensordata = new ArrayList<>();
+    
     // Jms
     private InputStream input;
     private OutputStream output;
-    private IotSimulator simulator;
+    private SimulatorDataListener simulator;
     private Connection connection;
     private Session session;
     private MessageProducer producer;
+    
     // Scheduler 
     ScheduledExecutorService scheduler;
     
@@ -51,6 +53,7 @@ public class IotGatewayArduino implements IotGatewayInterface {
     public IotGatewayArduino () {
         // Scheduler 
         scheduler = Executors.newScheduledThreadPool( 1 );
+        
         // Arduino connection
         this.sp = SerialPort.getCommPort("/dev/tty.usbmodem14301");
         if(sp.openPort()) {
@@ -59,13 +62,12 @@ public class IotGatewayArduino implements IotGatewayInterface {
             input = sp.getInputStream();
             output = sp.getOutputStream();
         }
-        this.arduinoListener = new ArduinoDataListener(sp);
+        this.arduinoListener.add(new ArduinoDataListener(sp));
          
         System.out.println("IotGateway erstellt");
     }
     
     @PostConstruct
-    @Override
     public void init() {
         // Setup jms connection as sender
         try {
@@ -90,7 +92,7 @@ public class IotGatewayArduino implements IotGatewayInterface {
             return;
         }
         
-        sp.addDataListener(arduinoListener);
+        //sp.addDataListener(arduinoListener);
     }
 
     
@@ -126,11 +128,10 @@ public class IotGatewayArduino implements IotGatewayInterface {
     }
     
     private void getData() {
-        Sensordata temp = arduinoListener.getSensordata();
-        if(temp != null) this.sensordata.add(temp);
+        // Sensordata temp = arduinoListener.getSensordata();
+        // if(temp != null) this.sensordata.add(temp);
     }
     
-    @Override
     public void routine() {
         System.out.println("123");
         // jms & arduino
