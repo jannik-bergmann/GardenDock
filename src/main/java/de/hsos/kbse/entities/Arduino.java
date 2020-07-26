@@ -16,6 +16,8 @@ import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import lombok.Data;
 import org.hibernate.annotations.GenericGenerator;
@@ -43,4 +45,13 @@ public class Arduino implements Serializable {
     @NotNull
     @ManyToOne
     private User user;
+    
+    @Min(value = 0) @Max(value = 100)
+    private int setWaterLevel;
+    @Min(value = 0) @Max(value = 100)
+    private int currentWaterLevel;
+    @Min(value = 0) @Max(value = 100)
+    private int setFertilizerLevel;
+    @Min(value = 0) @Max(value = 100)
+    private int currentFertilizerLevel;
 }

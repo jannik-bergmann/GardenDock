@@ -4,9 +4,9 @@ package de.hsos.kbse.jms;
  *
  * @author bastianluhrspullmann
  */
-import de.hsos.kbse.controller.ArduinoRepository;
-import de.hsos.kbse.controller.SensordataRepository;
-import de.hsos.kbse.controller.UserRepository;
+import de.hsos.kbse.repos.ArduinoRepository;
+import de.hsos.kbse.repos.SensordataRepository;
+import de.hsos.kbse.repos.UserRepository;
 import de.hsos.kbse.entities.Arduino;
 import de.hsos.kbse.entities.Sensordata;
 import de.hsos.kbse.entities.User;
@@ -22,26 +22,30 @@ import javax.jms.MessageListener;
 import javax.jms.TextMessage;
 
 public class ConsumerMessageListener implements MessageListener, Serializable {
+    @Inject
     private SensordataRepository sensorRepo;
+    @Inject
     private ArduinoRepository ardRepo;
+    @Inject
     private UserRepository userRepo;
 
     private String consumerName;
 
     public ConsumerMessageListener(String consumerName) { 
-        
+        /*
         this.sensorRepo = new SensordataRepository();
         this.ardRepo = new ArduinoRepository();
         this.userRepo = new UserRepository();
-
+*/
         this.consumerName = consumerName;
     }
     
     public ConsumerMessageListener() {
+  /*      
         this.sensorRepo = new SensordataRepository();
         this.ardRepo = new ArduinoRepository();
         this.userRepo = new UserRepository();
-
+*/
     }
      
     public void persistSensorData(MapMessage data) {
@@ -50,7 +54,12 @@ public class ConsumerMessageListener implements MessageListener, Serializable {
             Sensordata sd = new Sensordata();
             
             Arduino ardToInsert = ardRepo.getArduino(data.getString("arduinoId"));
-            if(ardToInsert == null) { System.out.println("ard was null"); return; }
+            if(ardToInsert == null) { 
+                System.out.println("ard was null"); 
+                sd = null;
+                return; 
+            }
+            System.out.println("go on" + ardToInsert.getName());
             sd.setWaterlevel(data.getInt("waterMeter"));
             sd.setFertilizerlevel(data.getInt("dungMeter"));
             sd.setLightintensity(data.getInt("sunLevel"));

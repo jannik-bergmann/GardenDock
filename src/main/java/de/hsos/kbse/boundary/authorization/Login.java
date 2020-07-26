@@ -6,7 +6,7 @@
 package de.hsos.kbse.boundary.authorization;
 
 //import de.hsos.kbse.controller.ArduinoUserRepoImpl;
-import de.hsos.kbse.controller.UserRepository;
+import de.hsos.kbse.repos.UserRepository;
 import de.hsos.kbse.entities.authorization.Credentials;
 //import de.hsos.kbse.entities.interfaces.ArduinoUserRepo;
 import de.hsos.kbse.util.SessionUtils;

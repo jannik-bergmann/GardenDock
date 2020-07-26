@@ -3,48 +3,44 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package de.hsos.kbse.controller;
+package de.hsos.kbse.repos;
 
 import de.hsos.kbse.entities.User;
 import de.hsos.kbse.entities.authorization.Credentials;
+import de.hsos.kbse.repos.interfaces.UserRepoInterface;
 import java.io.Serializable;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
-import javax.ejb.TransactionManagement;
-import javax.ejb.TransactionManagementType;
-import javax.enterprise.context.RequestScoped;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.NoResultException;
 import javax.persistence.Persistence;
+import javax.persistence.PersistenceContext;
 import javax.persistence.PersistenceException;
 import javax.persistence.Query;
-import javax.transaction.HeuristicMixedException;
-import javax.transaction.HeuristicRollbackException;
-import javax.transaction.NotSupportedException;
-import javax.transaction.RollbackException;
-import javax.transaction.SystemException;
 import javax.transaction.TransactionManager;
+import lombok.NoArgsConstructor;
 
 /**
  *
  * @author Basti's
  */
 
-@RequestScoped
-@TransactionManagement(TransactionManagementType.BEAN)
-public class UserRepository implements Serializable {
-    private EntityManagerFactory emf;
-    private TransactionManager tm;
+//@TransactionManagement(TransactionManagementType.BEAN)
+@NoArgsConstructor
+public class UserRepository implements UserRepoInterface, Serializable {
+    //@PersistenceContext(unitName = "ogm-mongodb")
+    EntityManagerFactory emf;
+    //private TransactionManager tm;
     private EntityManager em;
     
-    public UserRepository() {
-        System.out.println("*************************************************Userrepo created");
+    @PostConstruct
+    private void init() {
+        System.out.println("*************************************************Sensorrepo created");
         try {
             emf = Persistence.createEntityManagerFactory("ogm-mongodb");
-            tm = (TransactionManager) com.arjuna.ats.jta.TransactionManager.transactionManager();
+            //tm = (TransactionManager) com.arjuna.ats.jta.TransactionManager.transactionManager();
             em = emf.createEntityManager();
         } catch (PersistenceException ex) {
             System.err.println("********************************" + ex.toString());
@@ -52,38 +48,41 @@ public class UserRepository implements Serializable {
     }
     
     @PreDestroy
-    public void cleanup() {
-        emf.close();
-        em.close();
+    private void cleanup() {
+        //emf.close();
+        //em.close();
     }
     
     // Helper functions for handling Transactions
     private void tmBegin() {
+        /*
         try {
             tm.begin();
         } catch (NotSupportedException | SystemException ex) {
             Logger.getLogger(SensordataRepository.class.getName()).log(Level.SEVERE, null, ex);
         }
+*/
     }
     
     private void tmCommit() {
-        try {
+  /*      try {
             tm.commit();
         } catch (RollbackException | HeuristicMixedException | HeuristicRollbackException | SecurityException | IllegalStateException | SystemException ex) {
             Logger.getLogger(SensordataRepository.class.getName()).log(Level.SEVERE, null, ex);
         }
+*/
     }
    
     // User CRUD
+    @Override
     public User addUser(User usr) {
         if(usr == null) return null;
-        tmBegin();
         em.persist(usr);
         User temp = em.find(User.class, usr.getUserId());
-        tmCommit();
         return temp;
     }
     
+    @Override
     public int deleteUser(User usr) {
         if(usr == null) return 0; 
         tmBegin();
@@ -96,6 +95,7 @@ public class UserRepository implements Serializable {
         return 1;
     }
     
+    @Override
     public User updateUser(User usr) {
         if(usr == null) return null; 
         tmBegin();
@@ -106,6 +106,7 @@ public class UserRepository implements Serializable {
         return temp;
     }
     
+    @Override
     public User getUser(String id) {
         tmBegin();
         User usr = null;
@@ -115,6 +116,7 @@ public class UserRepository implements Serializable {
         return usr;
     }
     
+    @Override
     public List<User> getAllUser() {
         tmBegin();
         List<User> data = em.createQuery("SELECT h FROM User h" , User.class).getResultList();
@@ -123,6 +125,7 @@ public class UserRepository implements Serializable {
         return data;
     }
     
+    @Override
     public List<User> getArduinoUserByCredentials(Credentials credentials) {
 
         tmBegin();

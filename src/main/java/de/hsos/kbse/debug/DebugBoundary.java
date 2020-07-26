@@ -6,9 +6,9 @@
 package de.hsos.kbse.debug;
 
 import de.hsos.kbse.boundary.ArduinoBoundary;
-import de.hsos.kbse.controller.ArduinoRepository;
-import de.hsos.kbse.controller.SensordataRepository;
-import de.hsos.kbse.controller.UserRepository;
+import de.hsos.kbse.repos.ArduinoRepository;
+import de.hsos.kbse.repos.SensordataRepository;
+import de.hsos.kbse.repos.UserRepository;
 import de.hsos.kbse.entities.Arduino;
 import de.hsos.kbse.entities.Sensordata;
 import de.hsos.kbse.entities.User;

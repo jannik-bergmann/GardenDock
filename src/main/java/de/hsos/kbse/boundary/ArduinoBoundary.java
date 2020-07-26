@@ -5,7 +5,7 @@
  */
 package de.hsos.kbse.boundary;
 
-import de.hsos.kbse.controller.SensordataRepository;
+import de.hsos.kbse.repos.SensordataRepository;
 import de.hsos.kbse.entities.Sensordata;
 import de.hsos.kbse.util.ChartUtil;
 import de.hsos.kbse.entities.User;

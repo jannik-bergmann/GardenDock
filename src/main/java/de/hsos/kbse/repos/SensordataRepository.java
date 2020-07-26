@@ -3,21 +3,24 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package de.hsos.kbse.controller;
+package de.hsos.kbse.repos;
 
-import de.hsos.kbse.entities.Arduino;
+import de.hsos.kbse.entities.Sensordata;
+import de.hsos.kbse.repos.interfaces.SensordataRepoInterface;
 import java.io.Serializable;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
+import javax.ejb.Stateless;
 import javax.ejb.TransactionManagement;
 import javax.ejb.TransactionManagementType;
 import javax.enterprise.context.RequestScoped;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
+import javax.persistence.PersistenceContext;
 import javax.persistence.PersistenceException;
 import javax.transaction.HeuristicMixedException;
 import javax.transaction.HeuristicRollbackException;
@@ -25,22 +28,26 @@ import javax.transaction.NotSupportedException;
 import javax.transaction.RollbackException;
 import javax.transaction.SystemException;
 import javax.transaction.TransactionManager;
+import javax.transaction.Transactional;
+import lombok.NoArgsConstructor;
 
 /**
  *
  * @author Basti's
  */
 
-//@Transactional
-/*@RequestScoped*/
-@TransactionManagement(TransactionManagementType.BEAN)
-public class ArduinoRepository implements Serializable {
-    private EntityManagerFactory emf;
-    private TransactionManager tm;
+//@Stateless
+//@TransactionManagement(TransactionManagementType.BEAN)
+@NoArgsConstructor
+public class SensordataRepository implements SensordataRepoInterface, Serializable {  
+    EntityManagerFactory emf;
+    TransactionManager tm;
+    //@PersistenceContext(unitName = "ogm-mongodb")
     private EntityManager em;
     
-    public ArduinoRepository() {
-        System.out.println("*************************************************ArduinoRepo created");
+    @PostConstruct
+    private void init() {
+        System.out.println("*************************************************Sensorrepo created");
         try {
             emf = Persistence.createEntityManagerFactory("ogm-mongodb");
             tm = (TransactionManager) com.arjuna.ats.jta.TransactionManager.transactionManager();
@@ -49,75 +56,86 @@ public class ArduinoRepository implements Serializable {
             System.err.println("********************************" + ex.toString());
         }
     }
-    
+
     @PreDestroy
-    public void cleanup() {
-        emf.close();
-        em.close();
+    private void cleanup() {
+        //emf.close();
+        //em.close();
     }
     
     // Helper functions for handling Transactions
     private void tmBegin() {
+        /*
         try {
+            tm = com.arjuna.ats.jta.TransactionManager.transactionManager(); 
             tm.begin();
         } catch (NotSupportedException | SystemException ex) {
             Logger.getLogger(SensordataRepository.class.getName()).log(Level.SEVERE, null, ex);
         }
+*/
     }
     
     private void tmCommit() {
+        /*
         try {
             tm.commit();
         } catch (RollbackException | HeuristicMixedException | HeuristicRollbackException | SecurityException | IllegalStateException | SystemException ex) {
             Logger.getLogger(SensordataRepository.class.getName()).log(Level.SEVERE, null, ex);
         }
+*/
     }
     
-    // Arduino CRUD
-    public Arduino addArduino(Arduino ard) {
-        System.out.println("add Arduino" + ard.getArduinoId());
-        if(ard == null) return null;
-        tmBegin();
-        em.persist(ard);
-        Arduino temp = em.find(Arduino.class, ard.getArduinoId());
-        tmCommit();
+    // Sensordata CRUD
+    @Override
+    public Sensordata addSensordata(Sensordata sd) {
+        if (sd == null) {
+            return null;
+        }
+        em.getTransaction().begin();
+        em.persist(sd);
+        em.getTransaction().commit();
+        Sensordata temp = em.find(Sensordata.class, sd.getSensorId());
         return temp;
     }
     
-    public int deleteArduino(Arduino ard) {
+    @Override
+    public int deleteSensordata(Sensordata sd) {
+        if(sd == null) return 0; 
         tmBegin();
-        if(ard != null) em.remove(ard);
-        tmCommit();
-        tmBegin();
-        if(em.find(Arduino.class, ard.getArduinoId()) != null) {
+        em.remove(sd);
+        if(em.find(Sensordata.class, sd.getSensorId()) != null) {
+            tmCommit();
             return 0;
         }
         tmCommit();
         return 1;
     }
     
-    public Arduino updateArduino(Arduino ard) {
-        if(ard == null) return null; 
+    @Override
+    public Sensordata updateSensordata(Sensordata sd) {
+        if(sd == null) return null; 
         tmBegin();
-        em.persist(ard);
-        Arduino temp = em.find(Arduino.class, ard.getArduinoId());
+        em.persist(sd);
+        Sensordata temp = em.find(Sensordata.class, sd.getSensorId());
         tmCommit();
         if(temp == null) return null;
         return temp;
     }
     
-    public Arduino getArduino(String id) {
+    @Override
+    public Sensordata getSensordata(String id) {
+        Sensordata sd = null;
         tmBegin();
-        Arduino ard = null;
-        ard = em.find(Arduino.class, id);
+        sd = em.find(Sensordata.class, id);
         tmCommit();
-        if(ard == null) { return null; }
-        return ard;
+        if(sd == null) { return null; }
+        return sd;
     }
     
-    public List<Arduino> getAllArduino() {
+    @Override
+    public List<Sensordata> getAllSensordata() {
         tmBegin();
-        List<Arduino> data = em.createQuery("SELECT h FROM Arduino h" , Arduino.class).getResultList();
+        List<Sensordata> data = em.createQuery("SELECT h FROM Sensordata h" , Sensordata.class).getResultList();
         tmCommit();
         if(data.isEmpty()) return null;
         return data;

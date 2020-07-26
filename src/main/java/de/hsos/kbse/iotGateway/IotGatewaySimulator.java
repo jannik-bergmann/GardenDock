@@ -5,7 +5,6 @@ package de.hsos.kbse.iotGateway;
  * @author bastianluhrspullmann
  */
 
-import de.hsos.kbse.jms.ConsumerMessageListener;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.concurrent.Executors;
@@ -18,11 +17,8 @@ import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.annotation.Resource;
 import javax.inject.Inject;
-import javax.jms.Connection;
 import javax.jms.JMSException;
 import javax.jms.MapMessage;
-import javax.jms.MessageConsumer;
-import javax.jms.MessageProducer;
 import javax.jms.Session;
 import javax.jms.TextMessage;
 import javax.jms.Topic;
@@ -34,7 +30,6 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import lombok.NoArgsConstructor;
 
-@ManagedBean
 @GatewayModeSimulator
 @NoArgsConstructor
 public class IotGatewaySimulator implements IotGatewayInterface{
@@ -100,12 +95,13 @@ public class IotGatewaySimulator implements IotGatewayInterface{
         if(closed) { return; }
         TextMessage message;
         String sim_value = simulator.generateSensordata(lastValues);
-        sim_value += ",176ba88b-3b64-4e65-9705-6111b7b9da08";
+        sim_value += ",8983a7db-298a-41cd-9541-9f5e50214401";
         
         String[] values_split = sim_value.split(",");
         sendMessage(values_split);
     }
     
+    @Override
     public void startUp() {
         try {
             scheduler = Executors.newScheduledThreadPool( 1 );
@@ -118,9 +114,7 @@ public class IotGatewaySimulator implements IotGatewayInterface{
             producer = session.createPublisher(topic);
             System.out.println("IotGateway erstellt");
             closed = false;
-        } catch (NamingException ex) {
-            Logger.getLogger(IotGatewaySimulator.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (JMSException ex) {
+        } catch (NamingException | JMSException ex) {
             Logger.getLogger(IotGatewaySimulator.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
