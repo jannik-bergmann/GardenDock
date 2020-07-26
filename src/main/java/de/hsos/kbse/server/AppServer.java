@@ -91,33 +91,20 @@ public class AppServer implements Serializable {
         }
         iotgateway.routine();
         
-        
-        EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory("ogm-mongodb");
-        TransactionManager transactionManager = com.arjuna.ats.jta.TransactionManager.transactionManager();
-        EntityManager entityManager = entityManagerFactory.createEntityManager();
-        try {
-            transactionManager.begin();
-        } catch (NotSupportedException ex) {
-            Logger.getLogger(AppServer.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (SystemException ex) {
-            Logger.getLogger(AppServer.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        
+        // Create mocked Arduino and User  
+        /*
         Arduino ard = new Arduino();
         User temp = new User();
-        //usrRepo.addUser(temp);
-        entityManager.persist(temp);
+        temp.setUsername("admin");
+        temp.setPwdhash("admin");
+        usrRepo.addUser(temp);
         ard.setUser(temp);
-        ard.setComPort("asfas");
-        ard.setName("asggsd");
-        //ardRepo.addArduino(ard);
-        entityManager.persist(ard);
-        entityManager.close();      
-        try {
-            transactionManager.commit();
-        } catch (RollbackException | HeuristicMixedException | HeuristicRollbackException | SecurityException | IllegalStateException | SystemException ex) {
-            Logger.getLogger(AppServer.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        ard.setComPort("dev/1");
+        ard.setName("ard1");
+        ardRepo.addArduino(ard);
+        */
+        
+        
         
     }
      

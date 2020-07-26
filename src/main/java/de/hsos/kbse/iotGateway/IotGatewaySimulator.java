@@ -85,7 +85,6 @@ public class IotGatewaySimulator implements IotGatewayInterface{
             msg.setDouble("temperature", Double.parseDouble(values_split[5]));
             msg.setString("arduinoId", values_split[6]);
             producer.send(msg);
-            System.out.println("aaaaaaaaaaaaaaaaaaaaaaaaaaa");
         } catch (JMSException ex) {
             Logger.getLogger(IotGatewaySimulator.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -95,7 +94,7 @@ public class IotGatewaySimulator implements IotGatewayInterface{
         if(closed) { return; }
         TextMessage message;
         String sim_value = simulator.generateSensordata(lastValues);
-        sim_value += ",8983a7db-298a-41cd-9541-9f5e50214401";
+        sim_value += ",a67ca578-c5aa-4c85-868b-198975128bcc";
         
         String[] values_split = sim_value.split(",");
         sendMessage(values_split);

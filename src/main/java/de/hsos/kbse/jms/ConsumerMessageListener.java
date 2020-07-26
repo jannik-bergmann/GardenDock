@@ -50,7 +50,7 @@ public class ConsumerMessageListener implements MessageListener, Serializable {
                 sd = null;
                 return; 
             }
-            System.out.println("go on" + ardToInsert.getName());
+
             sd.setWaterlevel(data.getInt("waterMeter"));
             sd.setFertilizerlevel(data.getInt("dungMeter"));
             sd.setLightintensity(data.getInt("sunLevel"));

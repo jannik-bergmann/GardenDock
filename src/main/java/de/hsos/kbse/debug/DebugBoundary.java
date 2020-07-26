@@ -50,7 +50,7 @@ public class DebugBoundary {
                 ArduinoBoundary.getRandomIntegerBetweenRange(0, 39)
         );
         sensordata.setArduino(arduino);
-
+ 
         sensordataRepo.addSensordata(sensordata);
 
     }
