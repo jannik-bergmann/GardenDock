@@ -31,6 +31,9 @@
 
                     <b:navLink value="Wiki" icon-awesome="book" iconAlign="left" update="@form @(.contentform)"
                                onclick="ajax:arduino.showPageWiki()" />
+                    <b:navLink value="Account" icon-awesome="user" iconAlign="left" update="@form @(.contentform)"
+                               onclick="ajax:arduino.showPageAccount()" />
+
 
                     <b:navCommandLink value="Logout" icon-awesome="power-off" action="#{login.logout()}" href="#"></b:navCommandLink>
 

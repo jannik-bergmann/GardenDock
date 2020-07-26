@@ -1,0 +1,71 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:b="http://bootsfaces.net/ui"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+    <h:head>
+        <title>GardenDock</title>
+    </h:head>
+    <h:body style="padding-top: 60px">
+        <ui:composition>
+
+
+            <b:column col-sm="9" offset-sm="3" col-md="10" offset="2" styleClass="main">
+                <b:row>
+                    <b:column span="12" >
+                        <h1>Account</h1>
+                    </b:column>
+                </b:row>
+                <b:row>
+                    <b:column span="6">
+                        <h4>Accountname:</h4>
+                    </b:column>
+                    <b:column span="6">
+                        #{arduino.currentUser.username}
+                    </b:column>
+                </b:row>
+                <b:row>
+                    <b:column span="6">
+                        <h4>
+                            Account l&ouml;schen:
+                        </h4>
+                    </b:column>
+                    <b:column span="6">
+                        <h:form>     
+                            <b:button onclick="$('.formValidationModalClass').modal('show')" value="L&ouml;schen"/>
+                            <b:modal title="Account l&ouml;schen" styleClass="formValidationModalClass"
+                                     closable="false"
+                                     closeOnEscape="true">
+                                <b:form>
+                                    <p>Bist du dir sicher, dass du deinen Account l&ouml;schen m&ouml;chtest?</p><br/>
+                                    <p>Diese Aktion ist r&#252;ckg&#228;ngig zu machen.</p>
+
+                                    <b:row>
+                                        <b:column>
+                                            <b:button largeScreen="half"  value="Cancel"
+                                                      dismiss="modal" onclick="return false;"/>
+                                            <b:commandButton largeScreen="half" update="@form"
+                                                             dismiss="modal"
+                                                             value="L&ouml;schen" look="danger"
+                                                             actionListener="#{arduino.accountLoeschen()}"
+                                                             oncomplete="{ $('.formValidationModalClass').modal('hide') } "/>
+                                        </b:column>
+                                    </b:row>
+                                    <b:fetchBeanInfos />
+                                    <b:messages />
+                                </b:form>
+                            </b:modal>    
+                        </h:form>
+                    </b:column>
+                </b:row>
+
+            </b:column>
+
+
+        </ui:composition>
+    </h:body>
+</html>

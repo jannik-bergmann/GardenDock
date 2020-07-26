@@ -75,13 +75,14 @@ public class ArduinoBoundary implements Serializable {
 
         page = "landing";
         createBarModel();
-        this.currentSensorData = new Sensordata(0, 0, 0, 0, 0, 0);
         sensorDataCollection = new ArrayList();
         
         currentUser = arduinoUserRepo.getUser(SessionUtils.getUserId());
         arduinos = arduinoRepo.getAllArduinosByUser(currentUser);
         //GEtting first Arduino  TODO: Enable user to choose.        
         sensorDataCollection = sensorDataRepo.getLast100EntriesByArduino(arduinos.get(0));
+        
+        this.currentSensorData = sensorDataCollection.get(0);
         
         initLineModels();
     }
@@ -225,6 +226,10 @@ public class ArduinoBoundary implements Serializable {
         this.page = "wiki";
         System.out.println("de.hsos.kbse.boundary.ArduinoBoundary.showPageWiki()");
     }
+    
+    public void showPageAccount() {
+        this.page = "account";
+    }
 
     public static int getRandomIntegerBetweenRange(double min, double max) {
         int x = (int) ((int) (Math.random() * ((max - min) + 1)) + min);
@@ -260,7 +265,14 @@ public class ArduinoBoundary implements Serializable {
         this.temperatureLineModel = ChartUtil.drawTemperatureChart(sensorDataCollection);
         this.lightintensityLineModel = ChartUtil.drawLightintensityChart(sensorDataCollection);
         this.fertilizerlevelLineModel = ChartUtil.drawFertilizerlevelChart(sensorDataCollection);
-
+        
+        this.currentSensorData = sensorDataCollection.get(0);
+    }
+    
+    public void accountLoeschen(){
+        System.out.println("<------------->Account wurde geloescht! ");
+        System.out.println("<------------->Account wurde geloescht! ");
+        System.out.println("<------------->Account wurde geloescht! ");
     }
 
 }
