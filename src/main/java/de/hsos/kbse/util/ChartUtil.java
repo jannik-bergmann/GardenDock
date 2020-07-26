@@ -26,7 +26,7 @@ public class ChartUtil {
         ChartSeries waterlevelSeries = new ChartSeries();
         waterlevelSeries.setLabel("waterlevel");
         sensorDataCollection.forEach((sensorData) -> {
-            waterlevelSeries.set(sensorData.getTimeOfCapture().getMinutes() + ":" + sensorData.getTimeOfCapture().getSeconds(),
+            waterlevelSeries.set(sensorData.getTimeOfCapture().getMinute() + ":" + sensorData.getTimeOfCapture().getSecond(),
                     sensorData.getWaterlevel());
         });
 
@@ -51,7 +51,7 @@ public class ChartUtil {
         ChartSeries waterlevelSeries = new ChartSeries();
         waterlevelSeries.setLabel("Bodenfeuchtigkeit");
         sensorDataCollection.forEach((sensorData) -> {
-            waterlevelSeries.set(sensorData.getTimeOfCapture().getMinutes() + ":" + sensorData.getTimeOfCapture().getSeconds(),
+            waterlevelSeries.set(sensorData.getTimeOfCapture().getMinute() + ":" + sensorData.getTimeOfCapture().getSecond(),
                     sensorData.getSoilhumidity());
         });
 
@@ -76,7 +76,7 @@ public class ChartUtil {
         ChartSeries waterlevelSeries = new ChartSeries();
         waterlevelSeries.setLabel("Luftfeuchtigkeit");
         sensorDataCollection.forEach((sensorData) -> {
-            waterlevelSeries.set(sensorData.getTimeOfCapture().getMinutes() + ":" + sensorData.getTimeOfCapture().getSeconds(),
+            waterlevelSeries.set(sensorData.getTimeOfCapture().getMinute() + ":" + sensorData.getTimeOfCapture().getSecond(),
                     sensorData.getAirhumidity());
         });
 
@@ -101,7 +101,7 @@ public class ChartUtil {
         ChartSeries waterlevelSeries = new ChartSeries();
         waterlevelSeries.setLabel("Lichtintensitaet");
         sensorDataCollection.forEach((sensorData) -> {
-            waterlevelSeries.set(sensorData.getTimeOfCapture().getMinutes() + ":" + sensorData.getTimeOfCapture().getSeconds(),
+            waterlevelSeries.set(sensorData.getTimeOfCapture().getMinute() + ":" + sensorData.getTimeOfCapture().getSecond(),
                     sensorData.getLightintensity());
         });
 
@@ -126,7 +126,7 @@ public class ChartUtil {
         ChartSeries waterlevelSeries = new ChartSeries();
         waterlevelSeries.setLabel("Temperatur");
         sensorDataCollection.forEach((sensorData) -> {
-            waterlevelSeries.set(sensorData.getTimeOfCapture().getMinutes() + ":" + sensorData.getTimeOfCapture().getSeconds(),
+            waterlevelSeries.set(sensorData.getTimeOfCapture().getMinute() + ":" + sensorData.getTimeOfCapture().getSecond(),
                     sensorData.getTemperature());
         });
 
@@ -151,7 +151,7 @@ public class ChartUtil {
         ChartSeries waterlevelSeries = new ChartSeries();
         waterlevelSeries.setLabel("Duenger");
         sensorDataCollection.forEach((sensorData) -> {
-            waterlevelSeries.set(sensorData.getTimeOfCapture().getMinutes() + ":" + sensorData.getTimeOfCapture().getSeconds(),
+            waterlevelSeries.set(sensorData.getTimeOfCapture().getMinute() + ":" + sensorData.getTimeOfCapture().getSecond(),
                     sensorData.getFertilizerlevel());
         });
 

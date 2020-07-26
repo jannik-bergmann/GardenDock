@@ -9,6 +9,8 @@ import de.hsos.kbse.entities.Arduino;
 import de.hsos.kbse.entities.Sensordata;
 import de.hsos.kbse.repos.interfaces.SensordataRepoInterface;
 import java.io.Serializable;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -132,6 +134,11 @@ public class SensordataRepository implements SensordataRepoInterface, Serializab
             return null;
         }
         return data;
+    }
+    
+    public List<Sensordata> getNewEntries(Arduino arduino, LocalDateTime localTime){
+        
+        return new ArrayList();
     }
 
 }

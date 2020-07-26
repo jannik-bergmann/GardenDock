@@ -8,6 +8,7 @@ package de.hsos.kbse.entities;
 import de.hsos.kbse.entities.Arduino;
 import java.io.Serializable;
 import java.time.Instant;
+import java.time.LocalDateTime;
 import javax.enterprise.inject.Vetoed;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -84,7 +85,7 @@ public class Sensordata implements Serializable {
     @NotNull
     @Temporal(javax.persistence.TemporalType.DATE) // wird das gebraucht?
     @ToString.Include
-    Date timeOfCapture;
+    LocalDateTime timeOfCapture;
 
     public Sensordata(int waterlevel, int airhumidity, int soilhumidity, int lightintensity, int fertilizerlevel, double temperature) {
         this.waterlevel = waterlevel;
@@ -93,7 +94,7 @@ public class Sensordata implements Serializable {
         this.lightintensity = lightintensity;
         this.temperature = temperature;
         this.fertilizerlevel = fertilizerlevel;
-        this.timeOfCapture = new Date();
+        this.timeOfCapture = LocalDateTime.now();
     }
 
     public Sensordata() {
@@ -102,6 +103,6 @@ public class Sensordata implements Serializable {
         this.soilhumidity = 0;
         this.lightintensity = 0;
         this.temperature = 0;
-        this.timeOfCapture = new Date();
+        this.timeOfCapture = LocalDateTime.now();
     }
 }

@@ -11,6 +11,7 @@ import de.hsos.kbse.entities.Arduino;
 import de.hsos.kbse.entities.Sensordata;
 import de.hsos.kbse.entities.User;
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -56,7 +57,7 @@ public class ConsumerMessageListener implements MessageListener, Serializable {
             sd.setAirhumidity(data.getInt("airHumidity"));
             sd.setSoilhumidity(data.getInt("soilHumidity"));
             sd.setTemperature(data.getDouble("temperature"));
-            sd.setTimeOfCapture(new Date());
+            sd.setTimeOfCapture(LocalDateTime.now());
             sd.setArduino(ardToInsert);
             
             sensorRepo.addSensordata(sd);
