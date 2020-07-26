@@ -17,6 +17,9 @@
             <h:form>
                 <b:navbarLinks pull="right">
 
+                    <b:navLink value="Debug" icon-awesome="cog" iconAlign="left" update="@form @(.contentform)"
+                               onclick="ajax:login.setPage('debug')" />
+                    
                     <b:navLink value="Register" icon-awesome="key" iconAlign="left" update="@form @(.contentform)"
                                onclick="ajax:login.showRegister()" rendered="#{login.showRegisterIcon}"/>
                     

@@ -15,40 +15,14 @@
 
         <ui:composition>
             <b:container fluid="true">
-                <b:form>
-                    <b:row>
-                        <b:column medium-screen="2">
-                            <h:outputText value="Username:"/>
-                        </b:column>
-                        <b:column medium-screen="4">
-                            <b:inputText id="username" placeholder="Username" value="#{login.credentials.username}"/>
-                        </b:column>
-                        <b:column medium-screen="6">
-                            <b:message for="username" />
-                        </b:column>
-                    </b:row>
-                    <b:row>
-                        <b:column medium-screen="2">
-                            <h:outputText value="Password:" />
-                        </b:column>
-                        <b:column medium-screen="4">
-                            <b:inputSecret id="password" placeholder="Password" value="#{login.credentials.password}" />
-                        </b:column>
-                        <b:column medium-screen="6">
-                            <b:message for="password" />
-                        </b:column>
-                    </b:row>
-                    <b:row>
-                        <b:column span="4" offset="2">
-
-                            <b:commandButton update="@form" value="Login" action="#{login.login()}" look="primary" style="width:100%" />
-                        </b:column>
-                        
-
-
-                    </b:row>
-
-                </b:form>
+                <h:form>
+                    <p:commandButton value="Info" actionListener="#{debugBoundary.sendFacesMessage()}" update="@form"/>
+                    
+                    <p>Default setting:</p>
+                    <b:messages/>
+                    <p>Unsafe setting (<code>escape="false"</code>):</p>
+                    <b:messages escape="false"/>
+                </h:form>
             </b:container> 
         </ui:composition>
 

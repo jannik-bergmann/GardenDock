@@ -49,13 +49,12 @@
                                             <b:button largeScreen="half"  value="Cancel"
                                                       dismiss="modal" onclick="return false;"/>
                                             <b:commandButton largeScreen="half" update="@form"
-                                                             dismiss="modal"
                                                              value="L&ouml;schen" look="danger"
                                                              actionListener="#{arduino.accountLoeschen()}"
                                                              oncomplete="{ $('.formValidationModalClass').modal('hide') } "/>
                                         </b:column>
                                     </b:row>
-                                    <b:fetchBeanInfos />
+
                                     <b:messages />
                                 </b:form>
                             </b:modal>    

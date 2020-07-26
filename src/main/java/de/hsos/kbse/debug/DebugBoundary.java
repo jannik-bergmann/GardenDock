@@ -14,6 +14,8 @@ import de.hsos.kbse.entities.Sensordata;
 import de.hsos.kbse.entities.User;
 import java.util.List;
 import javax.enterprise.context.ApplicationScoped;
+import javax.faces.application.FacesMessage;
+import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.inject.Named;
 import lombok.Getter;
@@ -113,5 +115,13 @@ public class DebugBoundary {
             System.out.println("ArduinoId:  "+arduino.getArduinoId());
         }
          */
+    }
+    
+    public void sendFacesMessage(){
+        FacesContext.getCurrentInstance().addMessage(
+                    null,
+                    new FacesMessage(FacesMessage.SEVERITY_WARN,
+                            "Falscher Username oder Passwort",
+                            "Bitte geben Sie gültige Nutzerdaten ein"));
     }
 }
