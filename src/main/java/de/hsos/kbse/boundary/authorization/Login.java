@@ -6,12 +6,15 @@
 package de.hsos.kbse.boundary.authorization;
 
 //import de.hsos.kbse.controller.ArduinoUserRepoImpl;
+import de.hsos.kbse.entities.Arduino;
+import de.hsos.kbse.entities.Sensordata;
 import de.hsos.kbse.repos.UserRepository;
 import de.hsos.kbse.entities.authorization.Credentials;
 //import de.hsos.kbse.entities.interfaces.ArduinoUserRepo;
 import de.hsos.kbse.util.SessionUtils;
 import de.hsos.kbse.entities.User;
 import de.hsos.kbse.repos.ArduinoRepository;
+import de.hsos.kbse.repos.SensordataRepository;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -44,20 +47,23 @@ public class Login implements Serializable {
 
     @Inject
     Credentials registerCredentials;
-    
+
     @Inject
     UserRepository arduinoUserRepo;
-    
+
+    @Inject
+    SensordataRepository sensordataRepo;
+
     @Inject
     ArduinoRepository arduinoRepo;
-    
+
     private boolean showRegisterIcon;
 
     private User user;
     private String page;
-    
+
     @PostConstruct
-    private void init(){
+    private void init() {
         page = "loginForm";
         showRegisterIcon = true;
     }
@@ -85,12 +91,11 @@ public class Login implements Serializable {
     private boolean validateUser(Credentials credentials) {
         //TODO: Hole User aus DB
         //List<ArduinoUser> results = arduinoUserRepo.getArduinoUserByCredentials(credentials);
-        
-        List<User> results=  arduinoUserRepo.getArduinoUserByCredentials(credentials);
-        
+
+        List<User> results = arduinoUserRepo.getArduinoUserByCredentials(credentials);
+
         //List<User> results = new ArrayList();
         //results.add(createUser());
-        
         if (!results.isEmpty()) {
 
             user = results.get(0);
@@ -99,10 +104,45 @@ public class Login implements Serializable {
             return false;
         }
     }
-    
-    public String register(){
+
+    public String register() {
         System.out.println("<----->Register");
-        return "";
+        List<User> results = arduinoUserRepo.getArduinoUserByCredentials(registerCredentials);
+
+        //List<User> results = new ArrayList();
+        //results.add(createUser());
+        if (results.isEmpty()) {
+            System.out.println("<------->Result is empty");
+            user = new User();
+            user.setUsername(registerCredentials.getUsername());
+            user.setPwdhash(registerCredentials.getPassword());
+
+            arduinoUserRepo.addUser(user);
+
+            Arduino arduino = new Arduino();
+
+            arduino.setName("arduino-" + user.getUsername());
+            arduino.setComPort("dev/123");
+            arduino.setUser(user);
+            arduinoRepo.addArduino(arduino);
+
+            Sensordata sensordata = new Sensordata(0, 0, 0, 0, 0, 0);
+            sensordata.setArduino(arduino);
+
+            sensordataRepo.addSensordata(sensordata);
+            return "login?faces-redirect=true";
+
+        } else {
+            System.out.println("<------->Result is not empty");
+            FacesContext.getCurrentInstance().addMessage(
+                    null,
+                    new FacesMessage(FacesMessage.SEVERITY_WARN,
+                            "Falscher Username oder Passwort",
+                            "Bitte geben Sie gültige Nutzerdaten ein"));
+
+            return null;
+        }
+
     }
 
     public void timeout() throws IOException {
@@ -138,18 +178,17 @@ public class Login implements Serializable {
         User arduinoUser = new User();
         arduinoUser.setUsername("admin");
         arduinoUser.setPwdhash("admin");
-        
 
         //arduinoUserRepo.newArduinoUser(arduinoUser);
         return arduinoUser;
     }
-    
-    public void showLogin(){
+
+    public void showLogin() {
         this.showRegisterIcon = true;
         this.page = "loginForm";
     }
-    
-    public void showRegister(){
+
+    public void showRegister() {
         this.showRegisterIcon = false;
         this.page = "registerForm";
     }

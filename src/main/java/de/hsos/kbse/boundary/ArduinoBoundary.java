@@ -77,6 +77,7 @@ public class ArduinoBoundary implements Serializable {
         createBarModel();
         this.currentSensorData = new Sensordata(0, 0, 0, 0, 0, 0);
         sensorDataCollection = new ArrayList();
+        
         currentUser = arduinoUserRepo.getUser(SessionUtils.getUserId());
         arduinos = arduinoRepo.getAllArduinosByUser(currentUser);
         //GEtting first Arduino  TODO: Enable user to choose.        
