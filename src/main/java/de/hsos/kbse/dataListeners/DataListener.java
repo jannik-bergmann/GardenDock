@@ -5,6 +5,8 @@
  */
 package de.hsos.kbse.dataListeners;
 
+import de.hsos.kbse.entities.Arduino;
+
 /**
  *
  * @author Basti's
@@ -17,4 +19,5 @@ public interface DataListener {
     public String getArdId();
     public void close();
     public void currentToSetValue();
+    public void setArduino(Arduino ard);
 }

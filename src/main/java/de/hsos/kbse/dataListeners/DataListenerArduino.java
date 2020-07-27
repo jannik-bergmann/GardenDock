@@ -95,6 +95,7 @@ public class DataListenerArduino implements SerialPortDataListener, DataListener
         this.routine();
     }
     
+    @Override
     public void setArduino(Arduino ard) {
         this.arduino = ard;
     }
@@ -158,13 +159,13 @@ public class DataListenerArduino implements SerialPortDataListener, DataListener
             // get last data drom serial Port
             String[] values_split = null;
             values_split = newestDataAsString.split(",");
+           
+            currentToSetValue();
             
+            // sende Message
             if(values_split != null) {
-                // sende Message
                 sendMessage(values_split);
-            }
-            
-            
+            }    
         }, 1, 5, TimeUnit.SECONDS   
         );
     }

@@ -7,11 +7,9 @@ package de.hsos.kbse.iotGateway;
 
 import de.hsos.kbse.dataListeners.DataListenerArduino;
 import de.hsos.kbse.dataListeners.DataListener;
-import java.io.IOException;
 import com.fazecast.jSerialComm.SerialPort;
 import de.hsos.kbse.entities.Arduino;
 import de.hsos.kbse.repos.interfaces.ArduinoRepoInterface;
-import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.ManagedBean;
@@ -94,18 +92,42 @@ public class IotGatewayArduino implements IotGatewayInterface {
     // React to new and altered Arduinos
     @PostRemove
     private void afterRemove(Arduino ard) {
+        DataListener dl = findConnection(ard.getArduinoId());
+        dl.close();
+        this.openConnections.remove(dl);
         System.out.println("Arduino " + ard.getArduinoId() + " deleted");
     }
     
     @PostPersist
     private void afterNew(Arduino ard) {
+        System.out.println("h*******************************************************************i");
+        SerialPort sp = null;
+        sp = SerialPort.getCommPort(ard.getComPort());
+        if (!sp.openPort()) {
+            System.err.println("Error while opening port for Arduino " + ard.getName());
+            return;
+        }
+        sp.setComPortParameters(9600, 8, 1, 0);
+        sp.setComPortTimeouts(SerialPort.TIMEOUT_WRITE_BLOCKING, 0, 0);
+
+        DataListenerArduino ardDataListener = new DataListenerArduino();
+
+        ardDataListener.setArduino(ard);
+        ardDataListener.setSerialPort(sp);
+
+        sp.addDataListener(ardDataListener);
+
+        this.openConnections.add(ardDataListener);
         System.out.println("Arduino " + ard.getArduinoId() + " added");
     }
     
     @PostUpdate
     private void afterUpdate(Arduino ard) {
+        DataListener dl = findConnection(ard.getArduinoId());
+        dl.setArduino(ard);
         System.out.println("Arduino " + ard.getArduinoId() + " updated");
     }
+    
    
     /*** Arduino Functions
      * @param arduinoID ***/

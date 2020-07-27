@@ -15,6 +15,7 @@ import de.hsos.kbse.repos.interfaces.ArduinoRepoInterface;
 import de.hsos.kbse.repos.interfaces.SensordataRepoInterface;
 import de.hsos.kbse.repos.interfaces.UserRepoInterface;
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -83,8 +84,10 @@ public class StreamAnalytics implements Serializable {
             Logger.getLogger(StreamAnalytics.class.getName()).log(Level.SEVERE, null, ex);
         }
         
-        // Initial data
+        iotgateway.startUp();
         
+        // Initial data
+        /*
         Arduino ard = new Arduino();
         User user = new User();
         user.setPwdhash("admin");
@@ -93,10 +96,11 @@ public class StreamAnalytics implements Serializable {
         ard.setUser(user);
         ard.setName("ard2");
         ard.setComPort("dev/1");
+        ard.setSetWaterLevel(5);
         ard.setFertilizerIntervallInDays(5);
+        ard.setLastFertilization(LocalDateTime.now());
         ardRepo.addArduino(ard);
-        
-        iotgateway.startUp();
+        */
     }
         
     @PreDestroy
