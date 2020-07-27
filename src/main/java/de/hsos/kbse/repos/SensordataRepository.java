@@ -102,9 +102,7 @@ public class SensordataRepository implements SensordataRepoInterface, Serializab
     
     @Override
     public List<Sensordata> getAllSensordata() {
-        em.getTransaction().begin();
         List<Sensordata> data = em.createQuery("SELECT h FROM Sensordata h", Sensordata.class).getResultList();
-        em.getTransaction().commit();
         if (data.isEmpty()) {
             return null;
         }
@@ -113,11 +111,9 @@ public class SensordataRepository implements SensordataRepoInterface, Serializab
 
     @Override
     public List<Sensordata> getLast100Entries() {
-        em.getTransaction().begin();
         List<Sensordata> data = em.createQuery("select t from Sensordata t order by t.timeOfCapture desc", Sensordata.class)
                 .setMaxResults(100)
                 .getResultList();
-        em.getTransaction().commit();
         if (data.isEmpty()) {
             return null;
         }
@@ -126,7 +122,6 @@ public class SensordataRepository implements SensordataRepoInterface, Serializab
     
     @Override
     public Sensordata getLast(Arduino arduino) {
-        em.getTransaction().begin();
         Sensordata sd = null;
         try {
             sd = em.createQuery("select t from Sensordata t where t.arduino=:arduino order by t.timeOfCapture desc", Sensordata.class)
@@ -137,20 +132,17 @@ public class SensordataRepository implements SensordataRepoInterface, Serializab
             System.err.println(ex.toString());
         }
         
-        em.getTransaction().commit();
-        
         if(sd == null) return null;
         return sd;
     }
     
     @Override
     public List<Sensordata> getLast100EntriesByArduino(Arduino arduino) {
-        em.getTransaction().begin();
         List<Sensordata> data = em.createQuery("select t from Sensordata t where t.arduino=:arduino order by t.timeOfCapture desc", Sensordata.class)
                 .setParameter("arduino", arduino)
                 .setMaxResults(100)
                 .getResultList();
-        em.getTransaction().commit();
+
         if (data.isEmpty()) {
             return null;
         }

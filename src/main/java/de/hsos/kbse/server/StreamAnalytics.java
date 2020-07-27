@@ -6,6 +6,7 @@
 package de.hsos.kbse.server;
 
 import de.hsos.kbse.entities.Arduino;
+import de.hsos.kbse.entities.Sensordata;
 import de.hsos.kbse.entities.User;
 import de.hsos.kbse.iotGateway.GatewayModeArduino;
 import de.hsos.kbse.jms.ConsumerMessageListener;
@@ -86,6 +87,25 @@ public class StreamAnalytics implements Serializable {
         
         iotgateway.startUp();
         
+        
+        User usr1 = new User();
+        usr1.setPwdhash("admin");
+        usr1.setUsername("admin");
+        usrRepo.addUser(usr1);
+        Sensordata sd = new Sensordata();
+        sd.setAirhumidity(33);
+        sd.setSoilhumidity(33);
+        Arduino ardi = new Arduino();
+        ardi.setComPort("123");
+        ardi.setFertilizerIntervallInDays(5);
+        ardi.setLastFertilization(LocalDateTime.now());
+        ardi.setName("asf");
+        ardi.setSetWaterLevel(0);
+        ardi.setUser(usr1);
+        ardRepo.addArduino(ardi);
+        sd.setArduino(ardi);
+        sensorRepo.addSensordata(sd);
+        
         // Initial data
         /*
         Arduino ard = new Arduino();
@@ -117,7 +137,7 @@ public class StreamAnalytics implements Serializable {
     }
     
     public void fertilizerPumpOn(String arduinoID) {
-        iotgateway.dungPumpOn(arduinoID);
+        iotgateway.fertilizerPumpOn(arduinoID);
     }
     
     public void waterPumpOff(String arduinoID) {
@@ -125,6 +145,6 @@ public class StreamAnalytics implements Serializable {
     }
     
     public void fertilizerPumpOff(String arduinoID) {
-        iotgateway.dungPumpOff(arduinoID);
+        iotgateway.fertilizerPumpOff(arduinoID);
     }
 }

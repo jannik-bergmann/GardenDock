@@ -99,7 +99,7 @@ public class IotGatewaySimulator implements IotGatewayInterface {
     
     @PostPersist
     private void afterNew(Arduino ard) {
-        
+        if(this.dataListeners == null) return;
         DataListenerSimulated sdl = new DataListenerSimulated();
         if (sdl == null) {
             System.err.println("Error while creating ArduinoDataListener for Arduino " + ard.getName());
@@ -132,7 +132,7 @@ public class IotGatewaySimulator implements IotGatewayInterface {
     }
 
     @Override
-    public void dungPumpOn(String arduinoID) {
+    public void fertilizerPumpOn(String arduinoID) {
         DataListener dl = findConnection(arduinoID);
         if(dl == null) {
             System.err.println("Error while turning waterpump on: getting IotConnection of Arduino" + arduinoID);
@@ -152,7 +152,7 @@ public class IotGatewaySimulator implements IotGatewayInterface {
     }
 
     @Override
-    public void dungPumpOff(String arduinoID) {
+    public void fertilizerPumpOff(String arduinoID) {
         DataListener dl = findConnection(arduinoID);
         if(dl == null) {
             System.err.println("Error while turning waterpump on: getting IotConnection of Arduino" + arduinoID);

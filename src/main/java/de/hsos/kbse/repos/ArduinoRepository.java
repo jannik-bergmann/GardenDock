@@ -104,9 +104,7 @@ public class ArduinoRepository implements ArduinoRepoInterface, Serializable {
     
     @Override
     public List<Arduino> getAllArduino() {
-        em.getTransaction().begin();
         List<Arduino> data = em.createQuery("SELECT h FROM Arduino h", Arduino.class).getResultList();
-        em.getTransaction().commit();
         if (data.isEmpty()) {
             return null;
         }
@@ -115,11 +113,9 @@ public class ArduinoRepository implements ArduinoRepoInterface, Serializable {
     
     @Override
     public List<Arduino> getAllArduinosByUser(User user) {
-        em.getTransaction().begin();
         List<Arduino> data = em.createQuery("SELECT h FROM Arduino h where h.user=:user", Arduino.class)
                 .setParameter("user", user)
                 .getResultList();
-        em.getTransaction().commit();
         if (data.isEmpty()) {
             return null;
         }

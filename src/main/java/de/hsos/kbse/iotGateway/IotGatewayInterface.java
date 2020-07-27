@@ -14,9 +14,9 @@ import de.hsos.kbse.dataListeners.DataListener;
 public interface IotGatewayInterface {
     void cleanup();
     void waterPumpOn(String arduinoID);
-    void dungPumpOn(String arduinoID);
+    void fertilizerPumpOn(String arduinoID);
     void waterPumpOff(String arduinoID);
-    void dungPumpOff(String arduinoID);
+    void fertilizerPumpOff(String arduinoID);
     void startUp();
     DataListener findConnection(String ardID);
 }

@@ -88,18 +88,14 @@ public class UserRepository implements UserRepoInterface, Serializable {
     
     @Override
     public List<User> getAllUser() {
-        em.getTransaction().begin();
         List<User> data = em.createQuery("SELECT h FROM User h" , User.class).getResultList();
-        em.getTransaction().commit();
         if(data.isEmpty()) return null;
         return data;
     }
     
     @Override
     public List<User> getArduinoUserByCredentials(Credentials credentials) {
-        em.getTransaction().begin();
         Query query = em.createQuery("select u from User u where u.username=:username and u.pwdhash=:passwordhash" ,User.class);
-        em.getTransaction().commit();
         query.setParameter("username", credentials.getUsername());
         query.setParameter("passwordhash", credentials.getPassword());
 
