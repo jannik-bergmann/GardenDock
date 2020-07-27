@@ -45,6 +45,6 @@ public class User implements Serializable {
     @ToString.Include
     private String pwdhash;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.MERGE)
     private Set<Arduino> arduinos = new HashSet<>();
 }

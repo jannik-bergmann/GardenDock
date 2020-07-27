@@ -8,6 +8,7 @@ import com.fazecast.jSerialComm.SerialPort;
 import de.hsos.kbse.dataListeners.DataListenerSimulated;
 import de.hsos.kbse.dataListeners.DataListener;
 import de.hsos.kbse.entities.Arduino;
+import de.hsos.kbse.entities.User;
 import de.hsos.kbse.repos.interfaces.ArduinoRepoInterface;
 import de.hsos.kbse.repos.interfaces.SensordataRepoInterface;
 import java.util.ArrayList;
@@ -16,6 +17,9 @@ import javax.annotation.ManagedBean;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.inject.Inject;
+import javax.persistence.PostPersist;
+import javax.persistence.PostRemove;
+import javax.persistence.PostUpdate;
 import lombok.NoArgsConstructor;
 
 @GatewayModeSimulator
@@ -30,7 +34,7 @@ public class IotGatewaySimulator implements IotGatewayInterface {
     SensordataRepoInterface sensorRepo;
     
     // Simulator
-    private List<DataListener> openSimulatedConnections;
+    private List<DataListener> dataListeners;
     
     // Other
     private boolean closed;
@@ -38,7 +42,7 @@ public class IotGatewaySimulator implements IotGatewayInterface {
     @PostConstruct
     public void init() {
         // Get all Arduinos from DB and create IotSimulater
-        this.openSimulatedConnections = new ArrayList<>();
+        this.dataListeners = new ArrayList<>();
         
     }
     
@@ -54,14 +58,14 @@ public class IotGatewaySimulator implements IotGatewayInterface {
             if(sdl == null) continue;
             sdl.setArduino(ard);
             sdl.init();
-            this.openSimulatedConnections.add(sdl);
+            this.dataListeners.add(sdl);
         }
     }
     
     @PreDestroy
     @Override
     public void cleanup() {
-        openSimulatedConnections.forEach((con) -> {
+        dataListeners.forEach((con) -> {
             con.close();
         });
         this.closed = true;
@@ -74,53 +78,70 @@ public class IotGatewaySimulator implements IotGatewayInterface {
         if(ard == null) return null;
         
         // Check if right IotConnection and return if correct
-        for(DataListener con : this.openSimulatedConnections) {
+        for(DataListener con : this.dataListeners) {
             if(con.getArdId().equals(arduinoID)) {
                 return con;
             }
         }
-        
         return null;
     }
     
+    
+    // React to new and altered Arduinos
+    @PostRemove
+    private void afterRemove(Arduino ard) {
+        System.out.println("ard Removed");
+    }
+    
+    @PostPersist
+    private void afterNew(Arduino ard) {
+        System.out.println("Arduino " + ard.getArduinoId() + " added");
+    }
+    
+    @PostUpdate
+    private void afterUpdate(Arduino ard) {
+        
+    }
+    
+    // Water and Fertilizerpump
     @Override
     public void waterPumpOn(String arduinoID) {
-        DataListener sic = findConnection(arduinoID);
-        if(sic == null) {
+        DataListener dl = findConnection(arduinoID);
+        if(dl == null) {
             System.err.println("Error while turning waterpump on: getting IotConnection of Arduino" + arduinoID);
             return;
         } 
-        sic.waterOn();
+        dl.waterOn();
     }
 
     @Override
     public void dungPumpOn(String arduinoID) {
-        DataListener sic = findConnection(arduinoID);
-        if(sic == null) {
+        DataListener dl = findConnection(arduinoID);
+        if(dl == null) {
             System.err.println("Error while turning waterpump on: getting IotConnection of Arduino" + arduinoID);
             return;
         } 
-        sic.fertilizerOn();
+        dl.fertilizerOn();
     }
 
     @Override
     public void waterPumpOff(String arduinoID) {
-        DataListener sic = findConnection(arduinoID);
-        if(sic == null) {
+        DataListener dl = findConnection(arduinoID);
+        if(dl == null) {
             System.err.println("Error while turning waterpump on: getting IotConnection of Arduino" + arduinoID);
             return;
         } 
-        sic.waterOff();
+        dl.waterOff();
     }
 
     @Override
     public void dungPumpOff(String arduinoID) {
-        DataListener sic = findConnection(arduinoID);
-        if(sic == null) {
+        DataListener dl = findConnection(arduinoID);
+        if(dl == null) {
             System.err.println("Error while turning waterpump on: getting IotConnection of Arduino" + arduinoID);
             return;
         } 
-        sic.fertilizerOff();
+        dl.fertilizerOff();
     }
    
 }

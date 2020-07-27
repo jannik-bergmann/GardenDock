@@ -5,16 +5,19 @@
  */
 package de.hsos.kbse.entities;
 
+import de.hsos.kbse.iotGateway.IotGatewaySimulator;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.PostPersist;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
@@ -34,6 +37,7 @@ import org.hibernate.annotations.GenericGenerator;
 @Setter
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @ToString(onlyExplicitlyIncluded = true)
+@EntityListeners(IotGatewaySimulator.class)
 public class Arduino implements Serializable {
 
     @Id
@@ -49,7 +53,7 @@ public class Arduino implements Serializable {
     @ToString.Include
     private String name;
 
-    @OneToMany(mappedBy = "arduino", cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "arduino", cascade = CascadeType.MERGE)
     private Set<Sensordata> sensorDatas = new HashSet<>();
 
     @NotNull
@@ -72,4 +76,5 @@ public class Arduino implements Serializable {
         this.fertilizerIntervallInDays = 0;
         this.lastFertilization = LocalDateTime.now();
     }
+    
 }
