@@ -182,6 +182,8 @@ public class ArduinoBoundary implements Serializable {
         model.addSeries(soilhumidity);
         model.addSeries(airhumidity);
         model.addSeries(lightintensity);
+        model.addSeries(fertilizer);
+        model.addSeries(temperature);
         
         return model;
     }
