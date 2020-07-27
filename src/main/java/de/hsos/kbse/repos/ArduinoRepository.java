@@ -17,6 +17,7 @@ import javax.persistence.Persistence;
 import javax.persistence.PersistenceException;
 import lombok.NoArgsConstructor;
 import de.hsos.kbse.entities.User;
+import java.util.ArrayList;
 
 /**
  *
@@ -82,8 +83,11 @@ public class ArduinoRepository implements ArduinoRepoInterface, Serializable {
         if (ard == null) {
             return null;
         }
+        Arduino toUpdate = em.find(Arduino.class, ard.getArduinoId());
         em.getTransaction().begin();
-        em.merge(ard);
+        toUpdate.setComPort(ard.getComPort());
+        toUpdate.setFertilizerIntervallInDays(ard.getFertilizerIntervallInDays());
+        toUpdate.setSetWaterLevel(ard.getSetWaterLevel());
         em.getTransaction().commit();
         Arduino temp = em.find(Arduino.class, ard.getArduinoId());
         if (temp == null) {
@@ -104,7 +108,8 @@ public class ArduinoRepository implements ArduinoRepoInterface, Serializable {
     
     @Override
     public List<Arduino> getAllArduino() {
-        List<Arduino> data = em.createQuery("SELECT h FROM Arduino h", Arduino.class).getResultList();
+        List<Arduino> data = new ArrayList<>();
+        data = em.createQuery("SELECT h FROM Arduino h", Arduino.class).getResultList();
         if (data.isEmpty()) {
             return null;
         }

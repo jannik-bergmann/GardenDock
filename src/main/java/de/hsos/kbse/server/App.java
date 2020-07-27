@@ -41,7 +41,5 @@ public class App {
     public void fertilizerPumpOff(String arduinoID) {
         server.fertilizerPumpOff(arduinoID);
     }
-    
-    
-    
+
 }

@@ -21,7 +21,6 @@ import javax.persistence.PostUpdate;
 import lombok.NoArgsConstructor;
 
 @GatewayModeSimulator
-@NoArgsConstructor
 @ManagedBean
 public class IotGatewaySimulator implements IotGatewayInterface {
     
@@ -37,16 +36,13 @@ public class IotGatewaySimulator implements IotGatewayInterface {
     // Other
     private boolean closed;
     
-    @PostConstruct
-    public void init() {
-        // Get all Arduinos from DB and create IotSimulater
+    public IotGatewaySimulator() {
         this.dataListeners = new ArrayList<>();
-        
     }
     
     @Override
     public void startUp() {
-        List<Arduino> arduinos = null;
+        List<Arduino> arduinos = new ArrayList<>();
         if((arduinos = arduinoRepo.getAllArduino())== null) {
             System.out.println("**************************** init error");
             return;
@@ -66,15 +62,16 @@ public class IotGatewaySimulator implements IotGatewayInterface {
     @PreDestroy
     @Override
     public void cleanup() {
-        dataListeners.forEach((con) -> {
-            con.close();
-        });
+        for(DataListener dl : this.dataListeners) {
+            dl.close();
+        }
         this.closed = true;
     }
     
     @Override
     public DataListener findConnection(String arduinoID) {
         // Get Arduino
+        if(this.arduinoRepo == null) { return null; }
         Arduino ard = arduinoRepo.getArduino(arduinoID);
         if(ard == null) return null;
         
@@ -122,6 +119,7 @@ public class IotGatewaySimulator implements IotGatewayInterface {
         System.out.println("h*******************************************************************i");
         if(ard == null) return;   
         DataListener dl = findConnection(ard.getArduinoId());
+        if(dl == null) return;
         dl.setArduino(ard);
         System.out.println("Arduino " + ard.getArduinoId() + " updated");
 

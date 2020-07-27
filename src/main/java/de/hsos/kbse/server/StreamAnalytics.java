@@ -87,40 +87,6 @@ public class StreamAnalytics implements Serializable {
         
         iotgateway.startUp();
         
-        
-        User usr1 = new User();
-        usr1.setPwdhash("admin");
-        usr1.setUsername("admin");
-        usrRepo.addUser(usr1);
-        Sensordata sd = new Sensordata();
-        sd.setAirhumidity(33);
-        sd.setSoilhumidity(33);
-        Arduino ardi = new Arduino();
-        ardi.setComPort("123");
-        ardi.setFertilizerIntervallInDays(5);
-        ardi.setLastFertilization(LocalDateTime.now());
-        ardi.setName("asf");
-        ardi.setSetWaterLevel(0);
-        ardi.setUser(usr1);
-        ardRepo.addArduino(ardi);
-        sd.setArduino(ardi);
-        sensorRepo.addSensordata(sd);
-        
-        // Initial data
-        /*
-        Arduino ard = new Arduino();
-        User user = new User();
-        user.setPwdhash("admin");
-        user.setUsername("admin");
-        usrRepo.addUser(user);
-        ard.setUser(user);
-        ard.setName("ard2");
-        ard.setComPort("dev/1");
-        ard.setSetWaterLevel(5);
-        ard.setFertilizerIntervallInDays(5);
-        ard.setLastFertilization(LocalDateTime.now());
-        ardRepo.addArduino(ard);
-        */
     }
         
     @PreDestroy

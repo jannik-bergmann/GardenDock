@@ -56,6 +56,7 @@ public class DataListenerSimulated implements DataListener {
     // Others
     private Random rand;
     private Arduino arduino;
+    private boolean closed;
     
     // Repos
     private SensordataRepoInterface sensordataRepo;
@@ -63,6 +64,7 @@ public class DataListenerSimulated implements DataListener {
 
     public DataListenerSimulated() {
         rand = new Random();
+        closed = false;
         
         // Repos 
         this.sensordataRepo = new SensordataRepository();
@@ -133,6 +135,7 @@ public class DataListenerSimulated implements DataListener {
     
     private void sendMessage(String[] values_split) {
         System.out.println("Send data" + values_split.toString());
+        if(session == null || closed) return;
         try {
             MapMessage msg = session.createMapMessage();
             msg.setInt("waterMeter", Integer.parseInt(values_split[0]));
@@ -252,9 +255,11 @@ public class DataListenerSimulated implements DataListener {
     // Stop scheduler
     @Override
     public void close() {
-        scheduler.shutdownNow();
+        this.scheduler.shutdownNow();
+        this.closed = true;
         try {
             this.session.close();
+            this.session = null;
         } catch (JMSException ex) {
             Logger.getLogger(DataListenerSimulated.class.getName()).log(Level.SEVERE, null, ex);
         }
