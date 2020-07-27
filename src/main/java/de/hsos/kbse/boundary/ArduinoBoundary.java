@@ -71,10 +71,15 @@ public class ArduinoBoundary implements Serializable {
     private BarChartModel barModel;
 
     List<Sensordata> sensorDataCollection;
+    
+    private boolean waterPumpIsOn;
+    private boolean fertilizerPumpIsOn;
 
     @PostConstruct
     public void init() {
 
+        waterPumpIsOn = false;
+        fertilizerPumpIsOn = false;
         page = "landing";
         createBarModel();
         sensorDataCollection = new ArrayList();
@@ -279,12 +284,25 @@ public class ArduinoBoundary implements Serializable {
     }
 
     public void showFacesMessage() {
+        arduinoRepo.updateArduino(currentArduino);
         accountLoeschen();
         FacesContext.getCurrentInstance().addMessage(
                 null,
                 new FacesMessage(FacesMessage.SEVERITY_WARN,
                         "Falscher Username oder Passwort",
                         "Bitte geben Sie gültige Nutzerdaten ein"));
+    }
+    
+    public void toggleWaterPump(){
+        if(waterPumpIsOn){
+            System.out.println("<------->StoppedPumping");
+            waterPumpIsOn = false;
+        }
+        else{
+            System.out.println("<------->NowPumping");
+            waterPumpIsOn = true;
+        }
+        
     }
 
 }

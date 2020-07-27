@@ -56,7 +56,7 @@
                                         <h:outputText value="Soll-Wert Wasserf&uuml;stand:"/>
                                     </b:column>
                                     <b:column medium-screen="4">
-                                        <b:inputText id="setWaterlevel" placeholder="Sollwert" value=" "/>
+                                        <b:inputText id="setWaterlevel" placeholder="Sollwert" value="#{arduino.currentArduino.setWaterLevel}"/>
                                     </b:column>
                                     <b:column medium-screen="6">
                                         <b:message for="setWaterlevel"/>
@@ -72,6 +72,16 @@
                             </b:panel>
 
                         </b:form>
+                    </b:column>
+                </b:row>
+                <b:row>
+                    <b:column>
+                        <h1>Wasser-Pumpensterung:</h1>
+                    </b:column>
+                </b:row>
+                <b:row>
+                    <b:column>
+                        <b:commandButton ajax="true" value="#{arduino.waterPumpIsOn ? 'Pumpe aktivieren' : 'Pumpe deaktivieren'}" actionListener="#{arduino.toggleWaterPump()}" look="primary"/>
                     </b:column>
                 </b:row>
             </b:column>
