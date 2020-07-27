@@ -4,11 +4,9 @@ package de.hsos.kbse.iotGateway;
  *
  * @author bastianluhrspullmann
  */
-import com.fazecast.jSerialComm.SerialPort;
 import de.hsos.kbse.dataListeners.DataListenerSimulated;
 import de.hsos.kbse.dataListeners.DataListener;
 import de.hsos.kbse.entities.Arduino;
-import de.hsos.kbse.entities.User;
 import de.hsos.kbse.repos.interfaces.ArduinoRepoInterface;
 import de.hsos.kbse.repos.interfaces.SensordataRepoInterface;
 import java.util.ArrayList;
@@ -55,7 +53,10 @@ public class IotGatewaySimulator implements IotGatewayInterface {
         }
         for(Arduino ard : arduinos) {
             DataListenerSimulated sdl = new DataListenerSimulated();
-            if(sdl == null) continue;
+            if(sdl == null) {
+                System.err.println("Error while creating SimulatedDataListener for Arduino " + ard.getName());
+                continue;
+            }
             sdl.setArduino(ard);
             sdl.init();
             this.dataListeners.add(sdl);
@@ -90,17 +91,33 @@ public class IotGatewaySimulator implements IotGatewayInterface {
     // React to new and altered Arduinos
     @PostRemove
     private void afterRemove(Arduino ard) {
+        DataListener dl = findConnection(ard.getArduinoId());
+        dl.close();
+        this.dataListeners.remove(dl);
         System.out.println("ard Removed");
     }
     
     @PostPersist
     private void afterNew(Arduino ard) {
+        
+        DataListenerSimulated sdl = new DataListenerSimulated();
+        if (sdl == null) {
+            System.err.println("Error while creating ArduinoDataListener for Arduino " + ard.getName());
+            return;
+        }
+        sdl.setArduino(ard);
+        sdl.init();
+        this.dataListeners.add(sdl);
+
         System.out.println("Arduino " + ard.getArduinoId() + " added");
     }
     
     @PostUpdate
     private void afterUpdate(Arduino ard) {
-        
+                System.out.println("h*******************************************************************i");
+        DataListener dl = findConnection(ard.getArduinoId());
+        dl.setArduino(ard);
+        System.out.println("Arduino " + ard.getArduinoId() + " updated");
     }
     
     // Water and Fertilizerpump

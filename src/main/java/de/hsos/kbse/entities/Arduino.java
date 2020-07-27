@@ -66,11 +66,12 @@ public class Arduino implements Serializable {
     private int fertilizerIntervallInDays;
     
     // Timestamp
-    @NotNull
     @ToString.Include
+    @NotNull
     private LocalDateTime lastFertilization;
     
     public Arduino() {
+        this.setWaterLevel = 0;
         this.comPort = "";
         this.name = "";
         this.fertilizerIntervallInDays = 0;

@@ -81,8 +81,8 @@ public class DataListenerSimulated implements DataListener {
             Topic topicProducer = (Topic) context.lookup("jms.Topic");
             producer = session.createPublisher(topicProducer);
             
-            //Topic topicWarnings = (Topic) context.lookup("jms.Warning");
-            //emptyWarner = session.createPublisher(topicWarnings);
+            Topic topicWarnings = (Topic) context.lookup("jms.Warning");
+            emptyWarner = session.createPublisher(topicWarnings);
         } catch (JMSException | NamingException ex) {
             Logger.getLogger(DataListenerSimulated.class.getName()).log(Level.SEVERE, null, ex);
         }  
@@ -90,7 +90,6 @@ public class DataListenerSimulated implements DataListener {
     
     public void init() {
         // Init 'lastValues' for Simulation
-        System.out.println("listener init");
         Sensordata lastData = sensordataRepo.getLast(arduino);
         if(lastData != null) { 
             lastValues = new int[6];
@@ -107,10 +106,6 @@ public class DataListenerSimulated implements DataListener {
             }
         }
         this.routine();
-    }
-    
-    public void setArduino(Arduino ard) {
-        this.arduino = ard;
     }
     
     // Send jms message to topic emptyTankWarning
@@ -223,13 +218,10 @@ public class DataListenerSimulated implements DataListener {
                 val = Integer.parseInt(values_split[i]);
                 i++;
             }
-            
-            
             currentToSetValue();
             
             // sende Message
             sendMessage(values_split);
-            
         }, 1, 5, TimeUnit.SECONDS   
         );
     }
@@ -262,6 +254,11 @@ public class DataListenerSimulated implements DataListener {
         scheduler.shutdownNow();
         System.out.println("Port " + arduino.getComPort() + " closed :)");
     }
+     
+    @Override
+    public void setArduino(Arduino ard) {
+        this.arduino = ard;
+    }
     
     @Override
     public String getArdId() {
@@ -273,9 +270,10 @@ public class DataListenerSimulated implements DataListener {
         if(this.lastValues[0] == 0) {
             this.lastValues[0] = 0;
             sendTankEmptyWarning("water");
+        } else {
+            this.lastValues[0] -= 1;
         }
-        this.lastValues[0] -= 1;
-        
+
         if(this.lastValues[4] > 95) this.lastValues[4] = 100;
         this.lastValues[4] += 4;
         
