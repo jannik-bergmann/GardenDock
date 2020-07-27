@@ -208,11 +208,6 @@ public class DataListenerArduino implements SerialPortDataListener, DataListener
     @Override
     public void close() {
         scheduler.shutdownNow();
-        if (this.sp.closePort()) {
-            System.out.println("Port " + this.sp.toString() + "is closed :)");
-        } else {
-            System.out.println("Failed to close port :(");
-        }
     }
     
     @Override

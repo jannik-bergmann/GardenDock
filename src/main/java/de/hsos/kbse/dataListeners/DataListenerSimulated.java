@@ -57,7 +57,6 @@ public class DataListenerSimulated implements DataListener {
     private Arduino arduino;
     
     // Repos
-
     private SensordataRepoInterface sensordataRepo;
     private ArduinoRepoInterface arduinoRepo;
 
@@ -261,7 +260,7 @@ public class DataListenerSimulated implements DataListener {
     @Override
     public void close() {
         scheduler.shutdownNow();
-        System.out.println("Port " + arduino.getComPort() + "is closed :)");
+        System.out.println("Port " + arduino.getComPort() + " closed :)");
     }
     
     @Override
@@ -292,8 +291,9 @@ public class DataListenerSimulated implements DataListener {
         this.lastValues[1] -= 2;
         
         // Update Ferilization date in DB
-        arduino.setLastFertilization(LocalDateTime.now());
-        arduinoRepo.updateArduino(arduino);
+        Arduino ardTemp = arduinoRepo.getArduino(arduino.getArduinoId());
+        ardTemp.setLastFertilization(LocalDateTime.now());
+        arduinoRepo.updateArduino(ardTemp);
         System.out.println("Arduino " + this.arduino.getArduinoId() + ": Fertilizerpump on");
     }
     

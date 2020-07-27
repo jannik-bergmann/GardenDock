@@ -18,6 +18,9 @@ import javax.annotation.ManagedBean;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.inject.Inject;
+import javax.persistence.PostPersist;
+import javax.persistence.PostRemove;
+import javax.persistence.PostUpdate;
 import lombok.NoArgsConstructor;
 
 @GatewayModeArduino
@@ -86,6 +89,22 @@ public class IotGatewayArduino implements IotGatewayInterface {
         this.openConnections.forEach((dl) -> {
             dl.close();
         });
+    }
+    
+    // React to new and altered Arduinos
+    @PostRemove
+    private void afterRemove(Arduino ard) {
+        System.out.println("Arduino " + ard.getArduinoId() + " deleted");
+    }
+    
+    @PostPersist
+    private void afterNew(Arduino ard) {
+        System.out.println("Arduino " + ard.getArduinoId() + " added");
+    }
+    
+    @PostUpdate
+    private void afterUpdate(Arduino ard) {
+        System.out.println("Arduino " + ard.getArduinoId() + " updated");
     }
    
     /*** Arduino Functions

@@ -7,6 +7,7 @@ package de.hsos.kbse.server;
 
 import de.hsos.kbse.entities.Arduino;
 import de.hsos.kbse.entities.User;
+import de.hsos.kbse.iotGateway.GatewayModeArduino;
 import de.hsos.kbse.jms.ConsumerMessageListener;
 import de.hsos.kbse.iotGateway.GatewayModeSimulator;
 import de.hsos.kbse.iotGateway.IotGatewayInterface;
@@ -20,6 +21,7 @@ import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.annotation.Resource;
+import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Singleton;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -39,7 +41,6 @@ import lombok.NoArgsConstructor;
  * @author Basti's
  */
 
-//@ApplicationScoped
 @Singleton
 @Named
 @NoArgsConstructor
@@ -68,6 +69,7 @@ public class StreamAnalytics implements Serializable {
     // For The Gateways
     private List<User> users;
     
+    
     @PostConstruct
     private void init() {
         // Setup jms connection as receiver
@@ -82,7 +84,7 @@ public class StreamAnalytics implements Serializable {
         }
         
         // Initial data
-        /*
+        
         Arduino ard = new Arduino();
         User user = new User();
         user.setPwdhash("admin");
@@ -93,13 +95,17 @@ public class StreamAnalytics implements Serializable {
         ard.setComPort("dev/1");
         ard.setFertilizerIntervallInDays(5);
         ardRepo.addArduino(ard);
-        */
+        
         iotgateway.startUp();
     }
         
     @PreDestroy
     private void cleanup() {
        iotgateway.cleanup();
+    }
+    
+    public static void updatedValues() {
+        
     }
     
     public void waterPumpOn(String arduinoID) {
