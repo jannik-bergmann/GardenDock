@@ -131,7 +131,7 @@ public class Login implements Serializable {
             arduino.setUser(user);
             arduinoRepo.addArduino(arduino);
 
-            Sensordata sensordata = new Sensordata(0, 0, 0, 0, 0, 0);
+            Sensordata sensordata = new Sensordata(23, 12, 45, 63, 12, 19.5);
             sensordata.setArduino(arduino);
 
             sensordataRepo.addSensordata(sensordata);
