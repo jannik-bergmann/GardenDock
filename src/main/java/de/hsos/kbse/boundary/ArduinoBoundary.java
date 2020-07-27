@@ -139,7 +139,7 @@ public class ArduinoBoundary implements Serializable {
     private void createBarModel() {
         barModel = initBarModel();
         
-        barModel.setTitle("Füllstände");
+        barModel.setTitle("Fuellstaende");
         barModel.setLegendPosition("ne");
         
         Axis xAxis = barModel.getAxis(AxisType.X);
@@ -155,7 +155,7 @@ public class ArduinoBoundary implements Serializable {
         BarChartModel model = new BarChartModel();
         
         ChartSeries waterlevel = new ChartSeries();
-        waterlevel.setLabel("Wasserfüllstand");
+        waterlevel.setLabel("Wasserfuellstand");
         waterlevel.set("", currentSensorData.getWaterlevel());
         
         ChartSeries soilhumidity = new ChartSeries();

@@ -126,6 +126,6 @@ public class DebugBoundary {
                     null,
                     new FacesMessage(FacesMessage.SEVERITY_WARN,
                             "Falscher Username oder Passwort",
-                            "Bitte geben Sie gültige Nutzerdaten ein"));
+                            "Bitte geben Sie gueltige Nutzerdaten ein"));
     }
 }

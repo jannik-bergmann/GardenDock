@@ -173,7 +173,7 @@ public class DataListenerArduino implements SerialPortDataListener, DataListener
     // Routine for automatically water and fertilize the bed of the arduino
     @Override
     public void currentToSetValue() {
-        // TODO: eleganter lösen --> evtl. über databse
+        // TODO: eleganter loesen --> evtl. ueber databse
         int currentSoilhumidity = Integer.parseInt(newestDataAsString.split(",")[4]);
         // Check soilhumidity
         if(arduino.getSetWaterLevel() > currentSoilhumidity) {

@@ -38,7 +38,7 @@ public class IoTDeviceGatewayMock {
     }
 
     public void receiveData() {
-        System.out.println("Die Daten werden erhalten °D°");
+        System.out.println("Die Daten werden erhalten ");
 
         final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
 
