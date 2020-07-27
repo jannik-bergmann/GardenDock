@@ -289,12 +289,12 @@ public class ArduinoBoundary implements Serializable {
     
     public void changeWaterlevel() {
         
-        arduinoRepo.updateArduino(currentArduino);
+        currentArduino = arduinoRepo.updateArduino(currentArduino);
         
     }
     
     public void changeFertilizerLevel(){
-        arduinoRepo.updateArduino(currentArduino);
+        currentArduino = arduinoRepo.updateArduino(currentArduino);
     }
     
     public void toggleWaterPump() {
