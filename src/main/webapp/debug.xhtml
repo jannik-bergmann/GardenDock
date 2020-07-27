@@ -16,12 +16,21 @@
         <ui:composition>
             <b:container fluid="true">
                 <h:form>
-                    <p:commandButton value="Info" actionListener="#{debugBoundary.sendFacesMessage()}" update="@form"/>
-                    
-                    <p>Default setting:</p>
-                    <b:messages/>
-                    <p>Unsafe setting (<code>escape="false"</code>):</p>
-                    <b:messages escape="false"/>
+                    <b:row>
+                        <b:column span="2" offset="2">
+                            <b:commandButton update="@form" value="AddData2User" action="#{debugBoundary.persistSensorData()}" look="primary" style="width:100%" />
+
+                        </b:column>
+                    </b:row>
+                    <b:row>
+
+
+                        <b:column span="2" offset="2">
+                            <b:commandButton update="@form" value="ErstelleUser" action="#{debugBoundary.persistArduino()}" look="primary" style="width:100%" />
+
+                        </b:column>
+
+                    </b:row>
                 </h:form>
             </b:container> 
         </ui:composition>

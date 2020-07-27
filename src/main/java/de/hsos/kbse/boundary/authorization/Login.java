@@ -17,6 +17,7 @@ import de.hsos.kbse.repos.ArduinoRepository;
 import de.hsos.kbse.repos.SensordataRepository;
 import java.io.IOException;
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.PostConstruct;
@@ -112,6 +113,7 @@ public class Login implements Serializable {
         //List<User> results = new ArrayList();
         //results.add(createUser());
         if (results.isEmpty()) {
+            
             System.out.println("<------->Result is empty");
             user = new User();
             user.setUsername(registerCredentials.getUsername());
@@ -123,6 +125,9 @@ public class Login implements Serializable {
 
             arduino.setName("arduino-" + user.getUsername());
             arduino.setComPort("dev/123");
+            arduino.setFertilizerIntervallInDays(5);
+            arduino.setLastFertilization(LocalDateTime.now());
+            arduino.setSetWaterLevel(50);
             arduino.setUser(user);
             arduinoRepo.addArduino(arduino);
 

@@ -12,6 +12,7 @@ import de.hsos.kbse.repos.UserRepository;
 import de.hsos.kbse.entities.Arduino;
 import de.hsos.kbse.entities.Sensordata;
 import de.hsos.kbse.entities.User;
+import java.time.LocalDateTime;
 import java.util.List;
 import javax.enterprise.context.ApplicationScoped;
 import javax.faces.application.FacesMessage;
@@ -67,6 +68,9 @@ public class DebugBoundary {
         arduino.setUser(user);
         arduino.setComPort("ComPortBeispiel");
         arduino.setName("ArduinoEins");
+        arduino.setComPort("123");
+        arduino.setFertilizerIntervallInDays(5);
+        arduino.setLastFertilization(LocalDateTime.now());
         arduinoRepo.addArduino(arduino);
         
     }
