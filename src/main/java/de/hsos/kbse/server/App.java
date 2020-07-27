@@ -23,6 +23,7 @@ public class App {
     StreamAnalytics server;
     
     private void init(@Observes @Initialized(ApplicationScoped.class) Object init) throws InterruptedException {
+        /*
         System.out.println("test");
         
          // Test PumpON / PumpOff 
@@ -33,7 +34,7 @@ public class App {
         this.fertilizerPumpOn(arduinoID);
         Thread.sleep(1000);
         this.fertilizerPumpOff(arduinoID);
-        
+        */
     }
     
     public void waterPumpOn(String arduinoID) {

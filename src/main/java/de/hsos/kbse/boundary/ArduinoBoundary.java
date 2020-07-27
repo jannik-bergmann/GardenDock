@@ -13,6 +13,7 @@ import de.hsos.kbse.repos.ArduinoRepository;
 import de.hsos.kbse.repos.SensordataRepository;
 import de.hsos.kbse.util.SessionUtils;
 import de.hsos.kbse.repos.UserRepository;
+import de.hsos.kbse.server.App;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -43,58 +44,61 @@ import org.primefaces.model.chart.PieChartModel;
 @Getter
 @Setter
 public class ArduinoBoundary implements Serializable {
-
+    
     @Inject
     SensordataRepository sensorDataRepo;
     @Inject
     ArduinoRepository arduinoRepo;
     @Inject
     UserRepository arduinoUserRepo;
-
+    
+    @Inject
+    App app;
+    
     private List<Arduino> arduinos;
     User currentUser;
     private Sensordata currentSensorData;
     private Arduino currentArduino;
-
+    
     private String page;
-
+    
     private PieChartModel waterlevel;
     private PieChartModel soilhumidity;
-
+    
     private LineChartModel waterlevelLineModel;
     private LineChartModel soilmoistureLineModel;
     private LineChartModel airhumidityLineModel;
     private LineChartModel lightintensityLineModel;
     private LineChartModel temperatureLineModel;
     private LineChartModel fertilizerlevelLineModel;
-
+    
     private BarChartModel barModel;
-
+    
     List<Sensordata> sensorDataCollection;
     
     private boolean waterPumpIsOn;
     private boolean fertilizerPumpIsOn;
-
+    
     @PostConstruct
     public void init() {
-
+        
         waterPumpIsOn = false;
         fertilizerPumpIsOn = false;
         page = "landing";
         createBarModel();
         sensorDataCollection = new ArrayList();
-
+        
         currentUser = arduinoUserRepo.getUser(SessionUtils.getUserId());
         arduinos = arduinoRepo.getAllArduinosByUser(currentUser);
         currentArduino = arduinos.get(0);
         //Getting first Arduino  TODO: Enable user to choose.        
         sensorDataCollection = sensorDataRepo.getLast100EntriesByArduino(currentArduino);
-
+        
         this.currentSensorData = sensorDataCollection.get(0);
-
+        
         initLineModels();
     }
-
+    
     private void initLineModels() {
         waterlevelLineModel = ChartUtil.drawWaterlevelChart(sensorDataCollection);
         soilmoistureLineModel = ChartUtil.drawSoilMoistureChart(sensorDataCollection);
@@ -103,22 +107,22 @@ public class ArduinoBoundary implements Serializable {
         temperatureLineModel = ChartUtil.drawTemperatureChart(sensorDataCollection);
         fertilizerlevelLineModel = ChartUtil.drawFertilizerlevelChart(sensorDataCollection);
     }
-
+    
     private LineChartModel initLineChartWaterlevel() {
         LineChartModel model = new LineChartModel();
-
+        
         ChartSeries waterlevelSeries = new ChartSeries();
         waterlevelSeries.setLabel("waterlevel");
         sensorDataCollection.forEach((sensorData) -> {
             waterlevelSeries.set(sensorData.getTimeOfCapture().getMinute() + ":" + sensorData.getTimeOfCapture().getSecond(),
                     sensorData.getWaterlevel());
         });
-
+        
         model.addSeries(waterlevelSeries);
-
+        
         return model;
     }
-
+    
     public void drawWaterlevelChart() {
         waterlevelLineModel = initLineChartWaterlevel();
         waterlevelLineModel.setTitle("Verlauf Wasserstand");
@@ -130,13 +134,13 @@ public class ArduinoBoundary implements Serializable {
         yAxis.setMin(0);
         yAxis.setMax(100);
     }
-
+    
     private void createBarModel() {
         barModel = initBarModel();
-
+        
         barModel.setTitle("Füllstände");
         barModel.setLegendPosition("ne");
-
+        
         Axis xAxis = barModel.getAxis(AxisType.X);
         //xAxis.setLabel("Gender");
 
@@ -145,36 +149,36 @@ public class ArduinoBoundary implements Serializable {
         yAxis.setMin(0);
         yAxis.setMax(100);
     }
-
+    
     private BarChartModel initBarModel() {
         BarChartModel model = new BarChartModel();
-
+        
         ChartSeries waterlevel = new ChartSeries();
         waterlevel.setLabel("Wasserfüllstand");
         waterlevel.set("", 30);
-
+        
         ChartSeries soilhumidity = new ChartSeries();
         soilhumidity.setLabel("Bodenfeuchtigkeit");
         soilhumidity.set("", 52);
-
+        
         ChartSeries airhumidity = new ChartSeries();
         airhumidity.setLabel("Bodenfeuchtigkeit");
         airhumidity.set("", 72);
-
+        
         ChartSeries lightintensity = new ChartSeries();
         lightintensity.setLabel("Bodenfeuchtigkeit");
         lightintensity.set("", 92);
-
+        
         model.addSeries(waterlevel);
         model.addSeries(soilhumidity);
         model.addSeries(airhumidity);
         model.addSeries(lightintensity);
-
+        
         return model;
     }
-
+    
     public void createRandomData() {
-
+        
         Sensordata sensorData = new Sensordata(
                 getRandomIntegerBetweenRange(0, 100),
                 getRandomIntegerBetweenRange(0, 100),
@@ -195,57 +199,57 @@ public class ArduinoBoundary implements Serializable {
         this.lightintensityLineModel = ChartUtil.drawLightintensityChart(sensorDataCollection);
         this.fertilizerlevelLineModel = ChartUtil.drawFertilizerlevelChart(sensorDataCollection);
     }
-
+    
     public String goToIndex() {
         return "index";
     }
-
+    
     public void showPageWaterlevel() {
         this.page = "waterlevel";
         this.waterlevelLineModel = ChartUtil.drawWaterlevelChart(sensorDataCollection);
     }
-
+    
     public void showPageAirhumidity() {
         this.page = "airhumidity";
         this.airhumidityLineModel = ChartUtil.drawAirhumidityChart(sensorDataCollection);
     }
-
+    
     public void showPageLightintensity() {
         this.page = "lightintensity";
         lightintensityLineModel = ChartUtil.drawLightintensityChart(sensorDataCollection);
     }
-
+    
     public void showPageSoilmoisture() {
         this.page = "soilmoisture";
         this.soilmoistureLineModel = ChartUtil.drawSoilMoistureChart(sensorDataCollection);
     }
-
+    
     public void showPageTemperature() {
         this.page = "temperature";
         temperatureLineModel = ChartUtil.drawTemperatureChart(sensorDataCollection);
     }
-
+    
     public void showPageFertilizerlevel() {
         this.page = "fertilizerlevel";
         fertilizerlevelLineModel = ChartUtil.drawFertilizerlevelChart(sensorDataCollection);
     }
-
+    
     public void showPageWiki() {
         this.page = "wiki";
         System.out.println("de.hsos.kbse.boundary.ArduinoBoundary.showPageWiki()");
     }
-
+    
     public void showPageAccount() {
         this.page = "account";
     }
-
+    
     public static int getRandomIntegerBetweenRange(double min, double max) {
         int x = (int) ((int) (Math.random() * ((max - min) + 1)) + min);
         return x;
     }
-
+    
     public void persistNewSensorData() {
-
+        
         Sensordata sensordata = new Sensordata(
                 ArduinoBoundary.getRandomIntegerBetweenRange(0, 100),
                 ArduinoBoundary.getRandomIntegerBetweenRange(0, 100),
@@ -255,15 +259,15 @@ public class ArduinoBoundary implements Serializable {
                 ArduinoBoundary.getRandomIntegerBetweenRange(0, 39)
         );
         sensordata.setArduino(arduinos.get(0));
-
+        
         sensorDataRepo.addSensordata(sensordata);
-
+        
     }
-
+    
     public void pollSensorData() {
         sensorDataCollection = sensorDataRepo.getLast100EntriesByArduino(arduinos.get(0));
     }
-
+    
     public void pollData() {
         System.out.println("<----->Scheduled Function");
         sensorDataCollection = sensorDataRepo.getLast100EntriesByArduino(arduinos.get(0));
@@ -273,32 +277,50 @@ public class ArduinoBoundary implements Serializable {
         this.temperatureLineModel = ChartUtil.drawTemperatureChart(sensorDataCollection);
         this.lightintensityLineModel = ChartUtil.drawLightintensityChart(sensorDataCollection);
         this.fertilizerlevelLineModel = ChartUtil.drawFertilizerlevelChart(sensorDataCollection);
-
+        
         this.currentSensorData = sensorDataCollection.get(0);
     }
-
+    
     public void accountLoeschen() {
         System.out.println("<------------->Account wurde geloescht! ");
         System.out.println("<------------->Account wurde geloescht! ");
         System.out.println("<------------->Account wurde geloescht! ");
     }
-
+    
     public void changeWaterlevel() {
         
         arduinoRepo.updateArduino(currentArduino);
         
-        }
+    }
     
-    public void toggleWaterPump(){
-        if(waterPumpIsOn){
+    public void changeFertilizerLevel(){
+        arduinoRepo.updateArduino(currentArduino);
+    }
+    
+    public void toggleWaterPump() {
+        if (waterPumpIsOn) {
             System.out.println("<------->StoppedPumping");
             waterPumpIsOn = false;
-        }
-        else{
+            app.waterPumpOff(currentArduino.getArduinoId());
+        } else {
             System.out.println("<------->NowPumping");
             waterPumpIsOn = true;
+            app.waterPumpOn(currentArduino.getArduinoId());
         }
         
     }
-
+    
+     public void toggleFertilizerPump() {
+        if (fertilizerPumpIsOn) {
+            System.out.println("<------->StoppedPumping");
+            fertilizerPumpIsOn = false;
+            app.fertilizerPumpOff(currentArduino.getArduinoId());
+        } else {
+            System.out.println("<------->NowPumping");
+            fertilizerPumpIsOn = true;
+            app.fertilizerPumpOn(currentArduino.getArduinoId());
+        }
+        
+    }
+    
 }
