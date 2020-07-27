@@ -65,7 +65,7 @@
                                 <b:row>
                                     <b:column>
                                         <b:commandButton ajax="true" update="@(.waterlevelpanel)"
-                                                         actionListener="#{arduino.showFacesMessage()}" value="&Auml;ndern" look="primary" />
+                                                         actionListener="#{arduino.changeWaterlevel()}" value="&Auml;ndern" look="primary" />
                                     </b:column>
                                 </b:row>
 
@@ -80,8 +80,8 @@
                     </b:column>
                 </b:row>
                 <b:row>
-                    <b:column>
-                        <b:commandButton ajax="true" value="#{arduino.waterPumpIsOn ? 'Pumpe aktivieren' : 'Pumpe deaktivieren'}" actionListener="#{arduino.toggleWaterPump()}" look="primary"/>
+                    <b:column id="buttoncolumn">
+                        <b:commandButton ajax="true"  value="#{arduino.waterPumpIsOn ? 'Pumpe deaktivieren' : 'Pumpe aktivieren'}" actionListener="#{arduino.toggleWaterPump()}" look="primary" update="buttoncolumn"/>
                     </b:column>
                 </b:row>
             </b:column>

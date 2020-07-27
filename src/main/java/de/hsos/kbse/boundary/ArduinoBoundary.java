@@ -283,15 +283,11 @@ public class ArduinoBoundary implements Serializable {
         System.out.println("<------------->Account wurde geloescht! ");
     }
 
-    public void showFacesMessage() {
+    public void changeWaterlevel() {
+        
         arduinoRepo.updateArduino(currentArduino);
-        accountLoeschen();
-        FacesContext.getCurrentInstance().addMessage(
-                null,
-                new FacesMessage(FacesMessage.SEVERITY_WARN,
-                        "Falscher Username oder Passwort",
-                        "Bitte geben Sie gültige Nutzerdaten ein"));
-    }
+        
+        }
     
     public void toggleWaterPump(){
         if(waterPumpIsOn){

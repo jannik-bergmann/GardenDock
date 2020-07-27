@@ -83,7 +83,7 @@ public class ArduinoRepository implements ArduinoRepoInterface, Serializable {
             return null;
         }
         em.getTransaction().begin();
-        em.persist(ard);
+        em.merge(ard);
         em.getTransaction().commit();
         Arduino temp = em.find(Arduino.class, ard.getArduinoId());
         if (temp == null) {
