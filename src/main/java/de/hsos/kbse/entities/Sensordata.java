@@ -91,6 +91,7 @@ public class Sensordata implements Serializable {
 
     public Sensordata() {
         this.waterlevel = 0;
+        this.fertilizerlevel = 0;
         this.airhumidity = 0;
         this.soilhumidity = 0;
         this.lightintensity = 0;

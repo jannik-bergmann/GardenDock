@@ -142,7 +142,7 @@ public class IotGatewayArduino implements IotGatewayInterface {
     }
 
     @Override
-    public void dungPumpOn(String arduinoID) {
+    public void fertilizerPumpOn(String arduinoID) {
         DataListener sic = findConnection(arduinoID);
         if(sic == null) {
             System.err.println("Error while turning waterpump on: getting IotConnection of Arduino" + arduinoID);
@@ -162,7 +162,7 @@ public class IotGatewayArduino implements IotGatewayInterface {
     }
 
     @Override
-    public void dungPumpOff(String arduinoID) {
+    public void fertilizerPumpOff(String arduinoID) {
         DataListener sic = findConnection(arduinoID);
         if(sic == null) {
             System.err.println("Error while turning waterpump on: getting IotConnection of Arduino" + arduinoID);
