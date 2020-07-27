@@ -21,7 +21,7 @@
                     </b:column>
                 </b:row>
                     
-                <b:form>
+                <b:form id="loginform">
                     <b:row>
                         <b:column medium-screen="2">
                             <h:outputText value="Username:"/>
@@ -30,7 +30,7 @@
                             <b:inputText id="username" placeholder="Username" value="#{login.credentials.username}"/>
                         </b:column>
                         <b:column medium-screen="6">
-                            <b:message for="username" autoUpdate="true" />
+                            <b:message for="username" />
                         </b:column>
                     </b:row>
                     <b:row>
@@ -41,13 +41,13 @@
                             <b:inputSecret id="password" placeholder="Password" value="#{login.credentials.password}" />
                         </b:column>
                         <b:column medium-screen="6">
-                            <b:message for="password" autoUpdate="true" />
+                            <b:message for="password"/>
                         </b:column>
                     </b:row>
                     <b:row>
                         <b:column span="4" offset="2">
 
-                            <b:commandButton update="@form" value="Login" action="#{login.login()}" look="primary" style="width:100%" />
+                            <b:commandButton update="loginform" value="Login" action="#{login.login()}" look="primary" style="width:100%" />
                         </b:column>
                         
 

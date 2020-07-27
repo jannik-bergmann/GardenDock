@@ -47,6 +47,7 @@ public class DataListenerSimulated implements DataListener {
     private TopicSession session;
     private TopicPublisher producer;
     private TopicPublisher emptyWarner;
+    private TopicConnection con;
     
     // Scheduler
     private ScheduledExecutorService scheduler;
@@ -75,7 +76,7 @@ public class DataListenerSimulated implements DataListener {
         try {
             Context context = new InitialContext();
             TopicConnectionFactory topicFactory = (TopicConnectionFactory) context.lookup("jms/TopicFactory");
-            TopicConnection con = topicFactory.createTopicConnection();
+            con = topicFactory.createTopicConnection();
             con.start();
             session = con.createTopicSession(false, Session.AUTO_ACKNOWLEDGE);
             Topic topicProducer = (Topic) context.lookup("jms.Topic");
@@ -252,6 +253,11 @@ public class DataListenerSimulated implements DataListener {
     @Override
     public void close() {
         scheduler.shutdownNow();
+        try {
+            this.session.close();
+        } catch (JMSException ex) {
+            Logger.getLogger(DataListenerSimulated.class.getName()).log(Level.SEVERE, null, ex);
+        }
         System.out.println("Port " + arduino.getComPort() + " closed :)");
     }
      

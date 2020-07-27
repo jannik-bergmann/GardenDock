@@ -85,7 +85,7 @@ public class ArduinoBoundary implements Serializable {
         waterPumpIsOn = false;
         fertilizerPumpIsOn = false;
         page = "landing";
-        createBarModel();
+        
         sensorDataCollection = new ArrayList();
         
         currentUser = arduinoUserRepo.getUser(SessionUtils.getUserId());
@@ -94,8 +94,9 @@ public class ArduinoBoundary implements Serializable {
         //Getting first Arduino  TODO: Enable user to choose.        
         sensorDataCollection = sensorDataRepo.getLast100EntriesByArduino(currentArduino);
         
-        this.currentSensorData = sensorDataCollection.get(0);
+        this.currentSensorData = sensorDataCollection.get(sensorDataCollection.size()-1);
         
+        createBarModel();
         initLineModels();
     }
     
@@ -155,19 +156,27 @@ public class ArduinoBoundary implements Serializable {
         
         ChartSeries waterlevel = new ChartSeries();
         waterlevel.setLabel("Wasserfüllstand");
-        waterlevel.set("", 30);
+        waterlevel.set("", currentSensorData.getWaterlevel());
         
         ChartSeries soilhumidity = new ChartSeries();
         soilhumidity.setLabel("Bodenfeuchtigkeit");
-        soilhumidity.set("", 52);
+        soilhumidity.set("", currentSensorData.getSoilhumidity());
         
         ChartSeries airhumidity = new ChartSeries();
-        airhumidity.setLabel("Bodenfeuchtigkeit");
-        airhumidity.set("", 72);
+        airhumidity.setLabel("Luftfeuchtigkeit");
+        airhumidity.set("", currentSensorData.getAirhumidity());
         
         ChartSeries lightintensity = new ChartSeries();
-        lightintensity.setLabel("Bodenfeuchtigkeit");
-        lightintensity.set("", 92);
+        lightintensity.setLabel("Lichtintensitaet");
+        lightintensity.set("", currentSensorData.getLightintensity());
+        
+        ChartSeries fertilizer = new ChartSeries();
+        lightintensity.setLabel("Duengerfuellstand");
+        lightintensity.set("", currentSensorData.getFertilizerlevel());
+        
+        ChartSeries temperature = new ChartSeries();
+        lightintensity.setLabel("Temperatur");
+        lightintensity.set("", currentSensorData.getTemperature());
         
         model.addSeries(waterlevel);
         model.addSeries(soilhumidity);
@@ -175,6 +184,10 @@ public class ArduinoBoundary implements Serializable {
         model.addSeries(lightintensity);
         
         return model;
+    }
+    
+    private void drawBarModel(){
+        
     }
     
     public void createRandomData() {
@@ -277,20 +290,17 @@ public class ArduinoBoundary implements Serializable {
         this.temperatureLineModel = ChartUtil.drawTemperatureChart(sensorDataCollection);
         this.lightintensityLineModel = ChartUtil.drawLightintensityChart(sensorDataCollection);
         this.fertilizerlevelLineModel = ChartUtil.drawFertilizerlevelChart(sensorDataCollection);
+        this.createBarModel();
         
-        this.currentSensorData = sensorDataCollection.get(0);
+        this.currentSensorData = sensorDataCollection.get(sensorDataCollection.size()-1);
     }
     
     public void accountLoeschen() {
-        System.out.println("<------------->Account wurde geloescht! ");
-        System.out.println("<------------->Account wurde geloescht! ");
-        System.out.println("<------------->Account wurde geloescht! ");
+        arduinoUserRepo.deleteUser(currentUser);
     }
     
     public void changeWaterlevel() {
-        
         currentArduino = arduinoRepo.updateArduino(currentArduino);
-        
     }
     
     public void changeFertilizerLevel(){

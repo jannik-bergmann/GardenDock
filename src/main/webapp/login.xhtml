@@ -13,11 +13,35 @@
     <h:body style="padding-top: 60px">
         <h:outputScript library="holder" name="holder.js" />
         <!--script src="https://cdnjs.cloudflare.com/ajax/libs/holder/2.5.2/holder.min.js"></script-->
-       
-        
-        <ui:composition template="loginlayout.xhtml">
-            
-        </ui:composition>
-        
+
+        <h:outputScript library="holder" name="holder.js" />
+        <!--script src="https://cdnjs.cloudflare.com/ajax/libs/holder/2.5.2/holder.min.js"></script-->
+        <b:navBar brand="GardenDock" styleClass="navbar-style" brandHref="#" inverse="false" fixed="top" fluid="true" >
+            <h:form id="navbarform">
+                <b:navbarLinks pull="right">
+
+                    <b:navLink value="Debug" icon-awesome="cog" iconAlign="left" update="contentGrid"
+                               onclick="ajax:login.setPage('debug')" />
+
+                    <b:navLink value="Register" icon-awesome="key" iconAlign="left" update="navbarform contentGrid"
+                               onclick="ajax:login.showRegister()" rendered="#{login.showRegisterIcon}"/>
+
+                    <b:navLink value="Login" icon-awesome="key" iconAlign="left" update="navbarform contentGrid"
+                               onclick="ajax:login.showLogin()" rendered="#{!login.showRegisterIcon}"/>
+
+                </b:navbarLinks>
+            </h:form>
+            <h:form styleClass="navbar-form navbar-right">
+                <div class="form-group">
+                    <b:inputText placeholder="Search..." fieldSize="sm"/>
+                </div>
+            </h:form>
+        </b:navBar>
+
+        <h:panelGroup id="contentGrid">
+            <ui:insert name="content" >
+                <ui:include src="#{login.page}.xhtml" />
+            </ui:insert>
+        </h:panelGroup>
     </h:body>
 </html>

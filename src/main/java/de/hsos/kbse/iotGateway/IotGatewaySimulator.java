@@ -91,14 +91,17 @@ public class IotGatewaySimulator implements IotGatewayInterface {
     // React to new and altered Arduinos
     @PostRemove
     private void afterRemove(Arduino ard) {
+        
         DataListener dl = findConnection(ard.getArduinoId());
         dl.close();
         this.dataListeners.remove(dl);
         System.out.println("ard Removed");
+
     }
     
     @PostPersist
     private void afterNew(Arduino ard) {
+        
         if(this.dataListeners == null) return;
         DataListenerSimulated sdl = new DataListenerSimulated();
         if (sdl == null) {
@@ -110,19 +113,24 @@ public class IotGatewaySimulator implements IotGatewayInterface {
         this.dataListeners.add(sdl);
 
         System.out.println("Arduino " + ard.getArduinoId() + " added");
+
     }
     
     @PostUpdate
     private void afterUpdate(Arduino ard) {
-                System.out.println("h*******************************************************************i");
+        if(this.dataListeners == null) return;
+        System.out.println("h*******************************************************************i");
+        if(ard == null) return;   
         DataListener dl = findConnection(ard.getArduinoId());
         dl.setArduino(ard);
         System.out.println("Arduino " + ard.getArduinoId() + " updated");
+
     }
     
     // Water and Fertilizerpump
     @Override
     public void waterPumpOn(String arduinoID) {
+        if(this.dataListeners == null) return;
         DataListener dl = findConnection(arduinoID);
         if(dl == null) {
             System.err.println("Error while turning waterpump on: getting IotConnection of Arduino" + arduinoID);
