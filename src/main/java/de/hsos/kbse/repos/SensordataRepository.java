@@ -9,30 +9,26 @@ import de.hsos.kbse.entities.Arduino;
 import de.hsos.kbse.entities.Sensordata;
 import de.hsos.kbse.repos.interfaces.SensordataRepoInterface;
 import java.io.Serializable;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.NoResultException;
 import javax.persistence.Persistence;
 import javax.persistence.PersistenceException;
-import javax.transaction.TransactionManager;
-import lombok.NoArgsConstructor;
 
-/**
+/** Repository for Sensordata CRUD Operation
  *
- * @author Basti's
+ * @author Bastian Luehrs-Puellmann
  */
 
 public class SensordataRepository implements SensordataRepoInterface, Serializable {  
-    EntityManagerFactory emf;
+    private EntityManagerFactory emf;
     private EntityManager em;
     
-    
+    /** Create EntityManagerFactory and EntityManager
+     */
     public SensordataRepository() {
         try {
             emf = Persistence.createEntityManagerFactory("ogm-mongodb");
@@ -57,6 +53,7 @@ public class SensordataRepository implements SensordataRepoInterface, Serializab
         em.getTransaction().begin();
         em.persist(sd);
         em.getTransaction().commit();
+        if (em.getTransaction().isActive()) em.getTransaction().rollback();
         Sensordata temp = em.find(Sensordata.class, sd.getSensorId());
         return temp;
     }
@@ -80,8 +77,14 @@ public class SensordataRepository implements SensordataRepoInterface, Serializab
         if (sd == null) {
             return null;
         }
+        Sensordata toUpdate = em.find(Sensordata.class, sd.getSensorId());
         em.getTransaction().begin();
-        em.persist(sd);
+        toUpdate.setAirhumidity(sd.getAirhumidity());
+        toUpdate.setFertilizerlevel(sd.getFertilizerlevel());
+        toUpdate.setLightintensity(sd.getLightintensity());
+        toUpdate.setSoilhumidity(sd.getSoilhumidity());
+        toUpdate.setTemperature(sd.getTemperature());
+        toUpdate.setWaterlevel(sd.getWaterlevel());
         em.getTransaction().commit();
         Sensordata temp = em.find(Sensordata.class, sd.getSensorId());
         if (temp == null) {

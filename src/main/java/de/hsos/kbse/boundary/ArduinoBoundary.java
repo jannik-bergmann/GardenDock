@@ -22,6 +22,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.ejb.Schedule;
 import javax.ejb.Schedules;
@@ -31,6 +33,7 @@ import javax.faces.context.FacesContext;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.transaction.RollbackException;
 import lombok.Getter;
 import lombok.Setter;
 import org.primefaces.model.chart.Axis;
@@ -103,6 +106,7 @@ public class ArduinoBoundary implements Serializable {
         sensorDataCollection = new ArrayList();
 
         currentUser = arduinoUserRepo.getUser(SessionUtils.getUserId());
+        arduinos = new ArrayList<>();
         arduinos = arduinoRepo.getAllArduinosByUser(currentUser);
         currentArduino = arduinos.get(0);
 
@@ -249,7 +253,11 @@ public class ArduinoBoundary implements Serializable {
      * </p>
      */
     public void changeWaterlevel() {
-        currentArduino = arduinoRepo.updateArduino(currentArduino);
+        try {
+            currentArduino = arduinoRepo.updateArduino(currentArduino);
+        } catch (RollbackException ex) {
+            Logger.getLogger(ArduinoBoundary.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     /**
@@ -258,7 +266,11 @@ public class ArduinoBoundary implements Serializable {
      * </p>
      */
     public void changeFertilizerLevel() {
-        currentArduino = arduinoRepo.updateArduino(currentArduino);
+        try {
+            currentArduino = arduinoRepo.updateArduino(currentArduino);
+        } catch (RollbackException ex) {
+            Logger.getLogger(ArduinoBoundary.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     /**

@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package de.hsos.kbse.dataListeners;
 
 import com.fazecast.jSerialComm.SerialPort;
@@ -20,9 +15,6 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.annotation.ManagedBean;
-import javax.enterprise.context.RequestScoped;
-import javax.inject.Inject;
 import javax.inject.Named;
 import javax.jms.JMSException;
 import javax.jms.MapMessage;
@@ -31,24 +23,24 @@ import javax.jms.TextMessage;
 import javax.jms.Topic;
 import javax.jms.TopicConnection;
 import javax.jms.TopicConnectionFactory;
-import javax.jms.TopicPublisher;
 import javax.jms.TopicSession;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
+import javax.transaction.RollbackException;
 
-/**
+/** Listening for incoming data from Arduino and parse them to JSM Messages
  *
- * @author bastianluhrspullmann
+ * @author Bastian Luehrs-Puellmann
  */
 
 @Named
-@RequestScoped
 public class DataListenerArduino implements SerialPortDataListener, DataListener {
     // Jms
     private TopicSession session;
-    private TopicPublisher producer;
-    private TopicPublisher emptyWarner;
+    private TopicConnection con;
+    Topic topicProducer;
+    Topic topicWarnings;
     
     // Connection 
     private OutputStream output;
@@ -80,18 +72,15 @@ public class DataListenerArduino implements SerialPortDataListener, DataListener
         try {
             Context context = new InitialContext();
             TopicConnectionFactory topicFactory = (TopicConnectionFactory) context.lookup("jms/TopicFactory");
-            TopicConnection con = topicFactory.createTopicConnection();
+            con = topicFactory.createTopicConnection();
             con.start();
+            topicProducer = (Topic) context.lookup("jms.Topic");
+            topicWarnings = (Topic) context.lookup("jms.Warning");
             session = con.createTopicSession(false, Session.AUTO_ACKNOWLEDGE);
-            Topic topicProducer = (Topic) context.lookup("jms.Topic");
-            producer = session.createPublisher(topicProducer);
-            
-            Topic topicWarnings = (Topic) context.lookup("jms.Warning");
-            emptyWarner = session.createPublisher(topicWarnings);
         } catch (JMSException | NamingException ex) {
             Logger.getLogger(DataListenerSimulated.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        
+        } 
+     
         this.routine();
     }
     
@@ -114,18 +103,25 @@ public class DataListenerArduino implements SerialPortDataListener, DataListener
             try {
                 TextMessage msg = session.createTextMessage();
                 msg.setText("Watertank empty");
-                emptyWarner.publish(msg);
+                session.createPublisher(topicWarnings).publish(msg);
             } catch (JMSException ex) {
                 Logger.getLogger(DataListenerArduino.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (IllegalStateException ex) {
+                System.err.println("Error while creating JMS Message");
+                Logger.getLogger(IotGatewaySimulator.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
         if(tank.equals("fertilizer")) {
             try {
                 TextMessage msg = session.createTextMessage();
                 msg.setText("Fertilizertank empty");
-                emptyWarner.publish(msg);
+                session.createPublisher(topicWarnings).publish(msg);
             } catch (JMSException ex) {
                 Logger.getLogger(DataListenerArduino.class.getName()).log(Level.SEVERE, null, ex);
+            } 
+            catch (IllegalStateException ex) {
+                System.err.println("Error while creating JMS Message");
+                Logger.getLogger(IotGatewaySimulator.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
     }
@@ -148,8 +144,12 @@ public class DataListenerArduino implements SerialPortDataListener, DataListener
             msg.setInt("soilHumidity", Integer.parseInt(values_split[4]));
             msg.setDouble("temperature", Double.parseDouble(values_split[5]));
             msg.setString("arduinoId", values_split[6]);
-            producer.send(msg);
+            session.createPublisher(topicProducer).publish(msg);
         } catch (JMSException ex) {
+            Logger.getLogger(IotGatewaySimulator.class.getName()).log(Level.SEVERE, null, ex);
+        } 
+        catch (IllegalStateException ex) {
+            System.err.println("Error while creating JMS Message");
             Logger.getLogger(IotGatewaySimulator.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
@@ -173,7 +173,6 @@ public class DataListenerArduino implements SerialPortDataListener, DataListener
     // Routine for automatically water and fertilize the bed of the arduino
     @Override
     public void currentToSetValue() {
-        // TODO: eleganter loesen --> evtl. ueber databse
         int currentSoilhumidity = Integer.parseInt(newestDataAsString.split(",")[4]);
         // Check soilhumidity
         if(arduino.getSetWaterLevel() > currentSoilhumidity) {
@@ -209,6 +208,14 @@ public class DataListenerArduino implements SerialPortDataListener, DataListener
     @Override
     public void close() {
         scheduler.shutdownNow();
+        try {
+            this.con.close();
+            this.session.close();
+            this.session = null;
+        } catch (JMSException ex) {
+            Logger.getLogger(DataListenerSimulated.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        System.out.println("Port " + arduino.getComPort() + " closed :)");
     }
     
     @Override
@@ -246,18 +253,22 @@ public class DataListenerArduino implements SerialPortDataListener, DataListener
     
     @Override
     public void fertilizerOn() {
-        output = sp.getOutputStream();
-        
-        try {         
-            output.write(Byte.parseByte("dung, on"));
-            output.flush();
-        } catch (IOException ex) {
-            System.out.println(ex.toString());
+        try {
+            output = sp.getOutputStream();
+            
+            try {
+                output.write(Byte.parseByte("dung, on"));
+                output.flush();
+            } catch (IOException ex) {
+                System.out.println(ex.toString());
+            }
+            
+            // Update Ferilization date in DB
+            arduino.setLastFertilization(LocalDateTime.now());
+            arduinoRepo.updateArduino(arduino);
+        } catch (RollbackException ex) {
+            Logger.getLogger(DataListenerArduino.class.getName()).log(Level.SEVERE, null, ex);
         }  
-        
-        // Update Ferilization date in DB
-        arduino.setLastFertilization(LocalDateTime.now());
-        arduinoRepo.updateArduino(arduino);
     }   
     
     @Override

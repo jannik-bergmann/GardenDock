@@ -20,9 +20,9 @@ import lombok.Setter;
 import lombok.ToString;
 import org.hibernate.annotations.GenericGenerator;
 
-/**
+/** Sensordata Entity
  *
- * @author bastianluhrspullmann & Jannik Bergmann
+ * @author Bastian Luehrs-Puellmann & Jannik Bergmann
  */
 @Entity
 @Getter

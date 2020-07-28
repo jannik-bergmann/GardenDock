@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package de.hsos.kbse.jms;
 
 import javax.annotation.Resource;
@@ -16,9 +11,9 @@ import javax.jms.Session;
 import javax.jms.Topic;
 import javax.jms.TopicConnectionFactory;
 
-/**
+/** Helper Class for JMS Connection. Currently unused
  *
- * @author Basti's
+ * @author Bastian Luehrs-Puellmann
  */
 public class JmsBuilder {
     @Resource(lookup = "jms/TopicFactory")

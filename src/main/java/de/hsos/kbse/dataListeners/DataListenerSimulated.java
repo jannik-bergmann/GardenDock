@@ -1,10 +1,5 @@
 package de.hsos.kbse.dataListeners;
 
-/**
- *
- * @author bastianluhrspullmann
- */
-
 import de.hsos.kbse.entities.Arduino;
 import de.hsos.kbse.entities.Sensordata;
 import de.hsos.kbse.iotGateway.IotGatewaySimulator;
@@ -20,11 +15,9 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.annotation.ManagedBean;
-import javax.annotation.PostConstruct;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.enterprise.context.RequestScoped;
-import javax.faces.annotation.ManagedProperty;
-import javax.inject.Inject;
 import javax.inject.Named;
 import javax.jms.JMSException;
 import javax.jms.MapMessage;
@@ -38,16 +31,21 @@ import javax.jms.TopicSession;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
-import javax.persistence.Persistence;
+import javax.transaction.RollbackException;
+
+/** Simulating incoming data and parse them to JSM Messages
+ *
+ * @author Bastian Luehrs-Puellmann
+ */
 
 @Named
 @RequestScoped
 public class DataListenerSimulated implements DataListener {
     // Jms
     private TopicSession session;
+    private TopicConnection con;
     private TopicPublisher producer;
     private TopicPublisher emptyWarner;
-    private TopicConnection con;
     
     // Scheduler
     private ScheduledExecutorService scheduler;
@@ -62,6 +60,8 @@ public class DataListenerSimulated implements DataListener {
     private SensordataRepoInterface sensordataRepo;
     private ArduinoRepoInterface arduinoRepo;
 
+    /** Init scheduler and jms connection 
+    */
     public DataListenerSimulated() {
         rand = new Random();
         closed = false;
@@ -70,27 +70,28 @@ public class DataListenerSimulated implements DataListener {
         this.sensordataRepo = new SensordataRepository();
         this.arduinoRepo = new ArduinoRepository();
  
-        // Init scheduler
+        // Scheduler
         scheduler = Executors.newScheduledThreadPool( 1 );
         
-        // Init JMS publisher        
-        System.out.println("cunstructor datalistener");
+        // JMS      
         try {
             Context context = new InitialContext();
             TopicConnectionFactory topicFactory = (TopicConnectionFactory) context.lookup("jms/TopicFactory");
             con = topicFactory.createTopicConnection();
             con.start();
-            session = con.createTopicSession(false, Session.AUTO_ACKNOWLEDGE);
             Topic topicProducer = (Topic) context.lookup("jms.Topic");
-            producer = session.createPublisher(topicProducer);
-            
             Topic topicWarnings = (Topic) context.lookup("jms.Warning");
+            session = con.createTopicSession(false, Session.AUTO_ACKNOWLEDGE);
+            producer = session.createPublisher(topicProducer);
             emptyWarner = session.createPublisher(topicWarnings);
+            
         } catch (JMSException | NamingException ex) {
-            Logger.getLogger(DataListenerSimulated.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(DataListenerArduino.class.getName()).log(Level.SEVERE, null, ex);
         }  
     }
     
+    /** Init simulated Sensordata and start routine
+    */
     public void init() {
         // Init 'lastValues' for Simulation
         Sensordata lastData = sensordataRepo.getLast(arduino);
@@ -105,13 +106,15 @@ public class DataListenerSimulated implements DataListener {
         } else {
             lastValues = new int[6];
             for(int val : lastValues) {
-                val = 0;
+                val = rand.nextInt(40);
             }
         }
         this.routine();
     }
     
-    // Send jms message to topic emptyTankWarning
+    /** Send jms message to topic emptyTankWarning
+      * @param tank    indicates if water or fertilizer tank is empty
+    */
     private void sendTankEmptyWarning(String tank) {
         if(tank.equals("water")) {
             try {
@@ -120,6 +123,9 @@ public class DataListenerSimulated implements DataListener {
                 emptyWarner.publish(msg);
             } catch (JMSException ex) {
                 Logger.getLogger(DataListenerArduino.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (IllegalStateException ex) {
+                System.err.println("Error while creating JMS Message");
+                Logger.getLogger(IotGatewaySimulator.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
         if(tank.equals("fertilizer")) {
@@ -129,13 +135,19 @@ public class DataListenerSimulated implements DataListener {
                 emptyWarner.publish(msg);
             } catch (JMSException ex) {
                 Logger.getLogger(DataListenerArduino.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (IllegalStateException ex) {
+                System.err.println("Error while creating JMS Message");
+                Logger.getLogger(IotGatewaySimulator.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
     }
     
+    /** Send jms message to topic emptyTankWarning
+      * @param values _split    values from simulater
+    */
     private void sendMessage(String[] values_split) {
-        System.out.println("Send data" + values_split.toString());
-        if(session == null || closed) return;
+        System.out.println("prep mes");
+        if(closed) return;
         try {
             MapMessage msg = session.createMapMessage();
             msg.setInt("waterMeter", Integer.parseInt(values_split[0]));
@@ -145,19 +157,28 @@ public class DataListenerSimulated implements DataListener {
             msg.setInt("soilHumidity", Integer.parseInt(values_split[4]));
             msg.setDouble("temperature", Double.parseDouble(values_split[5]));
             msg.setString("arduinoId", values_split[6]);
-            producer.send(msg);
-        } catch (JMSException ex) {
+            producer.publish(msg);
+            System.out.println("send mes");
+        } catch (JMSException ex ) {
+            System.err.println("Error while creating JMS Message");
+            Logger.getLogger(IotGatewaySimulator.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IllegalStateException ex) {
+            System.err.println("Error while creating JMS Message");
             Logger.getLogger(IotGatewaySimulator.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
     
-    /* Values[]:
+    /* 
+    */
+    /** Send jms message to topic emptyTankWarning
+      * @param lastValues   last simulated values 
+      * lastValues[]:
         *int waterMeter;
         *int dungMeter;
         *int sunLevel;
         *int airHumidity;
         *int soilHumidity;
-        *int temperature;
+        *int temperature;   
     */
     private String generateSensordata(int[] lastValues) {
         String csv = "";
@@ -208,7 +229,8 @@ public class DataListenerSimulated implements DataListener {
         return csv;
     }
     
-    // Scheduler for generating sensordata und produce messages for topic
+    /** Scheduler for generating sensordata und produce messages for topic
+    */
     private void routine() {
         scheduler.scheduleAtFixedRate(() -> {
             // generate data
@@ -230,7 +252,8 @@ public class DataListenerSimulated implements DataListener {
         );
     }
     
-    // Routine for automatically water and fertilize the bed of the arduino
+    /** Routine for automatically water and fertilize the bed of the arduino
+    */
     @Override
     public void currentToSetValue() {
         int currentSoilhumidity = lastValues[4];
@@ -252,7 +275,8 @@ public class DataListenerSimulated implements DataListener {
         
     }
     
-    // Stop scheduler
+    /** Stop scheduler
+    */
     @Override
     public void close() {
         this.scheduler.shutdownNow();
@@ -260,6 +284,7 @@ public class DataListenerSimulated implements DataListener {
         try {
             this.session.close();
             this.session = null;
+            con.close();
         } catch (JMSException ex) {
             Logger.getLogger(DataListenerSimulated.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -293,17 +318,21 @@ public class DataListenerSimulated implements DataListener {
     
     @Override
     public void fertilizerOn() {
-        if(this.lastValues[1] == 0) {
-            this.lastValues[1] = 0;
-            sendTankEmptyWarning("fertilizer");
+        try {
+            if(this.lastValues[1] == 0) {
+                this.lastValues[1] = 0;
+                sendTankEmptyWarning("fertilizer");
+            }
+            this.lastValues[1] -= 2;
+            
+            // Update Ferilization date in DB
+            Arduino ardTemp = arduinoRepo.getArduino(arduino.getArduinoId());
+            ardTemp.setLastFertilization(LocalDateTime.now());
+            arduinoRepo.updateArduino(ardTemp);
+            System.out.println("Arduino " + this.arduino.getArduinoId() + ": Fertilizerpump on");
+        } catch (RollbackException ex) {
+            Logger.getLogger(DataListenerSimulated.class.getName()).log(Level.SEVERE, null, ex);
         }
-        this.lastValues[1] -= 2;
-        
-        // Update Ferilization date in DB
-        Arduino ardTemp = arduinoRepo.getArduino(arduino.getArduinoId());
-        ardTemp.setLastFertilization(LocalDateTime.now());
-        arduinoRepo.updateArduino(ardTemp);
-        System.out.println("Arduino " + this.arduino.getArduinoId() + ": Fertilizerpump on");
     }
     
     @Override

@@ -10,7 +10,6 @@ import de.hsos.kbse.entities.authorization.Credentials;
 import de.hsos.kbse.repos.interfaces.UserRepoInterface;
 import java.io.Serializable;
 import java.util.List;
-import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -18,15 +17,14 @@ import javax.persistence.NoResultException;
 import javax.persistence.Persistence;
 import javax.persistence.PersistenceException;
 import javax.persistence.Query;
-import lombok.NoArgsConstructor;
 
-/**
+/** Repository for User CRUD Operation
  *
- * @author Basti's
+ * @author Bastian Luehrs-Puellmann
  */
 
 public class UserRepository implements UserRepoInterface, Serializable {
-    EntityManagerFactory emf;
+    private EntityManagerFactory emf;
     private EntityManager em;
     
     public UserRepository() {
@@ -61,6 +59,7 @@ public class UserRepository implements UserRepoInterface, Serializable {
         em.getTransaction().begin();
         em.remove(usr);
         em.getTransaction().commit();
+        if (em.getTransaction().isActive()) em.getTransaction().rollback();
         if(em.find(User.class, usr.getUserId()) != null) {
             return 0;
         }
@@ -70,8 +69,10 @@ public class UserRepository implements UserRepoInterface, Serializable {
     @Override
     public User updateUser(User usr) {
         if(usr == null) return null; 
+        User toUpdate = em.find(User.class, usr.getUserId());
         em.getTransaction().begin();
-        em.persist(usr);
+        toUpdate.setPwdhash(usr.getPwdhash());
+        toUpdate.setUsername(usr.getUsername());
         em.getTransaction().commit();
         User temp = em.find(User.class, usr.getUserId());
         if(temp == null) return null;
@@ -95,11 +96,11 @@ public class UserRepository implements UserRepoInterface, Serializable {
     
     @Override
     public List<User> getArduinoUserByCredentials(Credentials credentials) {
-        Query query = em.createQuery("select u from User u where u.username=:username and u.pwdhash=:passwordhash" ,User.class);
+        Query query = em.createQuery("from User where username=:username and pwdhash=:passwordhash");
         query.setParameter("username", credentials.getUsername());
         query.setParameter("passwordhash", credentials.getPassword());
 
-        List<User> ArduinoUsers;
+        List<User> ArduinoUsers = null;
         try
         {
              ArduinoUsers = query.getResultList();

@@ -1,10 +1,5 @@
 package de.hsos.kbse.iotGateway;
 
-/**
- *
- * @author bastianluhrspullmann
- */
-
 import de.hsos.kbse.dataListeners.DataListenerArduino;
 import de.hsos.kbse.dataListeners.DataListener;
 import com.fazecast.jSerialComm.SerialPort;
@@ -20,6 +15,12 @@ import javax.persistence.PostPersist;
 import javax.persistence.PostRemove;
 import javax.persistence.PostUpdate;
 import lombok.NoArgsConstructor;
+
+
+/**
+ *
+ * @author Bastian Luehrs-Puellmann
+ */
 
 @GatewayModeArduino
 @NoArgsConstructor
@@ -40,25 +41,24 @@ public class IotGatewayArduino implements IotGatewayInterface {
     
     @Override
     public void startUp() {
-    List<Arduino> arduinos = arduinoRepo.getAllArduino();
-        for(Arduino ard : arduinos) {
+        List<Arduino> arduinos = arduinoRepo.getAllArduino();
+        if ((arduinos = arduinoRepo.getAllArduino()) == null) {
+            return;
+        }
+        for (Arduino ard : arduinos) {
             SerialPort sp = null;
             sp = SerialPort.getCommPort(ard.getComPort());
-            if(!sp.openPort()) {
+            if (!sp.openPort()) {
                 System.err.println("Error while opening port for Arduino " + ard.getName());
                 continue;
             }
             sp.setComPortParameters(9600, 8, 1, 0);
             sp.setComPortTimeouts(SerialPort.TIMEOUT_WRITE_BLOCKING, 0, 0);
-            
+
             DataListenerArduino ardDataListener = new DataListenerArduino();
-            if(ardDataListener == null) {
-                System.err.println("Error while creating ArduinoDataListener for Arduino " + ard.getName());
-                continue;
-            }
             ardDataListener.setArduino(ard);
             ardDataListener.setSerialPort(sp);
-            
+
             sp.addDataListener(ardDataListener);
 
             this.openConnections.add(ardDataListener);

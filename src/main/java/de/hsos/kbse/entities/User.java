@@ -14,7 +14,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.validation.constraints.NotNull;
-import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -22,9 +21,9 @@ import lombok.Setter;
 import lombok.ToString;
 import org.hibernate.annotations.GenericGenerator;
 
-/**
+/** User Entity
  *
- * @author Basti & Jannik Bergmann
+ * @author Bastian Luehrs-Puellmann & Jannik Bergmann
  */
 @Entity
 @Getter
@@ -48,6 +47,6 @@ public class User implements Serializable {
     @NotNull
     private String pwdhash;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.MERGE)
+    @OneToMany(orphanRemoval = true, mappedBy = "user")
     private Set<Arduino> arduinos = new HashSet<>();
 }

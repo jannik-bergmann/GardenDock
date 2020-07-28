@@ -1,27 +1,24 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package de.hsos.kbse.repos;
+
 
 import de.hsos.kbse.entities.Arduino;
 import de.hsos.kbse.repos.interfaces.ArduinoRepoInterface;
 import java.io.Serializable;
 import java.util.List;
-import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 import javax.persistence.PersistenceException;
-import lombok.NoArgsConstructor;
 import de.hsos.kbse.entities.User;
 import java.util.ArrayList;
+import javax.enterprise.context.RequestScoped;
+import javax.inject.Named;
+import javax.transaction.RollbackException;
 
-/**
+/** Repository for Arduino CRUD Operation
  *
- * @author Basti's
+ * @author Bastian Luehrs-Puellmann
  */
 
 public class ArduinoRepository implements ArduinoRepoInterface, Serializable {
@@ -30,24 +27,12 @@ public class ArduinoRepository implements ArduinoRepoInterface, Serializable {
     
     public ArduinoRepository() {
         try {
-            emf = Persistence.createEntityManagerFactory("ogm-mongodb");
+            emf = Persistence.createEntityManagerFactory("ogm-mongodb");   
             em = emf.createEntityManager();
         } catch (PersistenceException ex) {
             System.err.println("********************************" + ex.toString());
         }
     }
-    
-    /*
-    @PostConstruct
-    private void init() {
-        try {
-            emf = Persistence.createEntityManagerFactory("ogm-mongodb");
-            em = emf.createEntityManager();
-        } catch (PersistenceException ex) {
-            System.err.println("********************************" + ex.toString());
-        }
-    }
-*/
 
     @PreDestroy
     private void cleanup() {
@@ -61,6 +46,7 @@ public class ArduinoRepository implements ArduinoRepoInterface, Serializable {
         em.getTransaction().begin();
         em.persist(ard);
         em.getTransaction().commit();
+        if (em.getTransaction().isActive()) em.getTransaction().rollback();
         Arduino temp = em.find(Arduino.class, ard.getArduinoId());
         return temp;
     }
@@ -79,7 +65,7 @@ public class ArduinoRepository implements ArduinoRepoInterface, Serializable {
     }
   
     @Override
-    public Arduino updateArduino(Arduino ard) {
+    public Arduino updateArduino(Arduino ard) throws RollbackException {
         if (ard == null) {
             return null;
         }
@@ -88,6 +74,10 @@ public class ArduinoRepository implements ArduinoRepoInterface, Serializable {
         toUpdate.setComPort(ard.getComPort());
         toUpdate.setFertilizerIntervallInDays(ard.getFertilizerIntervallInDays());
         toUpdate.setSetWaterLevel(ard.getSetWaterLevel());
+        toUpdate.setLastFertilization(ard.getLastFertilization());
+        toUpdate.setName(ard.getName());
+        //em.getTransaction().commit();
+        em.merge(ard);
         em.getTransaction().commit();
         Arduino temp = em.find(Arduino.class, ard.getArduinoId());
         if (temp == null) {
@@ -99,7 +89,10 @@ public class ArduinoRepository implements ArduinoRepoInterface, Serializable {
     @Override
     public Arduino getArduino(String id) {
         Arduino ard = null;
+        //em.getTransaction().begin();
         ard = em.find(Arduino.class, id);
+        //em.getTransaction().commit();
+        //if (em.getTransaction().isActive()) em.getTransaction().rollback();
         if (ard == null) {
             return null;
         }
@@ -109,7 +102,7 @@ public class ArduinoRepository implements ArduinoRepoInterface, Serializable {
     @Override
     public List<Arduino> getAllArduino() {
         List<Arduino> data = new ArrayList<>();
-        data = em.createQuery("SELECT h FROM Arduino h", Arduino.class).getResultList();
+        data = em.createQuery("from Arduino").getResultList();
         if (data.isEmpty()) {
             return null;
         }

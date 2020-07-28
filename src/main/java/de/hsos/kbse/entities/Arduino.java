@@ -17,21 +17,20 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.PostPersist;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import org.hibernate.annotations.GenericGenerator;
 
-/**
+/** Arduino Entity
  *
- * @author bastianluhrspullmann & Jannik Bergmann
- */
+ * @author Bastian Luehrs-Puellmann & Jannik Bergmann
+*/ 
+
 @Entity
 @Getter
 @Setter
@@ -53,7 +52,7 @@ public class Arduino implements Serializable {
     @ToString.Include
     private String name;
 
-    @OneToMany(mappedBy = "arduino", cascade = CascadeType.MERGE)
+    @OneToMany(orphanRemoval = true, mappedBy = "arduino")
     private Set<Sensordata> sensorDatas = new HashSet<>();
 
     @NotNull
