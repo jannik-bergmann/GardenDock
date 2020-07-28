@@ -14,15 +14,19 @@ import de.hsos.kbse.repos.SensordataRepository;
 import de.hsos.kbse.util.SessionUtils;
 import de.hsos.kbse.repos.UserRepository;
 import de.hsos.kbse.server.App;
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import javax.annotation.PostConstruct;
 import javax.ejb.Schedule;
 import javax.ejb.Schedules;
 import javax.faces.application.FacesMessage;
+import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
@@ -225,6 +229,18 @@ public class ArduinoBoundary implements Serializable {
      */
     public void accountLoeschen() {
         arduinoUserRepo.deleteUser(currentUser);
+        ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
+            FacesContext.getCurrentInstance().addMessage(
+                    "loginform:password",
+                    new FacesMessage(FacesMessage.SEVERITY_INFO,
+                            "Account erfolgreich erstellt!",
+                            "Du kannst dich jetzt einloggen."));
+            ec.getFlash().setKeepMessages(true);
+        try {
+            ec.redirect("/GardenDock/login.xhtml");
+        } catch (IOException ex) {
+            Logger.getLogger(ArduinoBoundary.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     /**
