@@ -18,7 +18,7 @@ import javax.jms.TopicConnectionFactory;
 
 /**
  *
- * @author Basti's
+ * @author Bastian Lührs-Püllmann
  */
 public class JmsBuilder {
     @Resource(lookup = "jms/TopicFactory")

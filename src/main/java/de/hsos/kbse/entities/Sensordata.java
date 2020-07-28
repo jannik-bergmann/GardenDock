@@ -7,10 +7,12 @@ package de.hsos.kbse.entities;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import javax.enterprise.context.Dependent;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.transaction.Transactional;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
@@ -20,9 +22,9 @@ import lombok.Setter;
 import lombok.ToString;
 import org.hibernate.annotations.GenericGenerator;
 
-/**
+/** Sensordata Entity
  *
- * @author bastianluhrspullmann
+ * @author Bastian Lührs-Püllmann
  */
 @Entity
 @Getter

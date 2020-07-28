@@ -9,7 +9,7 @@ import de.hsos.kbse.dataListeners.DataListener;
 
 /**
  *
- * @author bastianluhrspullmann
+ * @author Bastian Lührs-Püllmann
  */
 public interface IotGatewayInterface {
     void cleanup();

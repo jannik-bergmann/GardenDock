@@ -1,9 +1,5 @@
 package de.hsos.kbse.jms;
 
-/**
- *
- * @author bastianluhrspullmann
- */
 import de.hsos.kbse.entities.Arduino;
 import de.hsos.kbse.entities.Sensordata;
 import de.hsos.kbse.repos.interfaces.ArduinoRepoInterface;
@@ -13,21 +9,27 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.ejb.ActivationConfigProperty;
+import javax.ejb.MessageDriven;
 import javax.inject.Inject;
 import javax.jms.JMSException;
 import javax.jms.MapMessage;
 import javax.jms.Message;
 import javax.jms.MessageListener;
 
+/** Listening for JMS Messages on Topic "jms.Topic" (from datalistener)
+ *
+ * @author Bastian Lührs-Püllmann
+ */
+
 public class ConsumerMessageListener implements MessageListener, Serializable {
     @Inject
     private SensordataRepoInterface sensorRepo;
     @Inject
     private ArduinoRepoInterface ardRepo;
+    private String consumerName;
     @Inject
     private UserRepoInterface userRepo;
-
-    private String consumerName;
 
     public ConsumerMessageListener(String consumerName) { 
         this.consumerName = consumerName;
@@ -36,15 +38,16 @@ public class ConsumerMessageListener implements MessageListener, Serializable {
     public ConsumerMessageListener() {
         this.consumerName = "";
     }
-     
+    
+     /** Parse JMS Message and persist data if valid
+      *  @param data     Message from datalistener
+     */
     public void persistSensorData(MapMessage data) {
         try {
-            System.out.println("********************** persist: " + data);
             Sensordata sd = new Sensordata();
-            
             Arduino ardToInsert = ardRepo.getArduino(data.getString("arduinoId"));
             if(ardToInsert == null) { 
-                System.out.println("ard was null"); 
+                System.err.println("Arduino was null"); 
                 sd = null;
                 return; 
             }
@@ -66,12 +69,8 @@ public class ConsumerMessageListener implements MessageListener, Serializable {
 
     @Override
     public void onMessage(Message msg) {
-        try {
-            msg.acknowledge();
-        } catch (JMSException ex) {
-            Logger.getLogger(ConsumerMessageListener.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        System.out.println(consumerName + " received " + msg.toString());
+        
+        System.out.println("rec mes");
         MapMessage message = (MapMessage) msg;
         persistSensorData(message);
     }

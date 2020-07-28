@@ -13,7 +13,7 @@ import javax.inject.Qualifier;
 
 /**
  *
- * @author bastianluhrspullmann
+ * @author Bastian Lührs-Püllmann
  */
 @Qualifier
 @Retention(RetentionPolicy.RUNTIME)

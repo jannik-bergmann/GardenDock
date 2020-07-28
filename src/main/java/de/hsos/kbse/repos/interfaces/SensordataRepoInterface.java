@@ -16,7 +16,7 @@ import de.hsos.kbse.old.entities.SensorData;
 */
 /**
  *
- * @author Jannik Bergmann <jannik.bergmann@hs-osnabrueck.de>
+ * @author Bastian Lührs-Püllmann
  */
 
 public interface SensordataRepoInterface {

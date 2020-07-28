@@ -1,9 +1,5 @@
 package de.hsos.kbse.iotGateway;
 
-/**
- *
- * @author bastianluhrspullmann
- */
 import de.hsos.kbse.dataListeners.DataListenerSimulated;
 import de.hsos.kbse.dataListeners.DataListener;
 import de.hsos.kbse.entities.Arduino;
@@ -12,13 +8,16 @@ import de.hsos.kbse.repos.interfaces.SensordataRepoInterface;
 import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.ManagedBean;
-import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 import javax.persistence.PostPersist;
 import javax.persistence.PostRemove;
 import javax.persistence.PostUpdate;
-import lombok.NoArgsConstructor;
+
+/** Manages the iot connections
+ *
+ * @author Bastian Lührs-Püllmann
+ */
 
 @GatewayModeSimulator
 @ManagedBean
@@ -40,11 +39,12 @@ public class IotGatewaySimulator implements IotGatewayInterface {
         this.dataListeners = new ArrayList<>();
     }
     
+    /** create datalister for every arduino
+    */
     @Override
     public void startUp() {
         List<Arduino> arduinos = new ArrayList<>();
         if((arduinos = arduinoRepo.getAllArduino())== null) {
-            System.out.println("**************************** init error");
             return;
         }
         for(Arduino ard : arduinos) {
@@ -59,6 +59,8 @@ public class IotGatewaySimulator implements IotGatewayInterface {
         }
     }
     
+    /** call close() method in all DL and close them
+    */
     @PreDestroy
     @Override
     public void cleanup() {
@@ -68,6 +70,10 @@ public class IotGatewaySimulator implements IotGatewayInterface {
         this.closed = true;
     }
     
+     /** Search for Datalister with specific arduino
+      * @param arduinoID    ID of the arduino the DL holds
+      * @return             datalister with arduino or null
+    */
     @Override
     public DataListener findConnection(String arduinoID) {
         // Get Arduino
@@ -85,7 +91,9 @@ public class IotGatewaySimulator implements IotGatewayInterface {
     }
     
     
-    // React to new and altered Arduinos
+    /** React to new arduinos --> new Datalistener
+      * @param ard    new arduino
+    */
     @PostRemove
     private void afterRemove(Arduino ard) {
         
@@ -96,6 +104,9 @@ public class IotGatewaySimulator implements IotGatewayInterface {
 
     }
     
+    /** React to deleted arduinos --> delete Datalistener
+      * @param ard    new arduino
+    */
     @PostPersist
     private void afterNew(Arduino ard) {
         
@@ -113,6 +124,9 @@ public class IotGatewaySimulator implements IotGatewayInterface {
 
     }
     
+    /** React to updated arduinos --> update Datalistener with arduino
+      * @param ard    new arduino
+    */
     @PostUpdate
     private void afterUpdate(Arduino ard) {
         if(this.dataListeners == null) return;
@@ -125,7 +139,9 @@ public class IotGatewaySimulator implements IotGatewayInterface {
 
     }
     
-    // Water and Fertilizerpump
+    /** find datalistender with specific aruduino and start waterpump
+      * @param arduinoID    ID of the arduino the DL holds
+    */
     @Override
     public void waterPumpOn(String arduinoID) {
         if(this.dataListeners == null) return;
