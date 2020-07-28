@@ -47,6 +47,7 @@ public class IotGatewaySimulator implements IotGatewayInterface {
         if((arduinos = arduinoRepo.getAllArduino())== null) {
             return;
         }
+        System.out.println(arduinos.size());
         for(Arduino ard : arduinos) {
             DataListenerSimulated sdl = new DataListenerSimulated();
             if(sdl == null) {
@@ -96,22 +97,20 @@ public class IotGatewaySimulator implements IotGatewayInterface {
     */
     @PostRemove
     private void afterRemove(Arduino ard) {
-        
+        System.out.println("remove arduino");
         DataListener dl = null;
         dl = findConnection(ard.getArduinoId());
         if(dl == null) return;
         dl.close();
         this.dataListeners.remove(dl);
         System.out.println("ard Removed");
-
     }
     
     /** React to deleted arduinos --> delete Datalistener
       * @param ard    new arduino
     */
     @PostPersist
-    private void afterNew(Arduino ard) {
-        
+    private void afterNew(Arduino ard) { 
         if(this.dataListeners == null) return;
         DataListenerSimulated sdl = new DataListenerSimulated();
         if (sdl == null) {
@@ -132,7 +131,6 @@ public class IotGatewaySimulator implements IotGatewayInterface {
     @PostUpdate
     private void afterUpdate(Arduino ard) {
         if(this.dataListeners == null) return;
-        System.out.println("h*******************************************************************i");
         if(ard == null) return;   
         DataListener dl = findConnection(ard.getArduinoId());
         if(dl == null) return;

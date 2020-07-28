@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package de.hsos.kbse.boundary;
 
 import de.hsos.kbse.entities.Arduino;
@@ -18,15 +13,11 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
-import javax.ejb.Schedule;
-import javax.ejb.Schedules;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
@@ -36,11 +27,7 @@ import javax.inject.Named;
 import javax.transaction.RollbackException;
 import lombok.Getter;
 import lombok.Setter;
-import org.primefaces.model.chart.Axis;
-import org.primefaces.model.chart.AxisType;
 import org.primefaces.model.chart.BarChartModel;
-import org.primefaces.model.chart.CategoryAxis;
-import org.primefaces.model.chart.ChartSeries;
 import org.primefaces.model.chart.LineChartModel;
 import org.primefaces.model.chart.PieChartModel;
 
@@ -107,8 +94,8 @@ public class ArduinoBoundary implements Serializable {
 
         currentUser = arduinoUserRepo.getUser(SessionUtils.getUserId());
         arduinos = new ArrayList<>();
-        if(currentUser != null) {
-            arduinos = arduinoRepo.getAllArduinosByUser(currentUser);
+        arduinos = arduinoRepo.getAllArduinosByUser(currentUser);
+        if (arduinos.size() != 0 && arduinos != null) {
             currentArduino = arduinos.get(0);
         }
         updateData();
@@ -213,9 +200,8 @@ public class ArduinoBoundary implements Serializable {
      * </p>
      */
     public void updateData() {
-
         sensorDataCollection = sensorDataRepo.getLast100EntriesByArduino(arduinos.get(0));
-
+        
         this.currentSensorData = sensorDataCollection.get(sensorDataCollection.size() - 1);
 
         List<Sensordata> sensordataList = sensorDataCollection;
@@ -234,13 +220,16 @@ public class ArduinoBoundary implements Serializable {
      */
     public void accountLoeschen() {
         arduinoUserRepo.deleteUser(currentUser);
+        
         ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
-            FacesContext.getCurrentInstance().addMessage(
-                    "loginform:password",
-                    new FacesMessage(FacesMessage.SEVERITY_WARN,
-                            "Dein Account wurde gelöscht.",
-                            "Du kannst dich jederzeit wieder registrieren."));
-            ec.getFlash().setKeepMessages(true);
+ 
+        FacesContext.getCurrentInstance().addMessage(
+                "loginform:password",
+                new FacesMessage(FacesMessage.SEVERITY_WARN,
+                        "Dein Account wurde gelöscht.",
+                        "Du kannst dich jederzeit wieder registrieren."));
+        ec.getFlash().setKeepMessages(true);
+
         try {
             ec.redirect("/GardenDock/login.xhtml");
         } catch (IOException ex) {

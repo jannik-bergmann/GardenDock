@@ -70,7 +70,6 @@ public class StreamAnalytics implements Serializable {
         } catch ( JMSException | SecurityException | IllegalStateException ex) {
             Logger.getLogger(StreamAnalytics.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
         iotgateway.startUp();
     }
      

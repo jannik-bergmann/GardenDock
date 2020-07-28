@@ -100,7 +100,6 @@ public class IotGatewayArduino implements IotGatewayInterface {
     
     @PostPersist
     private void afterNew(Arduino ard) {
-        System.out.println("h*******************************************************************i");
         SerialPort sp = null;
         sp = SerialPort.getCommPort(ard.getComPort());
         if (!sp.openPort()) {

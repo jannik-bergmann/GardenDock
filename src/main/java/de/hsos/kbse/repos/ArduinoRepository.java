@@ -2,6 +2,7 @@ package de.hsos.kbse.repos;
 
 
 import de.hsos.kbse.entities.Arduino;
+import de.hsos.kbse.entities.Sensordata;
 import de.hsos.kbse.repos.interfaces.ArduinoRepoInterface;
 import java.io.Serializable;
 import java.util.List;
@@ -76,7 +77,6 @@ public class ArduinoRepository implements ArduinoRepoInterface, Serializable {
         toUpdate.setSetWaterLevel(ard.getSetWaterLevel());
         toUpdate.setLastFertilization(ard.getLastFertilization());
         toUpdate.setName(ard.getName());
-        //em.getTransaction().commit();
         em.merge(ard);
         em.getTransaction().commit();
         Arduino temp = em.find(Arduino.class, ard.getArduinoId());
@@ -89,10 +89,9 @@ public class ArduinoRepository implements ArduinoRepoInterface, Serializable {
     @Override
     public Arduino getArduino(String id) {
         Arduino ard = null;
-        //em.getTransaction().begin();
+        em.getTransaction().commit();
         ard = em.find(Arduino.class, id);
-        //em.getTransaction().commit();
-        //if (em.getTransaction().isActive()) em.getTransaction().rollback();
+        em.getTransaction().commit();
         if (ard == null) {
             return null;
         }
@@ -102,7 +101,7 @@ public class ArduinoRepository implements ArduinoRepoInterface, Serializable {
     @Override
     public List<Arduino> getAllArduino() {
         List<Arduino> data = new ArrayList<>();
-        data = em.createQuery("from Arduino").getResultList();
+        data = em.createQuery("SELECT h FROM Arduino h", Arduino.class).getResultList();
         if (data.isEmpty()) {
             return null;
         }

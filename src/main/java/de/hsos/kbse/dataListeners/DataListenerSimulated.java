@@ -105,9 +105,12 @@ public class DataListenerSimulated implements DataListener {
             lastValues[5] = (int)lastData.getTemperature();
         } else {
             lastValues = new int[6];
-            for(int val : lastValues) {
-                val = rand.nextInt(40);
-            }
+            lastValues[0] = 80;
+            lastValues[1] = 72;
+            lastValues[2] = 40;
+            lastValues[3] = 75;
+            lastValues[4] = 90;
+            lastValues[5] = 25;
         }
         this.routine();
     }
@@ -146,7 +149,6 @@ public class DataListenerSimulated implements DataListener {
       * @param values _split    values from simulater
     */
     private void sendMessage(String[] values_split) {
-        System.out.println("prep mes");
         if(closed) return;
         try {
             MapMessage msg = session.createMapMessage();
@@ -158,7 +160,6 @@ public class DataListenerSimulated implements DataListener {
             msg.setDouble("temperature", Double.parseDouble(values_split[5]));
             msg.setString("arduinoId", values_split[6]);
             producer.publish(msg);
-            System.out.println("send mes");
         } catch (JMSException ex ) {
             System.err.println("Error while creating JMS Message");
             Logger.getLogger(IotGatewaySimulator.class.getName()).log(Level.SEVERE, null, ex);

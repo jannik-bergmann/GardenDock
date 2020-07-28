@@ -69,8 +69,6 @@ public class ConsumerMessageListener implements MessageListener, Serializable {
 
     @Override
     public void onMessage(Message msg) {
-        
-        System.out.println("rec mes");
         MapMessage message = (MapMessage) msg;
         persistSensorData(message);
     }
