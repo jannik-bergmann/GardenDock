@@ -9,7 +9,7 @@ import javax.enterprise.context.RequestScoped;
 import javax.inject.Named;
 
 /**
- *
+ * Hold username and Password for Authentification
  * @author Jannik Bergmann 
  */
 @Named

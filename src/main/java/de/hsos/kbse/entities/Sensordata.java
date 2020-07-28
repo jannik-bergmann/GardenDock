@@ -22,7 +22,7 @@ import org.hibernate.annotations.GenericGenerator;
 
 /**
  *
- * @author bastianluhrspullmann
+ * @author bastianluhrspullmann & Jannik Bergmann
  */
 @Entity
 @Getter

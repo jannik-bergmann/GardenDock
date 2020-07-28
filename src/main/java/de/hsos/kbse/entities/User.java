@@ -24,7 +24,7 @@ import org.hibernate.annotations.GenericGenerator;
 
 /**
  *
- * @author Basti's
+ * @author Basti & Jannik Bergmann
  */
 @Entity
 @Getter
