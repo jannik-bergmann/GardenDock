@@ -24,7 +24,7 @@ import lombok.Setter;
 
 /**
  *
- * @author Jannik Bergmann <jannik.bergmann@hs-osnabrueck.de>
+ * @author Jannik Bergmann
  */
 @Getter
 @Setter

@@ -11,7 +11,7 @@ import javax.servlet.http.HttpSession;
 
 /**
  *
- * @author Jannik Bergmann <jannik.bergmann@hs-osnabrueck.de/>
+ * @author Jannik Bergmann
  *Quelle: https://www.journaldev.com/7252/jsf-authentication-login-logout-database-example
  */
 public class SessionUtils {

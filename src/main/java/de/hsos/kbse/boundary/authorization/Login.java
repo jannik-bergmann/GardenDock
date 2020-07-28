@@ -30,10 +30,11 @@ import javax.servlet.http.HttpSession;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.primefaces.PrimeFaces;
 
 /**
  *
- * @author Jannik Bergmann <jannik.bergmann@hs-osnabrueck.de>
+ * @author Jannik Bergmann 
  * Quelle:https://www.journaldev.com/7252/jsf-authentication-login-logout-database-example
  */
 @SessionScoped
@@ -90,9 +91,7 @@ public class Login implements Serializable {
     }
 
     private boolean validateUser(Credentials credentials) {
-        //TODO: Hole User aus DB
-        //List<ArduinoUser> results = arduinoUserRepo.getArduinoUserByCredentials(credentials);
-
+        
         List<User> results = arduinoUserRepo.getArduinoUserByCredentials(credentials);
 
         //List<User> results = new ArrayList();
@@ -106,7 +105,7 @@ public class Login implements Serializable {
         }
     }
 
-    public String register() {
+    public void register() {
         System.out.println("<----->Register");
         List<User> results = arduinoUserRepo.getArduinoUserByCredentials(registerCredentials);
 
@@ -134,18 +133,22 @@ public class Login implements Serializable {
             Sensordata sensordata = new Sensordata(23, 12, 45, 63, 12, 19.5);
             sensordata.setArduino(arduino);
 
+            page="loginForm";
+            showRegisterIcon=true;
+            PrimeFaces.current().ajax().update("contentGrid");
+            PrimeFaces.current().ajax().update("loginnavbar");
             sensordataRepo.addSensordata(sensordata);
-            return "login?faces-redirect=true";
+            
 
         } else {
             System.out.println("<------->Result is not empty");
             FacesContext.getCurrentInstance().addMessage(
-                    "loginform:username",
+                    "registerform:username",
                     new FacesMessage(FacesMessage.SEVERITY_WARN,
-                            "Falscher Username oder Passwort",
-                            "Bitte geben Sie gueltige Nutzerdaten ein"));
+                            "Username existiert schon!",
+                            "Bitte gib einen anderen Namen ein."));
 
-            return null;
+            
         }
 
     }

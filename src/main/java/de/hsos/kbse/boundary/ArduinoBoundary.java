@@ -37,7 +37,7 @@ import org.primefaces.model.chart.PieChartModel;
 
 /**
  *
- * @author Jannik Bergmann <jannik.bergmann@hs-osnabrueck.de>
+ * @author Jannik Bergmann 
  */
 @ViewScoped
 @Named(value = "arduino")

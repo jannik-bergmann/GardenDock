@@ -15,7 +15,7 @@ import org.primefaces.model.chart.LineChartModel;
 
 /**
  *
- * @author Jannik Bergmann <jannik.bergmann@hs-osnabrueck.de>
+ * @author Jannik Bergmann 
  */
 public class ChartUtil {
 

@@ -15,7 +15,7 @@ import javax.transaction.Transactional;
 */
 /**
  *
- * @author Jannik Bergmann <jannik.bergmann@hs-osnabrueck.de>
+ * @author Jannik Bergmann 
  */
 
 /*

@@ -21,7 +21,7 @@ import lombok.NoArgsConstructor;
 */
 /**
  *
- * @author Jannik Bergmann <jannik.bergmann@hs-osnabrueck.de>
+ * @author Jannik Bergmann 
  */
 /*
 @Data

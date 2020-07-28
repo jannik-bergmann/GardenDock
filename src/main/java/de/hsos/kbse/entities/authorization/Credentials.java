@@ -10,7 +10,7 @@ import javax.inject.Named;
 
 /**
  *
- * @author Jannik Bergmann <jannik.bergmann@hs-osnabrueck.de>
+ * @author Jannik Bergmann 
  */
 @Named
 @RequestScoped
