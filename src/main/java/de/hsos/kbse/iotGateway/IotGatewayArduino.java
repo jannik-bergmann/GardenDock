@@ -1,10 +1,5 @@
 package de.hsos.kbse.iotGateway;
 
-/**
- *
- * @author Bastian Lührs-Püllmann
- */
-
 import de.hsos.kbse.dataListeners.DataListenerArduino;
 import de.hsos.kbse.dataListeners.DataListener;
 import com.fazecast.jSerialComm.SerialPort;
@@ -20,6 +15,12 @@ import javax.persistence.PostPersist;
 import javax.persistence.PostRemove;
 import javax.persistence.PostUpdate;
 import lombok.NoArgsConstructor;
+
+
+/**
+ *
+ * @author Bastian Luehrs-Puellmann
+ */
 
 @GatewayModeArduino
 @NoArgsConstructor

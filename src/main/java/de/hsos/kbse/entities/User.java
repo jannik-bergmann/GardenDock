@@ -8,13 +8,11 @@ package de.hsos.kbse.entities;
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
-import javax.enterprise.context.Dependent;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
-import javax.transaction.Transactional;
 import javax.validation.constraints.NotNull;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -25,11 +23,7 @@ import org.hibernate.annotations.GenericGenerator;
 
 /** User Entity
  *
-<<<<<<< HEAD
- * @author Bastian Lührs-Püllmann
-=======
- * @author Basti & Jannik Bergmann
->>>>>>> d5b342fc64ced32b8087012d8fe20d3e2a43f3d6
+ * @author Bastian Luehrs-Puellmann & Jannik Bergmann
  */
 @Entity
 @Getter
@@ -53,6 +47,6 @@ public class User implements Serializable {
     @NotNull
     private String pwdhash;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.MERGE)
+    @OneToMany(orphanRemoval = true, mappedBy = "user")
     private Set<Arduino> arduinos = new HashSet<>();
 }

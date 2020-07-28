@@ -28,7 +28,7 @@ import lombok.NoArgsConstructor;
 
 /** Entry for Analyzing data by creating JMS Listener
  *
- * @author Bastian Lührs-Püllmann
+ * @author Bastian Luehrs-Puellmann
  */
 
 @Singleton
@@ -40,14 +40,6 @@ public class StreamAnalytics implements Serializable {
     @GatewayModeSimulator
     private IotGatewayInterface iotgateway;
     
-    // Repos
-    @Inject
-    private ArduinoRepoInterface ardRepo;
-    @Inject
-    private SensordataRepoInterface sensorRepo;
-    @Inject
-    private UserRepoInterface usrRepo;
-    
     // JMS
     @Resource(mappedName = "jms/TopicFactory")
     private TopicConnectionFactory topicFactory;
@@ -57,6 +49,7 @@ public class StreamAnalytics implements Serializable {
     
     @Inject
     private ConsumerMessageListener cml;
+   
     
     // For The Gateways
     private List<User> users;
@@ -84,7 +77,6 @@ public class StreamAnalytics implements Serializable {
     */
     @PreDestroy
     private void cleanup() {
-    
         iotgateway.cleanup();
     }
     

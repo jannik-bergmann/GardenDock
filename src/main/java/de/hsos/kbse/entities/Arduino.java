@@ -10,7 +10,6 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
-import javax.enterprise.context.Dependent;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
@@ -18,7 +17,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.transaction.Transactional;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
@@ -30,12 +28,9 @@ import org.hibernate.annotations.GenericGenerator;
 
 /** Arduino Entity
  *
-<<<<<<< HEAD
- * @author Bastian Lührs-Püllmann
-=======
- * @author bastianluhrspullmann & Jannik Bergmann
->>>>>>> d5b342fc64ced32b8087012d8fe20d3e2a43f3d6
- */
+ * @author Bastian Luehrs-Puellmann & Jannik Bergmann
+*/ 
+
 @Entity
 @Getter
 @Setter
@@ -57,7 +52,7 @@ public class Arduino implements Serializable {
     @ToString.Include
     private String name;
 
-    @OneToMany(mappedBy = "arduino", cascade = CascadeType.ALL)
+    @OneToMany(orphanRemoval = true, mappedBy = "arduino")
     private Set<Sensordata> sensorDatas = new HashSet<>();
 
     @NotNull

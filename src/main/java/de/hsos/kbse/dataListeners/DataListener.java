@@ -2,9 +2,9 @@ package de.hsos.kbse.dataListeners;
 
 import de.hsos.kbse.entities.Arduino;
 
-/**
+/** Interface for Datalisters
  *
- * @author Bastian Lührs-Püllmann
+ * @author Bastian Luehrs-Puellmann
  */
 
 public interface DataListener {

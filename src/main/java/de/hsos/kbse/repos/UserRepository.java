@@ -20,7 +20,7 @@ import javax.persistence.Query;
 
 /** Repository for User CRUD Operation
  *
- * @author Bastian Lührs-Püllmann
+ * @author Bastian Luehrs-Puellmann
  */
 
 public class UserRepository implements UserRepoInterface, Serializable {
@@ -59,6 +59,7 @@ public class UserRepository implements UserRepoInterface, Serializable {
         em.getTransaction().begin();
         em.remove(usr);
         em.getTransaction().commit();
+        if (em.getTransaction().isActive()) em.getTransaction().rollback();
         if(em.find(User.class, usr.getUserId()) != null) {
             return 0;
         }

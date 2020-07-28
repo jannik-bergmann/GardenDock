@@ -35,7 +35,7 @@ import javax.transaction.RollbackException;
 
 /** Simulating incoming data and parse them to JSM Messages
  *
- * @author Bastian Lührs-Püllmann
+ * @author Bastian Luehrs-Puellmann
  */
 
 @Named

@@ -16,7 +16,7 @@ import javax.persistence.PostUpdate;
 
 /** Manages the iot connections
  *
- * @author Bastian Lührs-Püllmann
+ * @author Bastian Luehrs-Puellmann
  */
 
 @GatewayModeSimulator
@@ -97,7 +97,9 @@ public class IotGatewaySimulator implements IotGatewayInterface {
     @PostRemove
     private void afterRemove(Arduino ard) {
         
-        DataListener dl = findConnection(ard.getArduinoId());
+        DataListener dl = null;
+        dl = findConnection(ard.getArduinoId());
+        if(dl == null) return;
         dl.close();
         this.dataListeners.remove(dl);
         System.out.println("ard Removed");

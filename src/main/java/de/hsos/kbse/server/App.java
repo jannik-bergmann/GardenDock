@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 
 /** Interface fot Boundry classes
  *
- * @author Bastian Lührs-Püllmann
+ * @author Bastian Luehrs-Puellmann
  */
 
 @NoArgsConstructor

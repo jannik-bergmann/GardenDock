@@ -18,7 +18,7 @@ import javax.transaction.RollbackException;
 
 /** Repository for Arduino CRUD Operation
  *
- * @author Bastian Lührs-Püllmann
+ * @author Bastian Luehrs-Puellmann
  */
 
 public class ArduinoRepository implements ArduinoRepoInterface, Serializable {

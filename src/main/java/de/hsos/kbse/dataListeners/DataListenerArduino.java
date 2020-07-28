@@ -31,7 +31,7 @@ import javax.transaction.RollbackException;
 
 /** Listening for incoming data from Arduino and parse them to JSM Messages
  *
- * @author Bastian Lührs-Püllmann
+ * @author Bastian Luehrs-Puellmann
  */
 
 @Named

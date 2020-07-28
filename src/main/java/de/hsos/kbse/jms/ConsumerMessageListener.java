@@ -19,7 +19,7 @@ import javax.jms.MessageListener;
 
 /** Listening for JMS Messages on Topic "jms.Topic" (from datalistener)
  *
- * @author Bastian Lührs-Püllmann
+ * @author Bastian Luehrs-Puellmann
  */
 
 public class ConsumerMessageListener implements MessageListener, Serializable {

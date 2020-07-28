@@ -20,7 +20,7 @@ import javax.persistence.PersistenceException;
 
 /** Repository for Sensordata CRUD Operation
  *
- * @author Bastian Lührs-Püllmann
+ * @author Bastian Luehrs-Puellmann
  */
 
 public class SensordataRepository implements SensordataRepoInterface, Serializable {  
