@@ -27,6 +27,7 @@ import javax.enterprise.context.SessionScoped;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
+import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.servlet.http.HttpServletRequest;
@@ -41,7 +42,7 @@ import org.primefaces.PrimeFaces;
  * @author Jannik Bergmann
  * Quelle:https://www.journaldev.com/7252/jsf-authentication-login-logout-database-example
  */
-@SessionScoped
+@ViewScoped
 @Named
 @Getter
 @Setter
@@ -83,6 +84,7 @@ public class Login implements Serializable {
             session.setAttribute("username", user.getUsername());
             session.setAttribute("userId", user.getUserId());
             return "dashboard?faces-redirect=true";
+            
         } else {
             FacesContext.getCurrentInstance().addMessage(
                     "loginform:password",
@@ -141,6 +143,12 @@ public class Login implements Serializable {
             page = "loginForm";
             showRegisterIcon = true;
             ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
+            FacesContext.getCurrentInstance().addMessage(
+                    "loginform:password",
+                    new FacesMessage(FacesMessage.SEVERITY_INFO,
+                            "Account erfolgreich erstellt!",
+                            "Du kannst dich jetzt einloggen."));
+            ec.getFlash().setKeepMessages(true);
             try {
                 ec.redirect(((HttpServletRequest) ec.getRequest()).getRequestURI());
             } catch (IOException ex) {
@@ -150,11 +158,7 @@ public class Login implements Serializable {
             PrimeFaces.current().ajax().update("contentGrid");
             PrimeFaces.current().ajax().update("loginnavbar");
 */
-            FacesContext.getCurrentInstance().addMessage(
-                    "loginform:password",
-                    new FacesMessage(FacesMessage.SEVERITY_INFO,
-                            "Account erfolgreich erstellt!",
-                            "Du kannst dich jetzt einloggen."));
+            
             //PrimeFaces.current().ajax().update("loginform");
 
         } else {
