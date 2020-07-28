@@ -20,12 +20,16 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.SessionScoped;
 import javax.faces.application.FacesMessage;
+import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -34,7 +38,7 @@ import org.primefaces.PrimeFaces;
 
 /**
  *
- * @author Jannik Bergmann 
+ * @author Jannik Bergmann
  * Quelle:https://www.journaldev.com/7252/jsf-authentication-login-logout-database-example
  */
 @SessionScoped
@@ -91,7 +95,7 @@ public class Login implements Serializable {
     }
 
     private boolean validateUser(Credentials credentials) {
-        
+
         List<User> results = arduinoUserRepo.getArduinoUserByCredentials(credentials);
 
         //List<User> results = new ArrayList();
@@ -112,7 +116,7 @@ public class Login implements Serializable {
         //List<User> results = new ArrayList();
         //results.add(createUser());
         if (results.isEmpty()) {
-            
+
             System.out.println("<------->Result is empty");
             user = new User();
             user.setUsername(registerCredentials.getUsername());
@@ -132,13 +136,26 @@ public class Login implements Serializable {
 
             Sensordata sensordata = new Sensordata(23, 12, 45, 63, 12, 19.5);
             sensordata.setArduino(arduino);
+            sensordataRepo.addSensordata(sensordata);
 
-            page="loginForm";
-            showRegisterIcon=true;
+            page = "loginForm";
+            showRegisterIcon = true;
+            ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
+            try {
+                ec.redirect(((HttpServletRequest) ec.getRequest()).getRequestURI());
+            } catch (IOException ex) {
+                Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
+            }
+/*
             PrimeFaces.current().ajax().update("contentGrid");
             PrimeFaces.current().ajax().update("loginnavbar");
-            sensordataRepo.addSensordata(sensordata);
-            
+*/
+            FacesContext.getCurrentInstance().addMessage(
+                    "loginform:password",
+                    new FacesMessage(FacesMessage.SEVERITY_INFO,
+                            "Account erfolgreich erstellt!",
+                            "Du kannst dich jetzt einloggen."));
+            //PrimeFaces.current().ajax().update("loginform");
 
         } else {
             System.out.println("<------->Result is not empty");
@@ -148,9 +165,11 @@ public class Login implements Serializable {
                             "Username existiert schon!",
                             "Bitte gib einen anderen Namen ein."));
 
-            
         }
 
+    }
+
+    public void reload() throws IOException {
     }
 
     public void timeout() throws IOException {

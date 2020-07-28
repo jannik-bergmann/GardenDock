@@ -60,6 +60,89 @@
                             <span class="text-muted" >Sonneneinstrahlung</span>
                         </b:jumbotron>
                     </b:column>
+                    
+                </b:row>
+                <b:row styleClass="placeholders">
+                    <b:column col-xs="6" col-sm="3" styleClass="placeholder">
+                        <b:jumbotron>
+                            <h4>
+                                <b:iconAwesome value="burn" solid="true" size="2x"/>
+                                <!--Sonneneinstrahlung-->
+                            </h4><br/>
+                            <strong>#{arduino.currentSensorData.fertilizerlevel} %</strong><br/>
+                            <span class="text-muted" >D&uuml;ngerf&uuml;llstand</span>
+                        </b:jumbotron>
+                    </b:column>
+                    <b:column col-xs="6" col-sm="3" styleClass="placeholder">
+                        <b:jumbotron>
+                            <h4>
+                                <b:iconAwesome value="cloud" solid="true" size="2x"/>
+                                <!--Sonneneinstrahlung-->
+                            </h4><br/>
+                            <strong>#{arduino.currentSensorData.airhumidity} %</strong><br/>
+                            <span class="text-muted" >Luftfeuchtigkeit</span>
+                        </b:jumbotron>
+                    </b:column>
+                </b:row>
+
+                <h1>Steuerung Arduino:</h1>
+                <hr/>
+                <b:row>
+                    <b:column span="6">
+                        <b:panel>
+                            <b:row>
+                                <b:column>
+                                    <strong>Soll-Wert Bodenfeuchtigkeit:  </strong>
+                                </b:column>
+
+                            </b:row>
+                            <b:row>
+                                <b:column>
+
+                                    <h:outputText value="#{arduino.currentArduino.setWaterLevel}"/>
+                                </b:column>
+
+                            </b:row>
+
+
+                        </b:panel>
+
+                    </b:column>
+                    <b:column span="6">
+                        <b:form>
+                            <b:panel class="waterlevelpanel">
+                                <b:row>
+                                    <b:column medium-screen="2">
+                                        <h:outputText value="Soll-Wert Bodenfeuchtigkeit:"/>
+                                    </b:column>
+                                    <b:column medium-screen="4">
+                                        <b:inputText id="setWaterlevel" placeholder="Sollwert" value="#{arduino.currentArduino.setWaterLevel}"/>
+                                    </b:column>
+                                    <b:column medium-screen="6">
+                                        <b:message for="setWaterlevel"/>
+                                    </b:column>
+                                </b:row>
+                                <b:row>
+                                    <b:column>
+                                        <b:commandButton ajax="true" update="@(.waterlevelpanel)"
+                                                         actionListener="#{arduino.changeWaterlevel()}" value="&Auml;ndern" look="primary" />
+                                    </b:column>
+                                </b:row>
+
+                            </b:panel>
+
+                        </b:form>
+                    </b:column>
+                </b:row>
+                <b:row>
+                    <b:column>
+                        <h1>Wasser-Pumpensterung:</h1>
+                    </b:column>
+                </b:row>
+                <b:row>
+                    <b:column id="buttoncolumn">
+                        <b:commandButton ajax="true"  value="#{arduino.waterPumpIsOn ? 'Pumpe deaktivieren' : 'Pumpe aktivieren'}" actionListener="#{arduino.toggleWaterPump()}" look="primary" update="buttoncolumn"/>
+                    </b:column>
                 </b:row>
             </b:column>
 

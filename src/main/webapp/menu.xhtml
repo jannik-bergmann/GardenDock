@@ -84,17 +84,7 @@
                             <b:navCommandLink value="Wiki" actionListener="#{arduino.showPageWiki()}"
                                               icon="search" iconAlign="left" update="@form"/>
                         </b:listLinks>
-                        <b:listLinks>
-                            <b:navLink header="Debug" />
-                            <b:navCommandLink value="createSensorData" actionListener="#{arduino.createRandomData()}"
-                                              icon="tag" iconAlign="left" update="@form"/>
-                            <b:navCommandLink value="RedrawWaterLevelChart" actionListener="#{arduino.drawWaterlevelChart()}"
-                                              icon="pizza" iconAlign="left" update="@form"/>
-                            <b:navCommandLink value="Persist New SensorData" actionListener="#{arduino.persistNewSensorData()}"
-                                              icon="pizza" iconAlign="left" update="@form"/>
-
-
-                        </b:listLinks>
+                        
                     </b:column>
 
                     <div id="page">
@@ -106,7 +96,7 @@
                         </div>
 
                     </div>
-                    <p:poll interval="10" listener="#{arduino.pollData()}" update="@(.contentform)"  />
+                    <p:poll interval="10" listener="#{arduino.updateData()}" update="@(.contentform)"  />
                 </h:form>
             </b:row>
         </b:container> 
