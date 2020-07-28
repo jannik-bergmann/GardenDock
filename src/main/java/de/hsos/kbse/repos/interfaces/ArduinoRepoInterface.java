@@ -8,7 +8,7 @@ import javax.transaction.RollbackException;
 /**
  *
 <<<<<<< HEAD
- * @author Bastian Luehrs-Puellmann & Jannik Bergmann
+ * @author Bastian Luehrs-Puellmann,  Jannik Bergmann
 */
 
 public interface ArduinoRepoInterface {

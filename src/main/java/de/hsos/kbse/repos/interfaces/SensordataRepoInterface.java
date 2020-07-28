@@ -6,7 +6,7 @@ import java.util.List;
 
 
 
- /* @author Bastian Luehrs-Puellmann & Jannik Bergmann 
+ /* @author Bastian Luehrs-Puellmann,  Jannik Bergmann 
  */
 
 public interface SensordataRepoInterface {

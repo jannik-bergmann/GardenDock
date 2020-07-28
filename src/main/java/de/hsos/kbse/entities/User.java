@@ -23,7 +23,7 @@ import org.hibernate.annotations.GenericGenerator;
 
 /** User Entity
  *
- * @author Bastian Luehrs-Puellmann & Jannik Bergmann
+ * @author Bastian Luehrs-Puellmann,  Jannik Bergmann
  */
 @Entity
 @Getter
