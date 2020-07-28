@@ -16,7 +16,6 @@ import de.hsos.kbse.old.entites.ArduinoUser;
 */
 /**
  *
-<<<<<<< HEAD
  * @author Bastian Luehrs-Puellmann,  Jannik Bergmann 
  */
 

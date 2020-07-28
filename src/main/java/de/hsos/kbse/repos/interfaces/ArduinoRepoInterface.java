@@ -7,7 +7,6 @@ import javax.transaction.RollbackException;
 
 /**
  *
-<<<<<<< HEAD
  * @author Bastian Luehrs-Puellmann,  Jannik Bergmann
 */
 

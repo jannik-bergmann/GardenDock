@@ -236,9 +236,9 @@ public class ArduinoBoundary implements Serializable {
         ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
             FacesContext.getCurrentInstance().addMessage(
                     "loginform:password",
-                    new FacesMessage(FacesMessage.SEVERITY_INFO,
-                            "Account erfolgreich erstellt!",
-                            "Du kannst dich jetzt einloggen."));
+                    new FacesMessage(FacesMessage.SEVERITY_WARN,
+                            "Dein Account wurde gelöscht.",
+                            "Du kannst dich jederzeit wieder registrieren."));
             ec.getFlash().setKeepMessages(true);
         try {
             ec.redirect("/GardenDock/login.xhtml");
