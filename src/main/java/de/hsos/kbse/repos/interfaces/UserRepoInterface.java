@@ -16,7 +16,11 @@ import de.hsos.kbse.old.entites.ArduinoUser;
 */
 /**
  *
+<<<<<<< HEAD
  * @author Bastian Lührs-Püllmann
+=======
+ * @author Jannik Bergmann 
+>>>>>>> d5b342fc64ced32b8087012d8fe20d3e2a43f3d6
  */
 
 public interface UserRepoInterface {

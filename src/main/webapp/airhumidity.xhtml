@@ -61,6 +61,29 @@
                         </b:jumbotron>
                     </b:column>
                 </b:row>
+                <b:row styleClass="placeholders">
+                    <b:column col-xs="6" col-sm="3" styleClass="placeholder">
+                        <b:jumbotron>
+                            <h4>
+                                <b:iconAwesome value="burn" solid="true" size="2x"/>
+                                <!--Sonneneinstrahlung-->
+                            </h4><br/>
+                            <strong>#{arduino.currentSensorData.fertilizerlevel} %</strong><br/>
+                            <span class="text-muted" >D&uuml;ngerf&uuml;llstand</span>
+                        </b:jumbotron>
+                    </b:column>
+                    <b:column col-xs="6" col-sm="3" styleClass="placeholder">
+                        <b:jumbotron>
+                            <h4>
+                                <b:iconAwesome value="cloud" solid="true" size="2x"/>
+                                <!--Sonneneinstrahlung-->
+                            </h4><br/>
+                            <strong>#{arduino.currentSensorData.airhumidity} %</strong><br/>
+                            <span class="text-muted" >Luftfeuchtigkeit</span>
+                        </b:jumbotron>
+                    </b:column>
+                </b:row>
+
                 
             </b:column>
 

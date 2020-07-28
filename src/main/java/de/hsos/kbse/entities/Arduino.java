@@ -30,7 +30,11 @@ import org.hibernate.annotations.GenericGenerator;
 
 /** Arduino Entity
  *
+<<<<<<< HEAD
  * @author Bastian Lührs-Püllmann
+=======
+ * @author bastianluhrspullmann & Jannik Bergmann
+>>>>>>> d5b342fc64ced32b8087012d8fe20d3e2a43f3d6
  */
 @Entity
 @Getter

@@ -14,23 +14,31 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
-import javax.enterprise.context.SessionScoped;
 import javax.faces.application.FacesMessage;
+import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
+import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 /**
+ * 
+ * <p>
+ * Handles authentification process of Login-/RegistrationView
+ * </p>
+ * 
  *
- * @author Jannik Bergmann <jannik.bergmann@hs-osnabrueck.de>
- * Quelle:https://www.journaldev.com/7252/jsf-authentication-login-logout-database-example
+ * @author Jannik Bergmann
  */
-@SessionScoped
+@ViewScoped
 @Named
 @Getter
 @Setter
@@ -57,12 +65,23 @@ public class Login implements Serializable {
     private User user;
     private String page;
 
+    /**
+     * Sets default configuration of Login
+     */
     @PostConstruct
     private void init() {
         page = "loginForm";
         showRegisterIcon = true;
     }
 
+    /**
+     * <p>
+     * Validates user credentials and redirects to main app, if credentials are
+     * valid. Also creates new HttpSession
+     * </p>
+     *
+     * @return redirect-String to dashpgage or null
+     */
     public String login() {
 
         boolean loginValid = validateUser(credentials);
@@ -72,10 +91,11 @@ public class Login implements Serializable {
             session.setAttribute("username", user.getUsername());
             session.setAttribute("userId", user.getUserId());
             return "dashboard?faces-redirect=true";
+
         } else {
             FacesContext.getCurrentInstance().addMessage(
-                    null,
-                    new FacesMessage(FacesMessage.SEVERITY_WARN,
+                    "loginform:password",
+                    new FacesMessage(FacesMessage.SEVERITY_FATAL,
                             "Falscher Username oder Passwort",
                             "Bitte geben Sie gueltige Nutzerdaten ein"));
             return null;
@@ -83,9 +103,15 @@ public class Login implements Serializable {
 
     }
 
+    /**
+     * <p>
+     * Check if user exists in database
+     * </p>
+     *
+     * @param credentials - username and password
+     * @return true, if user exists and false,if user doesnt exist
+     */
     private boolean validateUser(Credentials credentials) {
-        //TODO: Hole User aus DB
-        //List<ArduinoUser> results = arduinoUserRepo.getArduinoUserByCredentials(credentials);
 
         List<User> results = arduinoUserRepo.getArduinoUserByCredentials(credentials);
 
@@ -100,15 +126,17 @@ public class Login implements Serializable {
         }
     }
 
-    public String register() {
-        System.out.println("<----->Register");
+    /**
+     * <p>
+     * Takes credentials of new User and checks if that username already exists.
+     * If not it creates a new User. If it already existe, it returns
+     * FacesMessage declaring this.
+     * </p>
+     */
+    public void register() {
         List<User> results = arduinoUserRepo.getArduinoUserByCredentials(registerCredentials);
 
-        //List<User> results = new ArrayList();
-        //results.add(createUser());
         if (results.isEmpty()) {
-            
-            System.out.println("<------->Result is empty");
             user = new User();
             user.setUsername(registerCredentials.getUsername());
             user.setPwdhash(registerCredentials.getPassword());
@@ -127,23 +155,50 @@ public class Login implements Serializable {
 
             Sensordata sensordata = new Sensordata(23, 12, 45, 63, 12, 19.5);
             sensordata.setArduino(arduino);
-
             sensordataRepo.addSensordata(sensordata);
-            return "login?faces-redirect=true";
 
-        } else {
-            System.out.println("<------->Result is not empty");
+            page = "loginForm";
+            showRegisterIcon = true;
+            ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
             FacesContext.getCurrentInstance().addMessage(
-                    null,
+                    "loginform:password",
+                    new FacesMessage(FacesMessage.SEVERITY_INFO,
+                            "Account erfolgreich erstellt!",
+                            "Du kannst dich jetzt einloggen."));
+            ec.getFlash().setKeepMessages(true);
+            try {
+                ec.redirect(((HttpServletRequest) ec.getRequest()).getRequestURI());
+            } catch (IOException ex) {
+                Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        } else {
+            FacesContext.getCurrentInstance().addMessage(
+                    "registerform:username",
                     new FacesMessage(FacesMessage.SEVERITY_WARN,
-                            "Falscher Username oder Passwort",
-                            "Bitte geben Sie gueltige Nutzerdaten ein"));
+                            "Username existiert schon!",
+                            "Bitte gib einen anderen Namen ein."));
 
-            return null;
         }
 
     }
-
+    /**
+     * <p>
+     * Invalidate session and redirects to LoginView
+     * </p>
+     * @return 
+     */
+    public String logout() {
+        user = null;
+        HttpSession session = SessionUtils.getSession();
+        session.invalidate();
+        return "login?faces-redirect=true";
+    }
+    /**
+     * <p>
+     * Logs user out and redirects to login.xhtml
+     * </p>
+     * @throws IOException 
+     */
     public void timeout() throws IOException {
 
         logout();
@@ -151,42 +206,23 @@ public class Login implements Serializable {
 
     }
 
-    public String logout() {
-        user = null;
-        HttpSession session = SessionUtils.getSession();
-        session.invalidate();
-        return "login?faces-redirect=true";
-    }
-
-    public boolean isLoggedIn() {
-
-        return user != null;
-
-    }
-
-    //@Produces
-    //@LoggedIn
-    User getCurrentUser() {
-
-        return user;
-
-    }
-
-    public User createUser() {
-        System.out.println("Erschaffe neuen User :D");
-        User arduinoUser = new User();
-        arduinoUser.setUsername("admin");
-        arduinoUser.setPwdhash("admin");
-
-        //arduinoUserRepo.newArduinoUser(arduinoUser);
-        return arduinoUser;
-    }
-
+    /**
+     * <p>
+     * Inserts loginForm.xhtml
+     * <p>
+     * 
+     */
     public void showLogin() {
         this.showRegisterIcon = true;
         this.page = "loginForm";
     }
 
+    /**
+     * <p>
+     * Inserts registerForm.xhtml
+     * <p>
+     * 
+     */
     public void showRegister() {
         this.showRegisterIcon = false;
         this.page = "registerForm";

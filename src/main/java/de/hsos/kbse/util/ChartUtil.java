@@ -9,13 +9,14 @@ import de.hsos.kbse.entities.Sensordata;
 import java.util.List;
 import org.primefaces.model.chart.Axis;
 import org.primefaces.model.chart.AxisType;
+import org.primefaces.model.chart.BarChartModel;
 import org.primefaces.model.chart.CategoryAxis;
 import org.primefaces.model.chart.ChartSeries;
 import org.primefaces.model.chart.LineChartModel;
 
 /**
  *
- * @author Jannik Bergmann <jannik.bergmann@hs-osnabrueck.de>
+ * @author Jannik Bergmann 
  */
 public class ChartUtil {
 
@@ -167,6 +168,53 @@ public class ChartUtil {
         yAxis.setMax(100);
 
         return lineModel;
+    }
+    
+
+    public static BarChartModel drawBarModel(Sensordata currentSensorData) {
+        BarChartModel barModel = new BarChartModel();
+
+        barModel.setTitle("Fuellstaende");
+        barModel.setLegendPosition("ne");
+
+        Axis xAxis = barModel.getAxis(AxisType.X);
+
+        Axis yAxis = barModel.getAxis(AxisType.Y);
+        yAxis.setLabel("Prozent");
+        yAxis.setMin(0);
+        yAxis.setMax(100);
+        ChartSeries waterlevel = new ChartSeries();
+        waterlevel.setLabel("Wasserfuellstand");
+        waterlevel.set("", currentSensorData.getWaterlevel());
+
+        ChartSeries soilhumidity = new ChartSeries();
+        soilhumidity.setLabel("Bodenfeuchtigkeit");
+        soilhumidity.set("", currentSensorData.getSoilhumidity());
+
+        ChartSeries airhumidity = new ChartSeries();
+        airhumidity.setLabel("Luftfeuchtigkeit");
+        airhumidity.set("", currentSensorData.getAirhumidity());
+
+        ChartSeries lightintensity = new ChartSeries();
+        lightintensity.setLabel("Lichtintensitaet");
+        lightintensity.set("", currentSensorData.getLightintensity());
+
+        ChartSeries fertilizer = new ChartSeries();
+        fertilizer.setLabel("Duengerfuellstand");
+        fertilizer.set("", currentSensorData.getFertilizerlevel());
+
+        ChartSeries temperature = new ChartSeries();
+        temperature.setLabel("Temperatur");
+        temperature.set("", currentSensorData.getTemperature());
+
+        barModel.addSeries(waterlevel);
+        barModel.addSeries(soilhumidity);
+        barModel.addSeries(airhumidity);
+        barModel.addSeries(lightintensity);
+        barModel.addSeries(fertilizer);
+        barModel.addSeries(temperature);
+
+        return barModel;
     }
 
 }

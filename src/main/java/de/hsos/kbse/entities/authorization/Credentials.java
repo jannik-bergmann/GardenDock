@@ -9,8 +9,8 @@ import javax.enterprise.context.RequestScoped;
 import javax.inject.Named;
 
 /**
- *
- * @author Jannik Bergmann <jannik.bergmann@hs-osnabrueck.de>
+ * Hold username and Password for Authentification
+ * @author Jannik Bergmann 
  */
 @Named
 @RequestScoped
