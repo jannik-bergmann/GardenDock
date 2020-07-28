@@ -202,11 +202,10 @@ public class ArduinoBoundary implements Serializable {
                 getRandomIntegerBetweenRange(0, 100),
                 getRandomIntegerBetweenRange(0, 100)
         );
-        //TODO: change SensorDataRepo
-        //sensorDataRepo.newSensorData(sensorData);
+        
         currentSensorData = sensorData;
         sensorDataCollection.add(sensorData);
-        System.out.println("Neue SensorData: " + sensorData);
+        
         this.waterlevelLineModel = ChartUtil.drawWaterlevelChart(sensorDataCollection);
         this.soilmoistureLineModel = ChartUtil.drawSoilMoistureChart(sensorDataCollection);
         this.airhumidityLineModel = ChartUtil.drawAirhumidityChart(sensorDataCollection);

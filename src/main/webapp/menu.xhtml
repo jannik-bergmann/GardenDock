@@ -19,7 +19,7 @@
         <h:form>
             <p:growl id="messages" showDetail="true" sticky="true" />
 
-            <p:idleMonitor timeout="50000">
+            <p:idleMonitor timeout="500000">
                 <p:ajax event="idle" listener="#{login.timeout()}" update="messages" />
             </p:idleMonitor>
 

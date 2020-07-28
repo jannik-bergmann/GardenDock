@@ -80,8 +80,8 @@ public class Login implements Serializable {
             return "dashboard?faces-redirect=true";
         } else {
             FacesContext.getCurrentInstance().addMessage(
-                    null,
-                    new FacesMessage(FacesMessage.SEVERITY_WARN,
+                    "loginform:password",
+                    new FacesMessage(FacesMessage.SEVERITY_FATAL,
                             "Falscher Username oder Passwort",
                             "Bitte geben Sie gueltige Nutzerdaten ein"));
             return null;
@@ -140,7 +140,7 @@ public class Login implements Serializable {
         } else {
             System.out.println("<------->Result is not empty");
             FacesContext.getCurrentInstance().addMessage(
-                    null,
+                    "loginform:username",
                     new FacesMessage(FacesMessage.SEVERITY_WARN,
                             "Falscher Username oder Passwort",
                             "Bitte geben Sie gueltige Nutzerdaten ein"));

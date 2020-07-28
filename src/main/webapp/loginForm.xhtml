@@ -7,6 +7,7 @@
       xmlns:b="http://bootsfaces.net/ui"
       xmlns:ui="http://java.sun.com/jsf/facelets"
       xmlns:p="http://primefaces.org/ui">
+
     <h:head>
         <title>GardenDock</title>
     </h:head>
@@ -20,36 +21,39 @@
                         <h2>Login:</h2>
                     </b:column>
                 </b:row>
-                    
+
                 <b:form id="loginform">
-                    <b:row>
-                        <b:column medium-screen="2">
-                            <h:outputText value="Username:"/>
-                        </b:column>
-                        <b:column medium-screen="4">
-                            <b:inputText id="username" placeholder="Username" value="#{login.credentials.username}"/>
-                        </b:column>
-                        <b:column medium-screen="6">
-                            <b:message for="username" />
-                        </b:column>
-                    </b:row>
-                    <b:row>
-                        <b:column medium-screen="2">
-                            <h:outputText value="Password:" />
-                        </b:column>
-                        <b:column medium-screen="4">
-                            <b:inputSecret id="password" placeholder="Password" value="#{login.credentials.password}" />
-                        </b:column>
-                        <b:column medium-screen="6">
-                            <b:message for="password"/>
-                        </b:column>
-                    </b:row>
+                    
+                        <b:row>
+                            <b:column medium-screen="2">
+                                <h:outputText value="Username:"/>
+                            </b:column>
+                            <b:column medium-screen="4">
+                                <b:inputText id="username" placeholder="Username" value="#{login.credentials.username}"/>
+                            </b:column>
+                            <b:column medium-screen="6">
+                                <b:message for="username" />
+                            </b:column>
+                        </b:row>
+                        <b:row>
+                            <b:column medium-screen="2">
+                                <h:outputText value="Password:" />
+                            </b:column>
+                            <b:column medium-screen="4">
+                                <b:inputSecret id="password" placeholder="Password" value="#{login.credentials.password}" />
+                            </b:column>
+                            <b:column medium-screen="6">
+                                <b:message for="password"/>
+                            </b:column>
+                        </b:row>
+                    
+                    
                     <b:row>
                         <b:column span="4" offset="2">
 
                             <b:commandButton update="loginform" value="Login" action="#{login.login()}" look="primary" style="width:100%" />
                         </b:column>
-                        
+
 
 
                     </b:row>
