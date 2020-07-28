@@ -6,9 +6,13 @@
 package de.hsos.kbse.boundary.authorization;
 
 /**
- *
+ * <p>
+ * Checks each call to the Website, if the users session is valid.
+ * If it is, the filter does nothing. If the user has no valid 
+ * session, it redirects to LoginView
+ * </p>
  * @author Jannik Bergmann 
- *Quelle: https://www.journaldev.com/7252/jsf-authentication-login-logout-database-example
+ *  Quelle: https://www.journaldev.com/7252/jsf-authentication-login-logout-database-example
  */
 import java.io.IOException;
 import javax.servlet.Filter;

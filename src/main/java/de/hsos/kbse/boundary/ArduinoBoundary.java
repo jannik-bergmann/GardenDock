@@ -38,6 +38,9 @@ import org.primefaces.model.chart.LineChartModel;
 import org.primefaces.model.chart.PieChartModel;
 
 /**
+ * <p>
+ * Boundary Class for main app.
+ * </p>
  *
  * @author Jannik Bergmann
  */
@@ -81,6 +84,11 @@ public class ArduinoBoundary implements Serializable {
     private boolean waterPumpIsOn;
     private boolean fertilizerPumpIsOn;
 
+    /**
+     * <p>
+     * Sets default configuration of Class and loads data to logged in User
+     * </p>
+     */
     @PostConstruct
     public void init() {
 
@@ -97,6 +105,13 @@ public class ArduinoBoundary implements Serializable {
         updateData();
     }
 
+    /**
+     * <p>
+     * Draws charts from newest Sensordata.
+     * </p>
+     *
+     * @param sensordataList
+     */
     private void drawModels(List<Sensordata> sensordataList) {
 
         this.waterlevelLineModel = ChartUtil.drawWaterlevelChart(sensordataList);
@@ -108,47 +123,86 @@ public class ArduinoBoundary implements Serializable {
         this.barModel = ChartUtil.drawBarModel(currentSensorData);
     }
 
-    public String goToIndex() {
-        return "index";
-    }
-
+    /**
+     * <p>
+     * Navigation
+     * </p>
+     */
     public void showPageWaterlevel() {
         this.page = "waterlevel";
-        
+
     }
 
+    /**
+     * <p>
+     * Navigation
+     * </p>
+     */
     public void showPageAirhumidity() {
         this.page = "airhumidity";
     }
 
+    /**
+     * <p>
+     * Navigation
+     * </p>
+     */
     public void showPageLightintensity() {
         this.page = "lightintensity";
     }
 
+    /**
+     * <p>
+     * Navigation
+     * </p>
+     */
     public void showPageSoilmoisture() {
         this.page = "soilmoisture";
     }
 
+    /**
+     * <p>
+     * Navigation
+     * </p>
+     */
     public void showPageTemperature() {
         this.page = "temperature";
     }
 
+    /**
+     * <p>
+     * Navigation
+     * </p>
+     */
     public void showPageFertilizerlevel() {
         this.page = "fertilizerlevel";
-        fertilizerlevelLineModel = ChartUtil.drawFertilizerlevelChart(sensorDataCollection);
     }
 
+    /**
+     * <p>
+     * Navigation
+     * </p>
+     */
     public void showPageWiki() {
         this.page = "wiki";
         System.out.println("de.hsos.kbse.boundary.ArduinoBoundary.showPageWiki()");
     }
 
+    /**
+     * <p>
+     * Navigation
+     * </p>
+     */
     public void showPageAccount() {
         this.page = "account";
     }
 
-
-
+    /**
+     * <p>
+     * Gets Last 100 Sensordata-Entries from Database and draws Chars again with
+     * new Data.
+     * </p>
+     */
     public void updateData() {
 
         sensorDataCollection = sensorDataRepo.getLast100EntriesByArduino(arduinos.get(0));
@@ -164,18 +218,38 @@ public class ArduinoBoundary implements Serializable {
         drawModels(sensordataList);
     }
 
+    /**
+     * <p>
+     * Deletes User-Account
+     * </p>
+     */
     public void accountLoeschen() {
         arduinoUserRepo.deleteUser(currentUser);
     }
 
+    /**
+     * <p>
+     * Changes setWaterlevel in Arduino
+     * </p>
+     */
     public void changeWaterlevel() {
         currentArduino = arduinoRepo.updateArduino(currentArduino);
     }
 
+    /**
+     * <p>
+     * Changes setFertilizerlevel in Arduino
+     * </p>
+     */
     public void changeFertilizerLevel() {
         currentArduino = arduinoRepo.updateArduino(currentArduino);
     }
 
+    /**
+     * <p>
+     * Toggles waterpump of Arduino
+     * </p>
+     */
     public void toggleWaterPump() {
         if (waterPumpIsOn) {
             waterPumpIsOn = false;
@@ -187,6 +261,11 @@ public class ArduinoBoundary implements Serializable {
 
     }
 
+    /**
+     * <p>
+     * Toggles fertilizerpump of Arduino
+     * </p>
+     */
     public void toggleFertilizerPump() {
         if (fertilizerPumpIsOn) {
             fertilizerPumpIsOn = false;

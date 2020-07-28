@@ -198,6 +198,18 @@ public class Login implements Serializable {
         session.invalidate();
         return "login?faces-redirect=true";
     }
+    /**
+     * <p>
+     * Logs user out and redirects to login.xhtml
+     * </p>
+     * @throws IOException 
+     */
+    public void timeout() throws IOException {
+
+        logout();
+        FacesContext.getCurrentInstance().getExternalContext().redirect("/GardenDock/login.xhtml");
+
+    }
 
     /**
      * <p>
