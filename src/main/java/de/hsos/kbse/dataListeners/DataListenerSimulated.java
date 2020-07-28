@@ -308,7 +308,7 @@ public class DataListenerSimulated implements DataListener {
             this.lastValues[0] = 0;
             sendTankEmptyWarning("water");
         } else {
-            this.lastValues[0] -= 1;
+            this.lastValues[0] -= 2;
         }
 
         if(this.lastValues[4] > 95) this.lastValues[4] = 100;

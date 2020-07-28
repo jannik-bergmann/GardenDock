@@ -15,12 +15,12 @@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/holder/2.5.2/holder.min.js"></script>
 
         <h:form>
-            <p:growl id="messages" showDetail="true" sticky="true" />
+            <p:growl id="messages" showDetail="true" sticky="true"  />
 
             <p:idleMonitor timeout="500000">
                 <p:ajax event="idle" listener="#{login.timeout()}" update="messages" />
             </p:idleMonitor>
-            <p:poll interval="10" listener="#{arduino.updateData()}" update=""  />
+            <p:poll interval="10" listener="#{arduino.updateData()}" update="@(.contentform)"  />
 
         </h:form>
 
