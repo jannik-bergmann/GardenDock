@@ -209,7 +209,7 @@ public class Login implements Serializable {
     /**
      * <p>
      * Inserts loginForm.xhtml
-     * <p>
+     * </p>
      * 
      */
     public void showLogin() {
@@ -220,7 +220,7 @@ public class Login implements Serializable {
     /**
      * <p>
      * Inserts registerForm.xhtml
-     * <p>
+     * </p>
      * 
      */
     public void showRegister() {

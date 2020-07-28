@@ -30,7 +30,7 @@ import org.hibernate.annotations.OnDeleteAction;
 
 /** Arduino Entity
  *
- * @author Bastian Luehrs-Puellmann & Jannik Bergmann
+ * @author Bastian Luehrs-Puellmann,  Jannik Bergmann
 */ 
 
 @Entity
