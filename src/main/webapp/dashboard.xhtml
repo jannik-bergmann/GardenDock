@@ -20,7 +20,7 @@
             <p:idleMonitor timeout="500000">
                 <p:ajax event="idle" listener="#{login.timeout()}" update="messages" />
             </p:idleMonitor>
-            <p:poll interval="10" listener="#{arduino.updateData()}" update="@(.contentform)"  />
+            <p:poll interval="10" listener="#{arduino.updateData()}" update=""  />
 
         </h:form>
 
@@ -53,11 +53,7 @@
 
                 </b:navbarLinks>
             </h:form>
-            <h:form styleClass="navbar-form navbar-right">
-                <div class="form-group">
-                    <b:inputText placeholder="Search..." fieldSize="sm"/>
-                </div>
-            </h:form>
+            
         </b:navBar>
 
         <b:container fluid="true">
@@ -85,6 +81,7 @@
                         </b:listLinks>
 
                     </b:column>
+
 
                     <div id="page">
 

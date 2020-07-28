@@ -35,9 +35,10 @@
                         </h4>
                     </b:column>
                     <b:column span="6">
+                        
                         <h:form>     
-                            <b:button onclick="$('.formValidationModalClass').modal('show')" value="L&ouml;schen"/>
-                            <b:modal title="Account l&ouml;schen" styleClass="formValidationModalClass"
+                            <b:button onclick="$('.modalPseudoClass').modal('show')" value="L&ouml;schen"/>
+                            <b:modal title="Account l&ouml;schen" styleClass="modalPseudoClass"
                                      closable="false"
                                      closeOnEscape="true">
                                 <b:form>
@@ -51,7 +52,7 @@
                                             <b:commandButton largeScreen="half" update="@form"
                                                              value="L&ouml;schen" look="danger"
                                                              actionListener="#{arduino.accountLoeschen()}"
-                                                             oncomplete="{ $('.formValidationModalClass').modal('hide') } "/>
+                                                             oncomplete="{ $('.modalPseudoClass').modal('hide') } "/>
                                         </b:column>
                                     </b:row>
 
