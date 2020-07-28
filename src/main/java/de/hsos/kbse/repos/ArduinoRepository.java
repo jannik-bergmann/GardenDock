@@ -89,9 +89,7 @@ public class ArduinoRepository implements ArduinoRepoInterface, Serializable {
     @Override
     public Arduino getArduino(String id) {
         Arduino ard = null;
-        em.getTransaction().commit();
         ard = em.find(Arduino.class, id);
-        em.getTransaction().commit();
         if (ard == null) {
             return null;
         }
