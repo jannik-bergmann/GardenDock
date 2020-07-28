@@ -50,10 +50,11 @@ public class StreamAnalytics implements Serializable {
     @Inject
     private ConsumerMessageListener cml;
    
+    private TopicConnection con;
     
     // For The Gateways
     private List<User> users;
-    
+
     
     /** Init the JMS Listener and IotGateway
     */
@@ -61,7 +62,7 @@ public class StreamAnalytics implements Serializable {
     private void init() {
         // Setup jms connection as receiver
         try {
-            TopicConnection con = topicFactory.createTopicConnection();
+            con = topicFactory.createTopicConnection();
             con.start();
             TopicSession ses = con.createTopicSession(false, Session.AUTO_ACKNOWLEDGE);
             TopicSubscriber receiver = ses.createSubscriber(topic);
@@ -77,6 +78,11 @@ public class StreamAnalytics implements Serializable {
     */
     @PreDestroy
     private void cleanup() {
+        try {
+            con.close();
+        } catch (JMSException ex) {
+            Logger.getLogger(StreamAnalytics.class.getName()).log(Level.SEVERE, null, ex);
+        }
         iotgateway.cleanup();
     }
     

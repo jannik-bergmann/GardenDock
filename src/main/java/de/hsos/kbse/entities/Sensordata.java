@@ -37,7 +37,7 @@ public class Sensordata implements Serializable {
     @EqualsAndHashCode.Include
     @ToString.Include
     private String sensorId;
-
+    
     @NotNull
     @ManyToOne
     private Arduino arduino;

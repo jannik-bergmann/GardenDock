@@ -198,7 +198,7 @@ public class DataListenerSimulated implements DataListener {
         // SunLevel
         int sunLevel = lastValues[2];
         if(initLastValues) { sunLevel = rand.nextInt(101); }
-        sunLevel += rand.nextInt(20)-10;
+        sunLevel += rand.nextInt(10)-5;
         if(sunLevel < 0) sunLevel = 0;
         if(sunLevel > 100) sunLevel = 100;
         
@@ -220,8 +220,8 @@ public class DataListenerSimulated implements DataListener {
         int temp = lastValues[5];
         if(initLastValues) { temp = rand.nextInt(30); }
         temp += rand.nextInt(2)-1;
-        if(temp < 0) temp = 0;
-        if(temp > 30) temp = 30;
+        if(temp <-20) temp = -20;
+        if(temp > 40) temp = 40;
         
         // Build CSV
         csv = String.format("%d,%d,%d,%d,%d,%d", waterMeter, dungMeter, sunLevel, airHum, soilHum, temp);

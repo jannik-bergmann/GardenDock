@@ -25,6 +25,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 /** Arduino Entity
  *
@@ -54,11 +56,11 @@ public class Arduino implements Serializable {
 
     @OneToMany(orphanRemoval = true, mappedBy = "arduino")
     private Set<Sensordata> sensorDatas = new HashSet<>();
-
+    
     @NotNull
     @ManyToOne
     private User user;
-    
+
     @Min(value = 0) @Max(value = 100)
     private int setWaterLevel;
     @Min(value = 0) @Max(value = 60)

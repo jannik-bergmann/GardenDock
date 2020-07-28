@@ -103,9 +103,10 @@ public class ArduinoBoundary implements Serializable {
 
         currentUser = arduinoUserRepo.getUser(SessionUtils.getUserId());
         arduinos = new ArrayList<>();
-        arduinos = arduinoRepo.getAllArduinosByUser(currentUser);
-        currentArduino = arduinos.get(0);
-
+        if(currentUser != null) {
+            arduinos = arduinoRepo.getAllArduinosByUser(currentUser);
+            currentArduino = arduinos.get(0);
+        }
         updateData();
     }
 
